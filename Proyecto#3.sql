@@ -752,7 +752,7 @@ insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectad
 ('153234558','998877665','2021/11/02','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Cultural'),
 ('123456789','998877665','2021/12/09','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Económico');
 
-
+--Hay 55
 
 CREATE TABLE Caso (
     CodigoCaso VARCHAR(15) NOT NULL,
@@ -842,19 +842,246 @@ CREATE TABLE Factura (
 	FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo),
 	foreign key (estado) references estadoFactura(tipoFactura)
 );
+INSERT INTO Factura (Codigo, CodigoCotizacion, CedulaCliente, CedulaEmpleado, CedulaJuridica, TelefonoLocal, NombreLocal, FechaFactura, NombreCliente, estado)
+VALUES
+('FAC1', null, '123456789', '123456789', '900123456', '22223334', 'Ferretería El Buen Precio', '2024-01-15', 'Juan Pérez', 'Emitida'),
+('FAC2', null, '325543227', '987654321', '900654321', '33334444', 'Librería Central', '2024-01-18', 'María López', 'Pagada'),
+('FAC3', null, '456789123', '112233445', '900789123', '44445555', 'Tecnología y Más', '2024-01-20', 'Carlos Rodríguez', 'Cancelada'),
+('FAC4', null, '321654987', '556677889', '900987654', '55556666', 'Consultorio Médico', '2024-08-25', 'Ana Martínez', 'Emitida'),
+('FAC5', null, '754323489', '334455667', '900345678', '66667777', 'Repuestos del Valle', '2025-08-30', 'Luis Fernández', 'Pagada'),
+('FAC6', null, '432124368', '998877665', '900876543', '77778888', 'Mercado del Pueblo', '2026-02-03', 'Laura Gómez', 'Emitida'),
+('FAC7', null, '153234558', '123456789', '900567890', '88889999', 'Tienda del Norte', '2028-09-07', 'Pedro Jiménez', 'Pagada'),
+('FAC8', null, '533467853', '987654321', '900123789', '99990000', 'Electrónica Universal', '2025-02-12', 'Carmen Díaz', 'Cancelada'),
+('FAC9', null, '258932147', '112233445', '900987321', '11112222', 'Supermercado Caribe', '2024-02-15', 'Javier Morales', 'Emitida'),
+('FAC10', null, '369253247', '556677889', '900543216', '22223334', 'Moda Latina', '2023-02-19', 'Isabel Torres', 'Pagada'),
+('FAC11', null, '235754438', '334455667', '900789654', '54345765', 'Comercial Guayacán', '2022-02-25', 'Eladio Carrión', 'Emitida'),
+('FAC12', null, '754332564', '998877665', '900234567', '34535321', 'Distribuidora Central', '2022-02-28', 'Mark Cuban', 'Cancelada'),
+('FAC13', null, '432123478', '123456789', '900654321', '54357565', 'Hogar y Construcción', '2022-03-05', 'MYke Towers', 'Emitida'),
+('FAC14', null, '564298645', '987654321', '900876345', '32476542', 'Farmacia Amiga', '2022-01-10', 'Rodrigo Chaves', 'Pagada'),
+('FAC15', null, '354215796', '112233445', '900234789', '86643354', 'Electrodomésticos Centro', '2022-03-15', 'Carolina Giraldo', 'Emitida'),
+('FAC16', null, '642342123', '556677889', '900543789', '97314784', 'Moda y Estilo', '2024-01-20', 'Shakira Isabel', 'Cancelada'),
+('FAC17', null, '653212356', '334455667', '900321654', '23462123', 'Abastecedor del Sur', '2023-07-25', 'Katy Perry', 'Pagada'),
+('FAC18', null, '257543123', '998877665', '900567321', '69504832', 'Super del Norte', '2023-07-28', 'Taylor Swift', 'Emitida'),
+('FAC19', null, '321234678', '123456789', '900654789', '43211257', 'Almacen del Pacífico', '2023-07-01', 'Sofia Vergara', 'Pagada'),
+('FAC20', null, '642342123', '987654321', '900321987', '55557788', 'Bazar Oriental', '2023-04-04', 'Laura Gomez', 'Cancelada'),
+('FAC21', null, '456789123', '987654321', '123456789', '23457899', 'Maderas del Caribe', '2024-11-04', 'Carlos Rodríguez', 'Emitida'),
+('FAC22', null, '754323489', '556677889', '987654321', '55512345', 'Constructora Los Andes', '2024-11-10', 'Luis Fernández', 'Pagada'),
+('FAC23', null, '321654987', '334455667', '456789123', '31254798', 'Tienda Futuro', '2024-01-15', 'Ana Martínez', 'Cancelada'),
+('FAC24', null, '258932147', '112233445', '654321987', '34765213', 'Hotel Mirador', '2024-02-03', 'Javier Morales', 'Emitida'),
+('FAC25', null, '369253247', '998877665', '678910111', '23876598', 'Ferretería Central', '2024-02-10', 'Isabel Torres', 'Pagada'),
+('FAC26', null, '533467853', '123456789', '234567890', '54897265', 'Distribuidora Norte', '2024-12-12', 'Carmen Díaz', 'Cancelada'),
+('FAC27', null, '754332564', '987654321', '876543219', '23984765', 'Constructora Sureña', '2024-12-20', 'Mark Cuban', 'Emitida'),
+('FAC28', null, '257543123', '556677889', '234567899', '48572139', 'Tienda La Modernidad', '2024-12-27', 'Taylor Swift', 'Pagada'),
+('FAC29', null, '321234678', '334455667', '123098456', '92384765', 'Café Aroma', '2024-03-05', 'Sofia Vergara', 'Emitida'),
+('FAC30', null, '533467853', '112233445', '234876543', '89532476', 'Panadería Delicias', '2024-03-10', 'Eladio Carrión', 'Cancelada'),
+('FAC31', null, '235754438', '998877665', '112233445', '32457893', 'Soda El Sabor', '2024-03-15', 'Pedro Jiménez', 'Pagada'),
+('FAC32', null, '754332564', '987654321', '345678901', '12345987', 'Electrónica Mundial', '2024-03-22', 'Mark Cuban', 'Emitida'),
+('FAC33', null, '564298645', '556677889', '987654321', '65982345', 'Supermercado Eco', '2024-03-28', 'Rodrigo Chaves', 'Pagada'),
+('FAC34', null, '432124368', '334455667', '987654322', '35478965', 'Farmacia Salud', '2023-04-01', 'Laura Gómez', 'Emitida'),
+('FAC35', null, '153234558', '112233445', '345098765', '82745693', 'Lavandería Express', '2024-06-05', 'Pedro Jiménez', 'Cancelada'),
+('FAC36', null, '235754438', '998877665', '112233445', '63584729', 'Centro Veterinario', '2024-06-15', 'Pedro Jiménez', 'Emitida'),
+('FAC37', null, '754332564', '987654321', '567890123', '38476521', 'Automotriz Sur', '2023-04-20', 'Mark Cuban', 'Pagada'),
+('FAC38', null, '369253247', '556677889', '456789321', '56723984', 'Gimnasio Power', '2024-05-28', 'Isabel Torres', 'Cancelada'),
+('FAC39', null, '432123478', '334455667', '789654321', '39284576', 'Construcción Heredia', '2024-05-01', 'MYke Towers', 'Emitida'),
+('FAC40', null, '564298645', '112233445', '678543219', '92384756', 'Tienda El Progreso', '2023-05-08', 'Rodrigo Chaves', 'Pagada');
 
 
 
 
 CREATE TABLE ListaFactura (
-    IDLista varchar(40) NOT NULL,
-    CantidadProducto int NOT NULL,
     Codigo varchar(15) not null,
+	CantidadProducto int NOT NULL,
 	CodigoF varchar(15) not null
-    primary key (IDLista, CodigoF),
+    primary key (Codigo, CodigoF),
     foreign key (Codigo) references Articulo (Codigo), 
 	foreign key (CodigoF) references Factura(Codigo), 
 );
+insert into ListaFactura(Codigo,CantidadProducto ,CodigoF) values
+('ART14', 5, 'FAC1'),
+('ART27', 2, 'FAC1'),
+('ART54', 4, 'FAC1'),
+('ART32', 3, 'FAC1'),
+('ART37', 4, 'FAC1'),
+('ART22', 1, 'FAC1'),
+
+('ART52', 4, 'FAC2'),
+('ART38', 3, 'FAC2'),
+('ART19', 3, 'FAC2'),
+
+('ART1', 3, 'FAC3'),
+('ART3', 4, 'FAC3'),
+('ART24', 2, 'FAC3'),
+('ART70', 5, 'FAC3'),
+('ART52', 1, 'FAC3'),
+('ART61', 1, 'FAC3'),
+
+('ART3', 3, 'FAC4'),
+('ART39', 2, 'FAC4'),
+('ART17', 3, 'FAC4'),
+('ART59', 2, 'FAC4'),
+
+('ART13', 6, 'FAC5'),
+('ART49', 1, 'FAC5'),
+('ART33', 5, 'FAC5'),
+('ART19', 7, 'FAC5'),
+
+('ART61', 3, 'FAC6'),
+('ART8', 2, 'FAC6'),
+('ART40', 6, 'FAC6'),
+('ART54', 4, 'FAC6'),
+
+('ART78', 5, 'FAC7'),
+('ART6', 1, 'FAC7'),
+('ART27', 2, 'FAC7'),
+('ART34', 8, 'FAC7'),
+('ART57', 3, 'FAC7'),
+('ART30', 5, 'FAC7'),
+('ART60', 2, 'FAC7'),
+
+('ART73', 3, 'FAC8'),
+('ART30', 3, 'FAC8'),
+('ART57', 5, 'FAC8'),
+('ART49', 4, 'FAC8'),
+('ART25', 2, 'FAC8'),
+
+('ART37', 6, 'FAC9'),
+('ART53', 1, 'FAC9'),
+('ART26', 2, 'FAC9'),
+('ART68', 3, 'FAC9'),
+
+('ART2', 3, 'FAC10'),
+('ART66', 2, 'FAC10'),
+('ART15', 5, 'FAC10'),
+('ART43', 7, 'FAC10'),
+
+('ART72', 4, 'FAC11'),
+('ART25', 7, 'FAC11'),
+
+('ART34', 3, 'FAC12'),
+('ART65', 1, 'FAC12'),
+('ART48', 3, 'FAC12'),
+
+('ART48', 4, 'FAC13'),
+('ART24', 6, 'FAC13'),
+('ART69', 2, 'FAC13'),
+('ART52', 3, 'FAC13'),
+
+('ART40', 4, 'FAC14'),
+('ART79', 7, 'FAC14'),
+('ART32', 3, 'FAC14'),
+('ART45', 1, 'FAC14'),
+
+('ART74', 3, 'FAC15'),
+('ART75', 7, 'FAC15'),
+('ART17', 4, 'FAC15'),
+('ART1', 2, 'FAC15'),
+
+('ART63', 9, 'FAC16'),
+('ART80', 8, 'FAC16'),
+('ART18', 3, 'FAC16'),
+
+('ART47', 5, 'FAC17'),
+('ART70', 2, 'FAC17'),
+('ART59', 3, 'FAC17'),
+
+('ART74', 7, 'FAC18'),
+('ART55', 1, 'FAC18'),
+('ART35', 3, 'FAC18'),
+('ART76', 4, 'FAC18'),
+
+('ART51', 1, 'FAC19'),
+('ART65', 2, 'FAC19'),
+('ART56', 3, 'FAC19'),
+('ART60', 7, 'FAC19'),
+
+('ART31', 1, 'FAC20'),
+('ART33', 2, 'FAC20'),
+('ART12', 7, 'FAC20'),
+('ART31', 3, 'FAC20'),
+('ART46', 5, 'FAC20'),
+
+('ART25', 1, 'FAC21'),
+('ART51', 2, 'FAC21'),
+('ART13', 3, 'FAC21'),
+
+('ART17', 3, 'FAC22'),
+('ART29', 6, 'FAC22'),
+('ART40', 2, 'FAC22'),
+
+('ART30', 5, 'FAC23'),
+('ART22', 4, 'FAC23'),
+('ART18', 2, 'FAC23'),
+('ART48', 10, 'FAC23'),
+
+('ART31', 9, 'FAC24'),
+('ART20', 8, 'FAC24'),
+('ART33', 5, 'FAC24'),
+
+('ART15', 7, 'FAC25'),
+('ART36', 5, 'FAC25'),
+('ART28', 4, 'FAC25'),
+
+('ART19', 2, 'FAC26'),
+('ART45', 4, 'FAC26'),
+
+('ART32', 3, 'FAC27'),
+('ART54', 6, 'FAC27'),
+('ART24', 2, 'FAC27'),
+
+('ART9', 4, 'FAC28'),
+('ART38', 2, 'FAC28'),
+('ART11', 5, 'FAC28'),
+
+('ART49', 3, 'FAC29'),
+('ART41', 6, 'FAC29'),
+('ART27', 8, 'FAC29'),
+('ART34', 5, 'FAC29'),
+
+('ART7', 3, 'FAC30'),
+('ART50', 5, 'FAC30'),
+('ART21', 3, 'FAC30'),
+
+('ART60', 2, 'FAC31'),
+('ART14', 3, 'FAC31'),
+('ART3', 7, 'FAC31'),
+('ART43', 4, 'FAC31'),
+
+('ART53', 2, 'FAC32'),
+('ART55', 5, 'FAC32'),
+('ART26', 3, 'FAC32'),
+('ART62', 4, 'FAC32'),
+
+('ART39', 1, 'FAC33'),
+('ART5', 8, 'FAC33'),
+('ART10', 7, 'FAC33'),
+
+('ART42', 5, 'FAC34'),
+('ART16', 4, 'FAC34'),
+('ART67', 2, 'FAC34'),
+
+('ART2', 9, 'FAC35'),
+('ART8', 8, 'FAC35'),
+('ART37', 5, 'FAC35'),
+
+('ART47', 5, 'FAC36'),
+('ART52', 4, 'FAC36'),
+('ART58', 7, 'FAC36'),
+
+('ART44', 4, 'FAC37'),
+('ART6', 3, 'FAC37'),
+('ART66', 2, 'FAC37'),
+
+('ART23', 8, 'FAC38'),
+('ART64', 4, 'FAC38'),
+('ART19', 1, 'FAC38'),
+
+('ART4', 4, 'FAC39'),
+('ART69', 5, 'FAC39'),
+('ART57', 2, 'FAC39'),
+
+('ART70', 3, 'FAC40'),
+('ART71', 4, 'FAC40'),
+('ART56', 2, 'FAC40');
 
 
 
@@ -946,3 +1173,244 @@ CREATE TABLE ListaCotizacion (
 	FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo)
 );
 
+insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) values
+('ART10', 5, 1),
+('ART23', 2, 1),
+('ART5', 7, 1),
+('ART17', 3, 1),
+('ART81', 4, 1),
+('ART42', 1, 1),
+
+('ART12', 6, 2),
+('ART48', 8, 2),
+('ART9', 3, 2),
+
+('ART27', 4, 3),
+('ART33', 6, 3),
+('ART14', 2, 3),
+('ART7', 5, 3),
+('ART50', 1, 3),
+('ART21', 7, 3),
+
+('ART3', 9, 4),
+('ART39', 2, 4),
+('ART16', 3, 4),
+('ART58', 4, 4),
+
+('ART13', 6, 5),
+('ART29', 1, 5),
+('ART36', 5, 5),
+('ART19', 7, 5),
+
+('ART61', 3, 6),
+('ART8', 2, 6),
+('ART40', 9, 6),
+('ART54', 4, 6),
+
+('ART78', 5, 7),
+('ART6', 1, 7),
+('ART20', 2, 7),
+('ART11', 7, 7),
+('ART44', 3, 7),
+('ART31', 8, 7),
+('ART62', 4, 7),
+
+('ART73', 6, 8),
+('ART30', 3, 8),
+('ART57', 5, 8),
+('ART49', 9, 8),
+('ART25', 2, 8),
+
+('ART37', 7, 9),
+('ART53', 1, 9),
+('ART26', 8, 9),
+('ART68', 4, 9),
+
+('ART2', 3, 10),
+('ART66', 6, 10),
+('ART15', 9, 10),
+('ART43', 5, 10),
+
+('ART72', 2, 11),
+('ART22', 4, 11),
+
+('ART38', 3, 12),
+('ART60', 7, 12),
+('ART41', 5, 12),
+
+('ART28', 9, 13),
+('ART24', 2, 13),
+('ART69', 6, 13),
+('ART52', 3, 13),
+
+('ART4', 8, 14),
+('ART79', 4, 14),
+('ART32', 1, 14),
+('ART45', 7, 14),
+
+('ART34', 6, 15),
+('ART75', 5, 15),
+('ART67', 3, 15),
+('ART1', 9, 15),
+
+('ART63', 2, 16),
+('ART80', 8, 16),
+('ART18', 5, 16),
+
+('ART47', 6, 17),
+('ART70', 3, 17),
+('ART59', 1, 17),
+
+('ART74', 8, 18),
+('ART55', 2, 18),
+('ART35', 5, 18),
+('ART76', 7, 18),
+
+('ART51', 4, 19),
+('ART65', 9, 19),
+('ART56', 6, 19),
+('ART60', 3, 19),
+
+('ART31', 7, 20),
+('ART39', 2, 20),
+('ART12', 5, 20),
+('ART35', 3, 20),
+('ART46', 4, 20),
+
+('ART25', 2, 21),
+('ART51', 7, 21),
+('ART13', 6, 21),
+
+('ART17', 5, 22),
+('ART29', 4, 22),
+('ART40', 3, 22),
+
+('ART30', 6, 23),
+('ART22', 2, 23),
+('ART18', 8, 23),
+('ART48', 5, 23),
+
+('ART31', 7, 24),
+('ART20', 1, 24),
+('ART33', 4, 24),
+
+('ART15', 9, 25),
+('ART36', 2, 25),
+('ART28', 6, 25),
+
+('ART19', 8, 26),
+('ART45', 3, 26),
+
+('ART32', 7, 27),
+('ART54', 4, 27),
+('ART24', 5, 27),
+
+('ART9', 2, 28),
+('ART38', 8, 28),
+('ART11', 3, 28),
+
+('ART49', 1, 29),
+('ART41', 5, 29),
+('ART27', 3, 29),
+('ART34', 7, 29),
+
+('ART7', 6, 30),
+('ART50', 2, 30),
+('ART21', 9, 30),
+
+('ART60', 8, 31),
+('ART14', 4, 31),
+('ART3', 5, 31),
+('ART43', 3, 31),
+
+('ART53', 6, 32),
+('ART55', 1, 32),
+('ART26', 2, 32),
+('ART62', 7, 32),
+
+('ART39', 3, 33),
+('ART5', 6, 33),
+('ART10', 4, 33),
+
+('ART42', 8, 34),
+('ART16', 3, 34),
+('ART67', 5, 34),
+
+('ART2', 7, 35),
+('ART8', 4, 35),
+('ART37', 6, 35),
+
+('ART47', 9, 36),
+('ART52', 3, 36),
+('ART58', 2, 36),
+
+('ART44', 6, 37),
+('ART6', 8, 37),
+('ART66', 1, 37),
+
+('ART23', 7, 38),
+('ART64', 4, 38),
+('ART19', 5, 38),
+
+('ART4', 9, 39),
+('ART69', 2, 39),
+('ART57', 3, 39),
+
+('ART70', 5, 40),
+('ART71', 1, 40),
+('ART56', 7, 40),
+
+('ART63', 6, 41),
+('ART12', 4, 41),
+('ART68', 3, 41),
+
+('ART1', 8, 42),
+('ART14', 2, 42),
+('ART61', 5, 42),
+('ART13', 6, 42),
+
+('ART75', 9, 43),
+('ART33', 3, 43),
+('ART65', 4, 43),
+
+('ART72', 7, 44),
+('ART50', 2, 44),
+('ART18', 6, 44),
+
+('ART32', 8, 45),
+('ART40', 1, 45),
+('ART45', 3, 45),
+
+('ART36', 4, 46),
+('ART11', 9, 46),
+('ART24', 5, 46),
+
+('ART59', 2, 47),
+('ART29', 8, 47),
+('ART20', 3, 47),
+
+('ART27', 5, 48),
+('ART52', 1, 48),
+
+('ART76', 4, 49),
+('ART38', 6, 49),
+
+('ART17', 3, 50),
+('ART42', 7, 50),
+
+('ART74', 9, 51),
+('ART26', 2, 51),
+
+('ART46', 5, 52),
+('ART22', 1, 52),
+('ART34', 8, 52),
+
+('ART78', 7, 53),
+('ART28', 3, 53),
+('ART15', 6, 53),
+
+('ART9', 4, 54),
+('ART30', 5, 54),
+
+('ART79', 8, 55),
+('ART25', 3, 55);
