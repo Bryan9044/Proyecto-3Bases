@@ -235,6 +235,7 @@ INSERT INTO Puesto(TipoPuesto, Salario, Descripcion) values
 ('Preparador', 250000, 'Va guardando y enlistando los productos a utilizar');
 
 
+
 CREATE TABLE Empleado (
 	Cedula VARCHAR(9) NOT NULL,
 	Nombre varchar(30) not null,
@@ -249,22 +250,35 @@ CREATE TABLE Empleado (
 	FechaIngreso DATE NOT NULL,
 	Puesto VARCHAR(35) NOT NULL,
 	tipoRol varchar(20) not null,
-	IDUsuario INT not null,
 	SalarioActual int not null
 	PRIMARY KEY(Cedula),
 	FOREIGN KEY (tipoRol) references Roles(tipoRol),
 	FOREIGN KEY (CodigoDepartamento) REFERENCES Departamento(Codigo),
-	FOREIGN KEY (Puesto) REFERENCES Puesto(TipoPuesto),
-	FOREIGN KEY (IDUsuario) REFERENCES Usuarios(IDUsuario) 
-);
-insert into Empleado(Cedula,Nombre,apellido1,apellido2,genero,FechaNacimiento,provincia,Direccion,Telefono,CodigoDepartamento,FechaIngreso,Puesto,tipoRol,IDUsuario,SalarioActual)
+	FOREIGN KEY (Puesto) REFERENCES Puesto(TipoPuesto)
+	);
+insert into Empleado(Cedula,Nombre,apellido1,apellido2,genero,FechaNacimiento,provincia,Direccion,Telefono,CodigoDepartamento,FechaIngreso,Puesto,tipoRol,SalarioActual)
 values
-('123456789', 'Jose', 'Perez', 'Rodriguez', 'M', '1990-05-12', 'San José', 'San pedro 50 metros norte', '22223333', 'DEP1', '2015-03-10', 'Electricista', 'Encargado', 1, 500000),
-('987654321', 'Sofia', 'Lopez', 'Jimenez', 'F', '1985-09-15', 'Alajuela', 'Alajuelita underground', '22334455', 'DEP2', '2010-07-22', 'Ingeniero', 'Vendedor', 2, 700000),
-('112233445', 'Fabian', 'Martinez', 'Solis', 'M', '1995-12-05', 'Heredia', 'Guarari', '22445566', 'DEP3', '2018-01-19', 'Control de Calidad', 'Bodeguero', 3, 480000),
-('556677889', 'Valka', 'Gomez', 'Alvarado', 'F', '1992-03-28', 'Cartago', 'Lomas del sur', '22556677', 'DEP4', '2017-09-15', 'Administrador', 'Encargado', 4, 450000),
-('334455667', 'Andres', 'Vargas', 'Campos', 'M', '1998-11-23', 'Puntarenas', 'Del faro a 30 metros', '22667788', 'DEP5', '2019-11-25', 'Recepcionista', 'Vendedor', 5, 320000),
-('998877665', 'Clarisa', 'Castro', 'Mora', 'F', '1991-06-30', 'Guanacaste', 'Playa samara casa 50', '22778899', 'DEP6', '2016-04-13', 'Vendedor', 'Ayudante', 1, 500000);
+('123456789', 'Jose', 'Perez', 'Rodriguez', 'M', '1990-05-12', 'San José', 'San pedro 50 metros norte', '22223333', 'DEP1', '2015-03-10', 'Electricista', 'Encargado', 500000),
+('987654321', 'Sofia', 'Lopez', 'Jimenez', 'F', '1985-09-15', 'Alajuela', 'Alajuelita underground', '22334455', 'DEP2', '2010-07-22', 'Ingeniero', 'Vendedor', 700000),
+('112233445', 'Fabian', 'Martinez', 'Solis', 'M', '1995-12-05', 'Heredia', 'Guarari', '22445566', 'DEP3', '2018-01-19', 'Control de Calidad', 'Bodeguero', 480000),
+('556677889', 'Valka', 'Gomez', 'Alvarado', 'F', '1992-03-28', 'Cartago', 'Lomas del sur', '22556677', 'DEP4', '2017-09-15', 'Administrador', 'Encargado', 450000),
+('334455667', 'Andres', 'Vargas', 'Campos', 'M', '1998-11-23', 'Puntarenas', 'Del faro a 30 metros', '22667788', 'DEP5', '2019-11-25', 'Recepcionista', 'Vendedor', 320000),
+('998877665', 'Clarisa', 'Castro', 'Mora', 'F', '1991-06-30', 'Guanacaste', 'Playa samara casa 50', '22778899', 'DEP6', '2016-04-13', 'Vendedor', 'Ayudante',500000),
+--Nuevos empleados a los que puedo darles cotizaciones o facturas
+('654321987', 'Mario', 'Guzmán', 'Perez', 'M', '1991-08-20', 'San José', 'Calle Blancos, 300 metros este', '22889922', 'DEP7', '2018-04-12', 'Operador', 'Ayudante', 370000),
+('223344556', 'Elena', 'Hernández', 'Lee', 'F', '1986-11-17', 'Cartago', 'Los Ángeles, casa 14', '22880099', 'DEP8', '2014-09-25', 'Supervisor', 'SuperUsuario', 600000),
+('887766554', 'Carlos', 'Morales', 'Smith', 'M', '1989-05-04', 'Heredia', 'San Rafael, 200 metros oeste', '22446655', 'DEP9', '2015-01-30', 'Electricista', 'Encargado', 500000),
+('445566778', 'Jahsimar', 'Medina', 'Solis', 'F', '1992-06-10', 'Alajuela', 'Calle nueva, 50 metros sur', '22770055', 'DEP1', '2016-08-15', 'Encargado de Inventarios', 'Bodeguero', 450000),
+('998877664', 'Liliana', 'Campos', 'Alvarado', 'F', '1995-09-14', 'Guanacaste', 'Playa Grande, casa 22', '22334422', 'DEP2', '2020-07-10', 'Ingeniero', 'Encargado', 700000),
+('335577992', 'Diego', 'Ramírez', 'Ávila', 'M', '1987-12-12', 'San José', 'Barrio La Cruz', '22112233', 'DEP4', '2019-11-05', 'Administrador', 'SuperUsuario', 450000),
+('112244335', 'Verónica', 'López', 'Cabrera', 'F', '1994-03-08', 'Heredia', 'Santo Domingo', '22221144', 'DEP5', '2021-02-01', 'Recepcionista', 'Vendedor', 320000),
+('775566443', 'Oscar', 'González', 'Vargas', 'M', '1988-02-19', 'Alajuela', 'Barrio San Antonio', '22335577', 'DEP6', '2013-06-22', 'Vendedor', 'Vendedor', 500000),
+('998877221', 'Gabriela', 'Sáenz', 'Marchena', 'F', '1993-12-21', 'Cartago', 'El Carmen, casa 15', '22446688', 'DEP7', '2019-04-25', 'Empacador', 'Ayudante', 350000),
+('335566778', 'Santiago', 'Solano', 'Quiroz', 'M', '1985-05-27', 'San José', 'Calle 8, casa 30', '22331155', 'DEP8', '2012-01-18', 'Supervisor', 'Encargado', 600000),
+('887788665', 'Natasha', 'Castro', 'Araya', 'F', '1991-10-14', 'Heredia', 'Barrio Fátima', '22445566', 'DEP9', '2018-08-12', 'Reparaciones', 'Bodeguero', 420000),
+('119922334', 'Roberto', 'Monge', 'Álvarez', 'M', '1989-09-25', 'San José', 'La Uruca', '22557788', 'DEP1', '2015-07-30', 'Control de Calidad', 'Bodeguero', 480000),
+('112233998', 'Patricia', 'Vargas', 'Méndez', 'F', '1992-11-11', 'Alajuela', 'San Antonio', '22229944', 'DEP3', '2016-05-23', 'Auxiliar', 'Ayudante', 400000),
+('665544332', 'Emilio', 'Cordero', 'Solis', 'M', '1996-03-04', 'Puntarenas', 'Playa Hermosa', '22998866', 'DEP6', '2022-01-11', 'Despachador', 'Encargado', 320000);
 
 
 
@@ -292,16 +306,444 @@ CREATE TABLE HistoricoSalario (
 );
 
 
+
+--En este probablemente vamos a ocupar la función que habíamos creado pero con un cursor para que se hagan todos
 CREATE TABLE Planilla (
 	CodigoPlanilla VARCHAR(15) NOT NULL,
 	FechaPlanilla date not null,   
 	CedulaEmpleado varchar(9) not null,
 	HorasRealizadas int not null,
-	Salario int, 
+	Salario int null, 
 	foreign key (CedulaEmpleado) references Empleado(Cedula),
 	Primary key (CodigoPlanilla, CedulaEmpleado)
-
 );
+
+insert into Planilla (CodigoPlanilla, FechaPlanilla, CedulaEmpleado, HorasRealizadas, Salario) values
+('PL001', '2024-11-01', '123456789', 180, NULL),
+('PL002', '2024-11-01', '987654321', 200, NULL),
+('PL003', '2024-11-01', '112233445', 150, NULL),
+('PL004', '2024-11-01', '556677889', 220, NULL),
+('PL005', '2024-11-01', '334455667', 170, NULL),
+('PL006', '2024-11-01', '998877665', 130, NULL),
+('PL007', '2024-11-01', '654321987', 250, NULL),
+('PL008', '2024-11-01', '223344556', 180, NULL),
+('PL009', '2024-11-01', '887766554', 210, NULL),
+('PL010', '2024-11-01', '445566778', 160, NULL),
+('PL011', '2024-11-01', '556677889', 240, NULL),
+('PL012', '2024-11-01', '998877664', 220, NULL),
+('PL013', '2024-11-01', '335577992', 180, NULL),
+('PL014', '2024-11-01', '112244335', 190, NULL),
+('PL015', '2024-11-01', '775566443', 210, NULL),
+('PL016', '2024-11-01', '998877221', 150, NULL),
+('PL017', '2024-11-01', '335566778', 280, NULL),
+('PL018', '2024-11-01', '887788665', 160, NULL),
+('PL019', '2024-11-01', '119922334', 230, NULL),
+('PL020', '2024-11-01', '112233998', 200, NULL),
+('PL021', '2024-11-01', '665544332', 270, NULL),
+
+('PL022', '2024-12-01', '123456789', 120, NULL),
+('PL023', '2024-12-01', '987654321', 110, NULL),
+('PL024', '2024-12-01', '112233445', 130, NULL),
+('PL025', '2024-12-01', '556677889', 230, NULL),
+('PL025', '2024-12-01', '334455667', 120, NULL),
+('PL026', '2024-12-01', '998877665', 160, NULL),
+('PL027', '2024-12-01', '654321987', 240, NULL),
+('PL028', '2024-12-01', '223344556', 260, NULL),
+('PL029', '2024-12-01', '887766554', 110, NULL),
+('PL030', '2024-12-01', '445566778', 50, NULL),
+('PL031', '2024-12-01', '556677889', 280, NULL),
+('PL032', '2024-12-01', '998877664', 115, NULL),
+('PL033', '2024-12-01', '335577992', 200, NULL),
+('PL034', '2024-12-01', '112244335', 123, NULL),
+('PL035', '2024-12-01', '775566443', 125, NULL),
+('PL036', '2024-12-01', '998877221', 215, NULL),
+('PL037', '2024-12-01', '335566778', 70, NULL),
+('PL038', '2024-12-01', '887788665', 210, NULL),
+('PL039', '2024-12-01', '119922334', 250, NULL),
+('PL040', '2024-12-01', '112233998', 280, NULL),
+('PL041', '2024-12-01', '665544332', 110, NULL),
+
+
+
+('PL042', '2025-01-01', '123456789', 174, NULL),
+('PL043', '2025-01-01', '987654321', 225, NULL),
+('PL044', '2025-01-01', '112233445', 190, NULL),
+('PL045', '2025-01-01', '556677889', 210, NULL),
+('PL046', '2025-01-01', '334455667', 150, NULL),
+('PL047', '2025-01-01', '998877665', 270, NULL),
+('PL048', '2025-01-01', '654321987', 230, NULL),
+('PL049', '2025-01-01', '223344556', 160, NULL),
+('PL050', '2025-01-01', '887766554', 195, NULL),
+('PL051', '2025-01-01', '445566778', 185, NULL),
+('PL052', '2025-01-01', '556677889', 255, NULL),
+('PL053', '2025-01-01', '998877664', 220, NULL),
+('PL054', '2025-01-01', '335577992', 230, NULL),
+('PL055', '2025-01-01', '112244335', 200, NULL),
+('PL056', '2025-01-01', '775566443', 260, NULL),
+('PL057', '2025-01-01', '998877221', 180, NULL),
+('PL058', '2025-01-01', '335566778', 240, NULL),
+('PL059', '2025-01-01', '887788665', 150, NULL),
+('PL060', '2025-01-01', '119922334', 210, NULL),
+('PL061', '2025-01-01', '112233998', 230, NULL),
+('PL062', '2025-01-01', '665544332', 280, NULL),
+
+('PL063', '2025-02-01', '123456789', 174, NULL),
+('PL064', '2025-02-01', '987654321', 225, NULL),
+('PL065', '2025-02-01', '112233445', 185, NULL),
+('PL066', '2025-02-01', '556677889', 210, NULL),
+('PL067', '2025-02-01', '334455667', 160, NULL),
+('PL068', '2025-02-01', '998877665', 270, NULL),
+('PL069', '2025-02-01', '654321987', 230, NULL),
+('PL070', '2025-02-01', '223344556', 156, NULL),
+('PL071', '2025-02-01', '887766554', 190, NULL),
+('PL072', '2025-02-01', '445566778', 183, NULL),
+('PL073', '2025-02-01', '556677889', 248, NULL),
+('PL074', '2025-02-01', '998877664', 207, NULL),
+('PL075', '2025-02-01', '335577992', 233, NULL),
+('PL076', '2025-02-01', '112244335', 198, NULL),
+('PL077', '2025-02-01', '775566443', 265, NULL),
+('PL078', '2025-02-01', '998877221', 182, NULL),
+('PL079', '2025-02-01', '335566778', 245, NULL),
+('PL080', '2025-02-01', '887788665', 157, NULL),
+('PL081', '2025-02-01', '119922334', 217, NULL),
+('PL082', '2025-02-01', '112233998', 235, NULL),
+('PL083', '2025-02-01', '665544332', 275, NULL),
+
+('PL084', '2025-03-01', '123456789', 178, NULL),
+('PL085', '2025-03-01', '987654321', 222, NULL),
+('PL086', '2025-03-01', '112233445', 169, NULL),
+('PL087', '2025-03-01', '556677889', 212, NULL),
+('PL088', '2025-03-01', '334455667', 168, NULL),
+('PL089', '2025-03-01', '998877665', 144, NULL),
+('PL090', '2025-03-01', '654321987', 265, NULL),
+('PL091', '2025-03-01', '223344556', 198, NULL),
+('PL092', '2025-03-01', '887766554', 221, NULL),
+('PL093', '2025-03-01', '445566778', 175, NULL),
+('PL094', '2025-03-01', '556677889', 230, NULL),
+('PL095', '2025-03-01', '998877664', 213, NULL),
+('PL096', '2025-03-01', '335577992', 185, NULL),
+('PL097', '2025-03-01', '112244335', 210, NULL),
+('PL099', '2025-03-01', '775566443', 225, NULL),
+('PL100', '2025-03-01', '998877221', 153, NULL),
+('PL101', '2025-03-01', '335566778', 250, NULL),
+('PL102', '2025-03-01', '887788665', 173, NULL),
+('PL103', '2025-03-01', '119922334', 234, NULL),
+('PL104', '2025-03-01', '112233998', 209, NULL),
+('PL105', '2025-03-01', '665544332', 276, NULL),
+
+('PL106', '2025-04-01', '123456789', 182, NULL),
+('PL107', '2025-04-01', '987654321', 215, NULL),
+('PL108', '2025-04-01', '112233445', 155, NULL),
+('PL109', '2025-04-01', '556677889', 225, NULL),
+('PL110', '2025-04-01', '334455667', 165, NULL),
+('PL111', '2025-04-01', '998877665', 140, NULL),
+('PL112', '2025-04-01', '654321987', 260, NULL),
+('PL113', '2025-04-01', '223344556', 185, NULL),
+('PL114', '2025-04-01', '887766554', 208, NULL),
+('PL115', '2025-04-01', '445566778', 170, NULL),
+('PL116', '2025-04-01', '556677889', 235, NULL),
+('PL117', '2025-04-01', '998877664', 212, NULL),
+('PL118', '2025-04-01', '335577992', 178, NULL),
+('PL119', '2025-04-01', '112244335', 202, NULL),
+('PL120', '2025-04-01', '775566443', 220, NULL),
+('PL121', '2025-04-01', '998877221', 157, NULL),
+('PL122', '2025-04-01', '335566778', 267, NULL),
+('PL123', '2025-04-01', '887788665', 162, NULL),
+('PL124', '2025-04-01', '119922334', 233, NULL),
+('PL125', '2025-04-01', '112233998', 195, NULL),
+('PL126', '2025-04-01', '665544332', 273, NULL),
+
+
+('PL127', '2025-05-01', '123456789', 182, NULL),
+('PL128', '2025-05-01', '987654321', 215, NULL),
+('PL129', '2025-05-01', '112233445', 155, NULL),
+('PL130', '2025-05-01', '556677889', 228, NULL),
+('PL131', '2025-05-01', '334455667', 168, NULL),
+('PL132', '2025-05-01', '998877665', 138, NULL),
+('PL133', '2025-05-01', '654321987', 260, NULL),
+('PL134', '2025-05-01', '223344556', 185, NULL),
+('PL135', '2025-05-01', '887766554', 211, NULL),
+('PL136', '2025-05-01', '445566778', 165, NULL),
+('PL137', '2025-05-01', '556677889', 232, NULL),
+('PL138', '2025-05-01', '998877664', 218, NULL),
+('PL139', '2025-05-01', '335577992', 176, NULL),
+('PL140', '2025-05-01', '112244335', 203, NULL),
+('PL141', '2025-05-01', '775566443', 222, NULL),
+('PL142', '2025-05-01', '998877221', 158, NULL),
+('PL143', '2025-05-01', '335566778', 275, NULL),
+('PL144', '2025-05-01', '887788665', 164, NULL),
+('PL145', '2025-05-01', '119922334', 237, NULL),
+('PL146', '2025-05-01', '112233998', 193, NULL),
+('PL147', '2025-05-01', '665544332', 268, NULL),
+
+('PL148', '2025-06-01', '123456789', 185, NULL),
+('PL149', '2025-06-01', '987654321', 210, NULL),
+('PL150', '2025-06-01', '112233445', 145, NULL),
+('PL151', '2025-06-01', '556677889', 235, NULL),
+('PL152', '2025-06-01', '334455667', 160, NULL),
+('PL153', '2025-06-01', '998877665', 125, NULL),
+('PL154', '2025-06-01', '654321987', 260, NULL),
+('PL155', '2025-06-01', '223344556', 190, NULL),
+('PL156', '2025-06-01', '887766554', 220, NULL),
+('PL157', '2025-06-01', '445566778', 150, NULL),
+('PL158', '2025-06-01', '556677889', 245, NULL),
+('PL159', '2025-06-01', '998877664', 225, NULL),
+('PL160', '2025-06-01', '335577992', 175, NULL),
+('PL161', '2025-06-01', '112244335', 195, NULL),
+('PL162', '2025-06-01', '775566443', 215, NULL),
+('PL163', '2025-06-01', '998877221', 155, NULL),
+('PL164', '2025-06-01', '335566778', 270, NULL),
+('PL165', '2025-06-01', '887788665', 165, NULL),
+('PL166', '2025-06-01', '119922334', 240, NULL),
+('PL167', '2025-06-01', '112233998', 210, NULL),
+('PL168', '2025-06-01', '665544332', 275, NULL),
+
+('PL169', '2025-07-01', '123456789', 180, NULL),
+('PL170', '2025-07-01', '987654321', 200, NULL),
+('PL171', '2025-07-01', '112233445', 150, NULL),
+('PL172', '2025-07-01', '556677889', 220, NULL),
+('PL173', '2025-07-01', '334455667', 170, NULL),
+('PL174', '2025-07-01', '998877665', 130, NULL),
+('PL175', '2025-07-01', '654321987', 250, NULL),
+('PL176', '2025-07-01', '223344556', 180, NULL),
+('PL177', '2025-07-01', '887766554', 210, NULL),
+('PL178', '2025-07-01', '445566778', 160, NULL),
+('PL179', '2025-07-01', '556677889', 240, NULL),
+('PL180', '2025-07-01', '998877664', 220, NULL),
+('PL181', '2025-07-01', '335577992', 180, NULL),
+('PL182', '2025-07-01', '112244335', 190, NULL),
+('PL183', '2025-07-01', '775566443', 210, NULL),
+('PL184', '2025-07-01', '998877221', 150, NULL),
+('PL185', '2025-07-01', '335566778', 280, NULL),
+('PL186', '2025-07-01', '887788665', 160, NULL),
+('PL187', '2025-07-01', '119922334', 230, NULL),
+('PL188', '2025-07-01', '112233998', 200, NULL),
+('PL189', '2025-07-01', '665544332', 270, NULL),
+
+
+('PL190', '2025-08-01', '123456789', 170, NULL),
+('PL191', '2025-08-01', '987654321', 180, NULL),
+('PL192', '2025-08-01', '112233445', 145, NULL),
+('PL193', '2025-08-01', '556677889', 215, NULL),
+('PL194', '2025-08-01', '334455667', 160, NULL),
+('PL195', '2025-08-01', '998877665', 120, NULL),
+('PL196', '2025-08-01', '654321987', 235, NULL),
+('PL197', '2025-08-01', '223344556', 175, NULL),
+('PL198', '2025-08-01', '887766554', 200, NULL),
+('PL199', '2025-08-01', '445566778', 140, NULL),
+('PL200', '2025-08-01', '556677889', 230, NULL),
+('PL201', '2025-08-01', '998877664', 215, NULL),
+('PL202', '2025-08-01', '335577992', 165, NULL),
+('PL203', '2025-08-01', '112244335', 180, NULL),
+('PL204', '2025-08-01', '775566443', 195, NULL),
+('PL205', '2025-08-01', '998877221', 140, NULL),
+('PL206', '2025-08-01', '335566778', 260, NULL),
+('PL207', '2025-08-01', '887788665', 155, NULL),
+('PL208', '2025-08-01', '119922334', 225, NULL),
+('PL209', '2025-08-01', '112233998', 210, NULL),
+('PL210', '2025-08-01', '665544332', 255, NULL),
+
+('PL211', '2025-09-01', '123456789', 160, NULL),
+('PL212', '2025-09-01', '987654321', 190, NULL),
+('PL213', '2025-09-01', '112233445', 140, NULL),
+('PL214', '2025-09-01', '556677889', 225, NULL),
+('PL215', '2025-09-01', '334455667', 165, NULL),
+('PL216', '2025-09-01', '998877665', 120, NULL),
+('PL217', '2025-09-01', '654321987', 240, NULL),
+('PL218', '2025-09-01', '223344556', 170, NULL),
+('PL219', '2025-09-01', '887766554', 205, NULL),
+('PL220', '2025-09-01', '445566778', 150, NULL),
+('PL221', '2025-09-01', '556677889', 235, NULL),
+('PL222', '2025-09-01', '998877664', 210, NULL),
+('PL223', '2025-09-01', '335577992', 175, NULL),
+('PL224', '2025-09-01', '112244335', 185, NULL),
+('PL225', '2025-09-01', '775566443', 200, NULL),
+('PL226', '2025-09-01', '998877221', 145, NULL),
+('PL227', '2025-09-01', '335566778', 270, NULL),
+('PL228', '2025-09-01', '887788665', 155, NULL),
+('PL229', '2025-09-01', '119922334', 220, NULL),
+('PL230', '2025-09-01', '112233998', 195, NULL),
+('PL231', '2025-09-01', '665544332', 265, NULL),
+
+('PL232', '2025-10-01', '123456789', 170, NULL),
+('PL233', '2025-10-01', '987654321', 190, NULL),
+('PL234', '2025-10-01', '112233445', 140, NULL),
+('PL235', '2025-10-01', '556677889', 225, NULL),
+('PL236', '2025-10-01', '334455667', 160, NULL),
+('PL237', '2025-10-01', '998877665', 120, NULL),
+('PL238', '2025-10-01', '654321987', 240, NULL),
+('PL239', '2025-10-01', '223344556', 175, NULL),
+('PL240', '2025-10-01', '887766554', 205, NULL),
+('PL241', '2025-10-01', '445566778', 150, NULL),
+('PL242', '2025-10-01', '556677889', 235, NULL),
+('PL243', '2025-10-01', '998877664', 210, NULL),
+('PL244', '2025-10-01', '335577992', 175, NULL),
+('PL245', '2025-10-01', '112244335', 185, NULL),
+('PL246', '2025-10-01', '775566443', 200, NULL),
+('PL247', '2025-10-01', '998877221', 145, NULL),
+('PL248', '2025-10-01', '335566778', 265, NULL),
+('PL249', '2025-10-01', '887788665', 155, NULL),
+('PL250', '2025-10-01', '119922334', 220, NULL),
+('PL251', '2025-10-01', '112233998', 195, NULL),
+('PL252', '2025-10-01', '665544332', 255, NULL),
+
+('PL253', '2025-11-01', '123456789', 170, NULL),
+('PL254', '2025-11-01', '987654321', 190, NULL),
+('PL255', '2025-11-01', '112233445', 140, NULL),
+('PL256', '2025-11-01', '556677889', 225, NULL),
+('PL257', '2025-11-01', '334455667', 160, NULL),
+('PL258', '2025-11-01', '998877665', 120, NULL),
+('PL259', '2025-11-01', '654321987', 240, NULL),
+('PL260', '2025-11-01', '223344556', 175, NULL),
+('PL261', '2025-11-01', '887766554', 205, NULL),
+('PL262', '2025-11-01', '445566778', 150, NULL),
+('PL263', '2025-11-01', '556677889', 235, NULL),
+('PL264', '2025-11-01', '998877664', 210, NULL),
+('PL265', '2025-11-01', '335577992', 175, NULL),
+('PL266', '2025-11-01', '112244335', 185, NULL),
+('PL267', '2025-11-01', '775566443', 200, NULL),
+('PL268', '2025-11-01', '998877221', 145, NULL),
+('PL269', '2025-11-01', '335566778', 265, NULL),
+('PL270', '2025-11-01', '887788665', 155, NULL),
+('PL271', '2025-11-01', '119922334', 220, NULL),
+('PL272', '2025-11-01', '112233998', 195, NULL),
+('PL273', '2025-11-01', '665544332', 255, NULL),
+
+('PL274', '2025-12-01', '123456789', 170, NULL),
+('PL275', '2025-12-01', '987654321', 190, NULL),
+('PL276', '2025-12-01', '112233445', 140, NULL),
+('PL277', '2025-12-01', '556677889', 225, NULL),
+('PL278', '2025-12-01', '334455667', 160, NULL),
+('PL279', '2025-12-01', '998877665', 120, NULL),
+('PL280', '2025-12-01', '654321987', 240, NULL),
+('PL281', '2025-12-01', '223344556', 175, NULL),
+('PL282', '2025-12-01', '887766554', 205, NULL),
+('PL283', '2025-12-01', '445566778', 150, NULL),
+('PL284', '2025-12-01', '556677889', 235, NULL),
+('PL285', '2025-12-01', '998877664', 210, NULL),
+('PL286', '2025-12-01', '335577992', 175, NULL),
+('PL287', '2025-12-01', '112244335', 185, NULL),
+('PL288', '2025-12-01', '775566443', 200, NULL),
+('PL289', '2025-12-01', '998877221', 145, NULL),
+('PL290', '2025-12-01', '335566778', 265, NULL),
+('PL291', '2025-12-01', '887788665', 155, NULL),
+('PL292', '2025-12-01', '119922334', 220, NULL),
+('PL293', '2025-12-01', '112233998', 195, NULL),
+('PL294', '2025-12-01', '665544332', 255, NULL),
+
+('PL295', '2026-01-01', '123456789', 170, NULL),
+('PL296', '2026-01-01', '987654321', 190, NULL),
+('PL297', '2026-01-01', '112233445', 140, NULL),
+('PL298', '2026-01-01', '556677889', 225, NULL),
+('PL299', '2026-01-01', '334455667', 160, NULL),
+('PL300', '2026-01-01', '998877665', 120, NULL),
+('PL301', '2026-01-01', '654321987', 240, NULL),
+('PL302', '2026-01-01', '223344556', 175, NULL),
+('PL303', '2026-01-01', '887766554', 205, NULL),
+('PL304', '2026-01-01', '445566778', 150, NULL),
+('PL305', '2026-01-01', '556677889', 235, NULL),
+('PL306', '2026-01-01', '998877664', 210, NULL),
+('PL307', '2026-01-01', '335577992', 175, NULL),
+('PL308', '2026-01-01', '112244335', 185, NULL),
+('PL309', '2026-01-01', '775566443', 200, NULL),
+('PL310', '2026-01-01', '998877221', 145, NULL),
+('PL311', '2026-01-01', '335566778', 265, NULL),
+('PL312', '2026-01-01', '887788665', 155, NULL),
+('PL313', '2026-01-01', '119922334', 220, NULL),
+('PL314', '2026-01-01', '112233998', 195, NULL),
+('PL315', '2026-01-01', '665544332', 255, NULL),
+
+('PL316', '2026-02-01', '123456789', 170, NULL),
+('PL317', '2026-02-01', '987654321', 190, NULL),
+('PL318', '2026-02-01', '112233445', 140, NULL),
+('PL319', '2026-02-01', '556677889', 225, NULL),
+('PL320', '2026-02-01', '334455667', 160, NULL),
+('PL321', '2026-02-01', '998877665', 120, NULL),
+('PL322', '2026-02-01', '654321987', 240, NULL),
+('PL323', '2026-02-01', '223344556', 175, NULL),
+('PL324', '2026-02-01', '887766554', 205, NULL),
+('PL325', '2026-02-01', '445566778', 150, NULL),
+('PL326', '2026-02-01', '556677889', 235, NULL),
+('PL327', '2026-02-01', '998877664', 210, NULL),
+('PL328', '2026-02-01', '335577992', 175, NULL),
+('PL329', '2026-02-01', '112244335', 185, NULL),
+('PL330', '2026-02-01', '775566443', 200, NULL),
+('PL331', '2026-02-01', '998877221', 145, NULL),
+('PL332', '2026-02-01', '335566778', 265, NULL),
+('PL333', '2026-02-01', '887788665', 155, NULL),
+('PL334', '2026-02-01', '119922334', 220, NULL),
+('PL335', '2026-02-01', '112233998', 195, NULL),
+('PL336', '2026-02-01', '665544332', 255, NULL),
+
+
+('PL337', '2026-03-01', '123456789', 170, NULL),
+('PL338', '2026-03-01', '987654321', 190, NULL),
+('PL339', '2026-03-01', '112233445', 140, NULL),
+('PL340', '2026-03-01', '556677889', 225, NULL),
+('PL341', '2026-03-01', '334455667', 160, NULL),
+('PL342', '2026-03-01', '998877665', 120, NULL),
+('PL343', '2026-03-01', '654321987', 240, NULL),
+('PL344', '2026-03-01', '223344556', 175, NULL),
+('PL345', '2026-03-01', '887766554', 205, NULL),
+('PL346', '2026-03-01', '445566778', 150, NULL),
+('PL347', '2026-03-01', '556677889', 235, NULL),
+('PL348', '2026-03-01', '998877664', 210, NULL),
+('PL349', '2026-03-01', '335577992', 175, NULL),
+('PL350', '2026-03-01', '112244335', 185, NULL),
+('PL351', '2026-03-01', '775566443', 200, NULL),
+('PL352', '2026-03-01', '998877221', 145, NULL),
+('PL353', '2026-03-01', '335566778', 265, NULL),
+('PL354', '2026-03-01', '887788665', 155, NULL),
+('PL355', '2026-03-01', '119922334', 220, NULL),
+('PL356', '2026-03-01', '112233998', 195, NULL),
+('PL357', '2026-03-01', '665544332', 255, NULL),
+
+('PL358', '2026-04-01', '123456789', 170, NULL),
+('PL359', '2026-04-01', '987654321', 190, NULL),
+('PL360', '2026-04-01', '112233445', 140, NULL),
+('PL361', '2026-04-01', '556677889', 225, NULL),
+('PL362', '2026-04-01', '334455667', 160, NULL),
+('PL363', '2026-04-01', '998877665', 120, NULL),
+('PL364', '2026-04-01', '654321987', 240, NULL),
+('PL365', '2026-04-01', '223344556', 175, NULL),
+('PL366', '2026-04-01', '887766554', 205, NULL),
+('PL367', '2026-04-01', '445566778', 150, NULL),
+('PL368', '2026-04-01', '556677889', 235, NULL),
+('PL369', '2026-04-01', '998877664', 210, NULL),
+('PL370', '2026-04-01', '335577992', 175, NULL),
+('PL371', '2026-04-01', '112244335', 185, NULL),
+('PL372', '2026-04-01', '775566443', 200, NULL),
+('PL373', '2026-04-01', '998877221', 145, NULL),
+('PL374', '2026-04-01', '335566778', 265, NULL),
+('PL375', '2026-04-01', '887788665', 155, NULL),
+('PL376', '2026-04-01', '119922334', 220, NULL),
+('PL377', '2026-04-01', '112233998', 195, NULL),
+('PL378', '2026-04-01', '665544332', 255, NULL),
+
+('PL379', '2026-05-01', '123456789', 170, NULL),
+('PL380', '2026-05-01', '987654321', 190, NULL),
+('PL381', '2026-05-01', '112233445', 140, NULL),
+('PL382', '2026-05-01', '556677889', 225, NULL),
+('PL383', '2026-05-01', '334455667', 160, NULL),
+('PL384', '2026-05-01', '998877665', 120, NULL),
+('PL385', '2026-05-01', '654321987', 240, NULL),
+('PL386', '2026-05-01', '223344556', 175, NULL),
+('PL387', '2026-05-01', '887766554', 205, NULL),
+('PL388', '2026-05-01', '445566778', 150, NULL),
+('PL389', '2026-05-01', '556677889', 235, NULL),
+('PL390', '2026-05-01', '998877664', 210, NULL),
+('PL391', '2026-05-01', '335577992', 175, NULL),
+('PL392', '2026-05-01', '112244335', 185, NULL),
+('PL393', '2026-05-01', '775566443', 200, NULL),
+('PL394', '2026-05-01', '998877221', 145, NULL),
+('PL395', '2026-05-01', '335566778', 265, NULL),
+('PL396', '2026-05-01', '887788665', 155, NULL),
+('PL397', '2026-05-01', '119922334', 220, NULL),
+('PL398', '2026-05-01', '112233998', 195, NULL),
+('PL399', '2026-05-01', '665544332', 255, NULL);
+
+
+
 
 
 CREATE TABLE Familia (
@@ -545,19 +987,19 @@ INSERT INTO Cliente (Cedula, Telefono, Genero, Nombre, CorreoElectronico, Fax, S
 ('325543227', '33334444', 'F', 'María López', 'marilopez@mail.com', '33335555', 'Tecnológico', 'Pacifico central', '70755432'),
 ('456789123', '44445555', 'M', 'Carlos Rodríguez', 'carlosrodriguezzzzz@mail.com', '44446666', 'Industrial', 'Caribe sur', '60876543'),
 ('321654987', '55556666', 'F', 'Ana Martínez', 'anadel@mail.com', '55557777', 'Salud', 'Caribe norte', '56647890'),
-('754323489', '66667777', 'M', 'Luis Fernández', 'luisferna3421@mail.com', '66668888', 'Construcción', 'Valle central', '98763453'),
+('754323489', '66667777', 'M', 'Luis Fernández', 'luisferna3421@mail.com', '66668888', 'Constructor', 'Valle central', '98763453'),
 ('432124368', '77778888', 'F', 'Laura Gómez', 'lauragoz@mail.com', '77779999', 'Comercial', 'Pacifico sur', '75623754'),
-('153234558', '88889999', 'M', 'Pedro Jiménez', 'pedronez@mail.com', '88880000', 'Alimentacion', 'Pacifico norte', '87357423'),
-('533467853', '99990000', 'F', 'Carmen Díaz', 'carmenz@mail.com', '99991111', 'Educacion', 'Zona norte', '93945412'),
+('153234558', '88889999', 'M', 'Pedro Jiménez', 'pedronez@mail.com', '88880000', 'Alimentación', 'Pacifico norte', '87357423'),
+('533467853', '99990000', 'F', 'Carmen Díaz', 'carmenz@mail.com', '99991111', 'Educación', 'Zona norte', '93945412'),
 ('258932147', '11112222', 'M', 'Javier Morales', 'moralesjavier@mail.com', '11113333', 'Deportivo', 'Caribe sur', '45678976'),
 ('369253247', '22223334', 'F', 'Isabel Torres', 'isabel20torres@mail.com', '22224444', 'Cultural', 'Valle central', '23456843'),
 ('235754438', '54345765', 'M', 'Eladio Carrión', 'EladioC@mail.com', '22224444', 'Económico', 'Zona norte', '80839796'),
 ('754332564', '34535321', 'M', 'Mark Cuban', 'MarkCuban1@mail.com', '22223333', 'Energía', 'Pacifico central', '70755432'),
-('432123478', '54357565', 'M', 'MYke Towers', 'TowersMyk35@mail.com', '44445544', 'Construcción', 'Caribe sur', '60876543'),
+('432123478', '54357565', 'M', 'MYke Towers', 'TowersMyk35@mail.com', '44445544', 'Constructor', 'Caribe sur', '60876543'),
 ('564298645', '32476542', 'M', 'Rodrigo Chaves', 'Chavezzzz@mail.com', '55556643', 'Salud', 'Caribe norte', '56647890'),
 ('354215796', '86643354', 'F', 'Carolina Giraldo', 'GiradlCaro@mail.com', '66665432', 'Económico', 'Valle central', '98763453'),
 ('642342123', '97314784', 'F', 'Shakira Isabel', 'WakaWaka@mail.com', '77775436', 'Económico', 'Pacifico sur', '75623754'),
-('653212356', '23462123', 'F', 'Katy Perry', 'Fireworks@mail.com', '88886543', 'Alimentacion', 'Pacifico norte', '87357423'),
+('653212356', '23462123', 'F', 'Katy Perry', 'Fireworks@mail.com', '88886543', 'Alimentación', 'Pacifico norte', '87357423'),
 ('257543123', '69504832', 'F', 'Taylor Swift', 'SwiftTayTay@mail.com', '99991012', 'Tecnológico', 'Zona norte', '93945412'),
 ('321234678', '43211257', 'F', 'Sofia Vergara', 'VerSofi@mail.com', '11112345', 'Deportivo', 'Caribe sur', '45678976');
 
@@ -632,13 +1074,49 @@ CREATE TABLE Tarea (
 );
 INSERT INTO Tarea (CodigoTarea, tipoTareaCotizacion, tipoTareaCaso, Fecha, Descripcion, Estado) 
 VALUES
-('T1', NULL,'Devolucion','2024/10/22','Tiene que mover la mercancia hasta el camion','Terminada'),
-('T2', NULL, 'Reclamo', '2024/05/15', 'descargar equipo', 'Iniciada'),
-('T3', NULL, 'Garantia', '2022/10/24', 'Saber como comunicarse con el cliente', 'En proceso'),
-('T4', NULL, 'Devolucion', '2023/07/03', 'Tiene que verificar el tipo de producto a devolver', 'En proceso'),
-('T5', NULL, 'Reclamo', '2024/06/28', 'debe revisar si el reclamo es valido', 'Iniciada'),
-('T6', NULL, 'Garantia', '2022/12/31', 'Revisar si todavía es valida y ver el producto', 'Terminada');
-
+('T1', 'Orden', NULL, '2023/03/15', 'Revisar el inventario y hacer orden de productos', 'En proceso'), --1
+('T2', NULL, 'Reclamo', '2025/05/20', 'Resolver el reclamo de equipo defectuoso', 'Iniciada'), --2
+('T3', 'Envio', NULL, '2023/02/12', 'Confirmar el envío del producto al cliente', 'Terminada'), 
+('T4', NULL, 'Garantia', '2023/11/08', 'Verificar la validez de la garantía', 'Iniciada'), -- 3
+('T5', 'Documentación', NULL, '2023/01/05', 'Preparar documentación para la cotización', 'En proceso'), --4
+('T6', NULL, 'Devolucion', '2023/09/30', 'Verificar si se autoriza la devolución', 'Iniciada'), --5 
+('T7', 'Control de calidad', NULL, '2022/12/25', 'Revisar calidad de productos en la cotización', 'En proceso'), --6
+('T8', NULL, 'Reclamo', '2021/04/18', 'Atender el reclamo de cliente', 'Iniciada'), --7
+('T9', 'Seguimiento', NULL, '2021/05/07', 'Dar seguimiento a la cotización', 'En proceso'), --8
+('T10', NULL, 'Garantia', '2022/08/10', 'Verificar cobertura de garantía del producto', 'Terminada'),
+('T11', 'Archivacion', NULL, '2023/07/04', 'Archivar documentación de la cotización', 'Iniciada'), --9
+('T12', NULL, 'Devolucion', '2022/06/13', 'Autorizar devolución del artículo', 'En proceso'), --10
+('T13', 'Revisión de precios', NULL, '2021/03/20', 'Asegurarse de que los precios sean correctos', 'En proceso'), --11
+('T14', NULL, 'Reclamo', '2020/12/22', 'Resolver el reclamo de sobreprecio', 'Terminada'),
+('T15', 'Negociación', NULL, '2020/08/12', 'Negociar términos de compra con el cliente', 'Iniciada'), --12
+('T16', NULL, 'Garantia', '2021/10/05', 'Revisar si el producto aplica para garantía', 'Terminada'),
+('T17', 'Orden', NULL, '2020/09/05', 'Generar orden para productos solicitados', 'En proceso'), --13
+('T18', NULL, 'Devolucion', '2025/07/28', 'Validar devolución del producto por cliente', 'Iniciada'), --14
+('T19', 'Documentación', NULL, '2025/05/13', 'Formalizar lista de productos en documento', 'En proceso'), --15
+('T20', NULL, 'Reclamo', '2026/03/17', 'Atender queja por producto incompleto', 'Terminada'),
+('T21', NULL, 'Garantia', '2021/11/14', 'Asegurarse de cobertura en garantía', 'Terminada'),
+('T22', 'Control de calidad', NULL, '2020/09/02', 'Revisar calidad de productos antes de entrega', 'Terminada'),
+('T23', NULL, 'Reclamo', '2019/07/21', 'Revisión del reclamo de cliente por daño', 'Iniciada'),--16
+('T24', 'Seguimiento', NULL, '2019/03/25', 'Monitorear avance en cotización', 'Terminada'),
+('T25', NULL, 'Devolucion', '2023/07/10', 'Validar el motivo de la devolución', 'Terminada'),
+('T26', 'Negociación', NULL, '2020/04/14', 'Negociar condiciones de venta con el cliente', 'Iniciada'),--17
+('T27', NULL, 'Garantia', '2023/09/22', 'Evaluar si se acepta la garantía', 'Terminada'),
+('T28', 'Revisión de precios', NULL, '2021/01/11', 'Revisar y ajustar precios en cotización', 'Iniciada'), --18
+('T29', NULL, 'Reclamo', '2021/06/02', 'Atender reclamo de cliente por entrega tardía', 'Terminada'), 
+('T30', 'Archivacion', NULL, '2020/04/29', 'Guardar documentos de la cotización', 'Iniciada'),  --19 
+('T31', 'Envio', NULL, '2023/08/20', 'Confirmar envío de productos solicitados', 'Terminada'),
+('T32', NULL, 'Devolucion', '2024/02/12', 'Recoger producto defectuoso para devolución', 'Terminada'),
+('T33', 'Orden', NULL, '2024/06/17', 'Generar orden de productos para la cotización', 'Terminada'),
+('T34', NULL, 'Garantia', '2023/11/03', 'Verificar cobertura de garantía del equipo', 'Terminada'),
+('T35', 'Documentación', NULL, '2024/03/10', 'Completar documentación de la cotización', 'Terminada'),
+('T36', NULL, 'Reclamo', '2024/07/25', 'Atender reclamo por productos faltantes', 'Terminada'),
+('T37', 'Seguimiento', NULL, '2023/09/14', 'Monitorear proceso de cotización', 'Terminada'),
+('T38', NULL, 'Garantia', '2024/05/28', 'Confirmar términos de garantía con el cliente', 'Terminada'),
+('T39', 'Control de calidad', NULL, '2023/10/04', 'Inspección de productos antes del envío', 'Terminada'),
+('T40', NULL, 'Devolucion', '2024/01/18', 'Registrar detalles de la devolución solicitada', 'Terminada'), 
+('T41', 'Negociación', NULL, '2024/04/05', 'Finalizar negociación con cliente', 'Terminada'),
+('T42', 'Revisión de precios', NULL, '2023/12/07', 'Ajustar precios para cotización aprobada', 'Terminada'),
+('T43', 'Control de calidad', NULL, '2024/08/21', 'Revisar condiciones del producto antes de entrega', 'En proceso'); --20
 
 
 
@@ -681,78 +1159,80 @@ CREATE TABLE Cotizacion (
     FOREIGN KEY (Sector) REFERENCES Sector(Nombre)
 );
 
+
 insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectadoCierre,TipoCotizacion,Estado,Probabilidad,Zona,Sector) values
-('432124368','123456789','2020/10/15','2020/12/15','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Alimentación'),
-('325543227','123456789','2024/11/05','2024/12/31','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Económico'),
-('456789123','123456789','2024/10/01','2025/10/12','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Energía'),
-('321654987','123456789','2024/09/10','2026/05/05','Cotizacion abierta','Abierta' ,0.75, 'Valle central','Educación'),
-('754323489','123456789','2024/08/24','2025/06/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Transporte'),
-('564298645','123456789','2022/05/04','2025/12/13','Cotizacion abierta','Abierta' ,0.75, 'Pacifico sur','Educacion'),
-('258932147','123456789','2023/01/09','2026/07/11','Cotizacion abierta','Abierta' ,0.50, 'Caribe norte','Telecomunicaciones'),
-('153234558','123456789','2023/10/19','2026/04/03','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Alimentación'),
+('432124368','123456789','2020/10/15','2020/12/15','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Alimentación'), --
+('325543227','123456789','2024/11/05','2024/12/31','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Económico'),--
+('456789123','123456789','2024/10/01','2025/10/12','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Energía'),--
+('321654987','123456789','2024/09/10','2026/05/05','Cotizacion abierta','Abierta' ,0.75, 'Valle central','Educación'), --
+('754323489','123456789','2024/08/24','2025/06/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Transporte'), --
+('564298645','123456789','2022/05/04','2025/12/13','Cotizacion abierta','Abierta' ,0.75, 'Pacifico sur','Educación'), --
+('258932147','123456789','2023/01/09','2026/07/11','Cotizacion abierta','Abierta' ,0.50, 'Caribe norte','Telecomunicaciones'),--
+('153234558','123456789','2023/10/19','2026/04/03','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Alimentación'),--
 
 
-('153234558','987654321','2024/07/06','2025/04/20','Cotizacion cerrada','Aprobado' ,0.50, 'Caribe sur','Comercial'),
-('533467853','987654321','2024/06/14','2027/03/25','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Cultural'),
-('258932147','987654321','2024/05/17','2025/02/12','Cotizacion abierta','Abierta' ,0.75, 'Pacifico central norte','Deportivo'),
-('369253247','987654321','2024/04/20','2026/01/02','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Alimentación'),
-('235754438','987654321','2024/03/22','2028/08/16','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Salud'),
-('321234678','987654321','2023/07/28','2028/05/11','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Deportivo'),
-('564298645','987654321','2023/04/18','2027/01/12','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Industrial'),
-('354215796','987654321','2022/12/09','2026/10/22','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Automotriz'),
-('123456789','987654321','2022/11/27','2026/10/22','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Cultural'),
+('153234558','987654321','2024/07/06','2025/04/20','Cotizacion cerrada','Aprobado' ,0.50, 'Caribe sur','Comercial'),--
+('533467853','987654321','2024/06/14','2027/03/25','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Cultural'),--
+('258932147','987654321','2024/05/17','2025/02/12','Cotizacion abierta','Abierta' ,0.75, 'Pacifico central','Deportivo'),--
+('369253247','987654321','2024/04/20','2026/01/02','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Alimentación'),--
+('235754438','987654321','2024/03/22','2028/08/16','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Salud'),--
+('321234678','987654321','2023/07/28','2028/05/11','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Deportivo'),--
+('564298645','987654321','2023/04/18','2027/01/12','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Industrial'),--
+('354215796','987654321','2022/12/09','2026/10/22','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Automotriz'),--
+('123456789','987654321','2022/11/27','2026/10/22','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Cultural'),--
 
 
-('432124368','112233445','2024/02/24','2024/12/24','Cotizacion de articulos','Rechazado' ,0.75, 'Pacifico central','Económico'),
-('754332564','112233445','2024/01/15','2027/05/24','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Tecnológico'),
-('432123478','112233445','2024/12/07','2025/04/13','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Telecomunicaciones'),
-('564298645','112233445','2024/11/21','2026/03/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Automotriz'),
-('354215796','112233445','2024/10/03','2028/02/06','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Constructor'),
-('533467853','112233445','2022/09/03','2029/01/16','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Salud'),
-('257543123','112233445','2022/08/03','2029/10/08','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Energía'),
-('642342123','112233445','2022/07/03','2029/12/02','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Comercial'),
-('153234558','112233445','2022/06/03','2029/09/17','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Cultural'),
-
-
-
-('642342123','556677889','2024/09/13','2025/09/03','Cotizacion de servicios', 'Aprobado',0.50, 'Pacifico norte','Constructor'),
-('653212356','556677889','2024/08/25','2027/03/24','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Tecnológico'),
-('257543123','556677889','2024/07/17','2025/05/17','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Telecomunicaciones'),
-('321232678','556677889','2024/06/14','2026/03/15','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Automotriz'),
-('354215796','556677889','2024/05/21','2028/02/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Constructor'),
-('258932147','556677889','2022/04/18','2028/04/04','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Económico'),
-('533467853','556677889','2022/03/16','2028/07/06','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Tecnológico'),
-('153234558','556677889','2022/02/27','2028/09/05','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Salud'),
-('754332564','556677889','2022/01/09','2028/12/02','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Industrial'),
-('123456789','556677889','2022/12/01','2028/01/01','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Deportivo'),
+('432124368','112233445','2024/02/24','2024/12/24','Cotizacion de articulos','Rechazado' ,0.75, 'Pacifico central','Económico'),--
+('754323489','112233445','2024/01/15','2027/05/24','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Tecnológico'),--
+('432123478','112233445','2024/12/07','2025/04/13','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Telecomunicaciones'),---
+('564298645','112233445','2024/11/21','2026/03/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Automotriz'),--
+('354215796','112233445','2024/10/03','2028/02/06','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Constructor'),--
+('533467853','112233445','2022/09/03','2029/01/16','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Salud'),--
+('257543123','112233445','2022/08/03','2029/10/08','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Energía'),--
+('642342123','112233445','2022/07/03','2029/12/02','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Comercial'),--
+('153234558','112233445','2022/06/03','2029/09/17','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Cultural'),--
 
 
 
-
-('533467853','334455667','2023/02/02','2026/04/12','Cotizacion preliminar','Abierta' ,0.25, 'Zona norte','Económico'),
-('235754438','334455667','2023/08/25','2025/10/27','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Salud'),
-('754332564','334455667','2023/07/17','2024/12/07','Cotizacion abierta','Abierta' ,0.75, 'Caribe sur','Industrial'),
-('153234558','334455667','2023/06/14','2026/07/25','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Transporte'),
-('257543123','334455667','2023/05/21','2025/04/05','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Tecnlógico'),
-('123456789','334455667','2023/05/21','2022/12/15','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Educación'),
-('258932147','334455667','2023/05/21','2023/05/08','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Transporte'),
-('642342123','334455667','2023/05/21','2024/04/26','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Deportivo'),
-('754323489','334455667','2023/05/21','2021/11/28','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Alimentación'),
-('321234678','334455667','2023/05/21','2021/03/01','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Tecnológico'),
-
+('642342123','556677889','2024/09/13','2025/09/03','Cotizacion de servicios', 'Aprobado',0.50, 'Pacifico norte','Constructor'),--
+('653212356','556677889','2024/08/25','2027/03/24','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Tecnológico'),--
+('257543123','556677889','2024/07/17','2025/05/17','Cotizacion abierta','Abierta' ,0.75, 'Zona norte','Telecomunicaciones'),--
+('321234678','556677889','2024/06/14','2026/03/15','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Automotriz'),--
+('354215796','556677889','2024/05/21','2028/02/12','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Constructor'),--
+('258932147','556677889','2022/04/18','2028/04/04','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Económico'),--
+('533467853','556677889','2022/03/16','2028/07/06','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Tecnológico'),--
+('153234558','556677889','2022/02/27','2028/09/05','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Salud'),--
+('754332564','556677889','2022/01/09','2028/12/02','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Industrial'),--
+('123456789','556677889','2022/12/01','2028/01/01','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Deportivo'),-- aq
 
 
-('754323489','998877665','2023/09/11','2024/05/15','Cotizacion de articulos', 'Rechazado',0.75,'Valle central','Deportivo'),
-('235754438','998877665','2023/02/23','2025/10/27','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Tecnológico'),
-('754332564','998877665','2023/01/13','2026/12/07','Cotizacion abierta','Abierta' ,0.75, 'Pacifico sur','Telecomunicaciones'),
-('153234558','998877665','2023/12/06','2028/07/25','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Automotriz'),
-('257543123','998877665','2023/07/15','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Deportivo'),
-('432123478','998877665','2022/09/25','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Comercial'),
-('564298645','998877665','2021/10/03','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Educación'),
-('153234558','998877665','2021/11/02','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Cultural'),
-('123456789','998877665','2021/12/09','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Económico');
+
+('533467853','334455667','2023/02/02','2026/04/12','Cotizacion preliminar','Abierta' ,0.25, 'Zona norte','Económico'),--
+('235754438','334455667','2023/08/25','2025/10/27','Cotizacion abierta','Abierta' ,0.50, 'Valle central','Salud'),--
+('754332564','334455667','2023/07/17','2024/12/07','Cotizacion abierta','Abierta' ,0.75, 'Caribe sur','Industrial'),--
+('153234558','334455667','2023/06/14','2026/07/25','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Transporte'),--
+('257543123','334455667','2023/05/21','2025/04/05','Cotizacion abierta','Abierta' ,0.25, 'Caribe sur','Tecnológico'),--
+('123456789','334455667','2023/05/21','2022/12/15','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Educación'),--
+('258932147','334455667','2023/05/21','2023/05/08','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Transporte'),--
+('642342123','334455667','2023/05/21','2024/04/26','Cotizacion abierta','Abierta' ,0.25, 'Pacifico sur','Deportivo'),--
+('754323489','334455667','2023/05/21','2021/11/28','Cotizacion abierta','Abierta' ,0.25, 'Pacifico norte','Alimentación'),--
+('321234678','334455667','2023/05/21','2021/03/01','Cotizacion abierta','Abierta' ,0.25, 'Valle central','Tecnológico'),--
+
+
+('754323489','998877665','2023/09/11','2024/05/15','Cotizacion de articulos', 'Rechazado',0.75,'Valle central','Deportivo'),--
+('235754438','998877665','2023/02/23','2025/10/27','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Tecnológico'),--
+('754332564','998877665','2023/01/13','2026/12/07','Cotizacion abierta','Abierta' ,0.75, 'Pacifico sur','Telecomunicaciones'),--
+('153234558','998877665','2023/12/06','2028/07/25','Cotizacion abierta','Abierta' ,0.25, 'Zona norte','Automotriz'),--
+('257543123','998877665','2023/07/15','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Deportivo'),--
+('432123478','998877665','2022/09/25','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Comercial'),--
+('564298645','998877665','2021/10/03','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Educación'),--
+('153234558','998877665','2021/11/02','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Cultural'),--
+('123456789','998877665','2021/12/09','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Económico');--
 
 --Hay 55
+SELECT Codigo
+FROM Cotizacion
+WHERE Codigo IN (1, 2, 3, 4, 5, 6);
 
 CREATE TABLE Caso (
     CodigoCaso VARCHAR(15) NOT NULL,
@@ -997,7 +1477,7 @@ insert into ListaFactura(Codigo,CantidadProducto ,CodigoF) values
 ('ART31', 1, 'FAC20'),
 ('ART33', 2, 'FAC20'),
 ('ART12', 7, 'FAC20'),
-('ART31', 3, 'FAC20'),
+('ART39', 3, 'FAC20'),
 ('ART46', 5, 'FAC20'),
 
 ('ART25', 1, 'FAC21'),
@@ -1109,7 +1589,7 @@ CREATE TABLE ListaMovimiento (
 	FOREIGN KEY (CodigoMovimiento) REFERENCES Movimiento(IDMovimiento),
 );
 
-
+--Esto es para ingresar elementos a una bodega
 CREATE TABLE IngresoInventario (
     IDIngreso INT IDENTITY(1,1) NOT NULL,
     CedulaEmpleado VARCHAR(9) NOT NULL,
@@ -1119,6 +1599,33 @@ CREATE TABLE IngresoInventario (
     FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula),
     FOREIGN KEY (BodegaDestino) REFERENCES Bodega(Codigo)
 );
+
+insert into IngresoInventario(CedulaEmpleado, BodegaDestino, Fecha) values 
+('123456789', 'BO1', '2024-10-12 08:00:00'),
+('987654321', 'BO2', '2024-09-12 09:00:00'),
+('112233445', 'BO3', '2024-08-12 10:00:00'),
+('556677889', 'BO4', '2024-07-12 11:00:00'),
+('334455667', 'BO5', '2024-06-12 12:00:00'),
+('998877665', 'BO6', '2024-05-12 13:00:00'),
+('654321987', 'BO7', '2024-04-12 14:00:00'),
+('223344556', 'BO8', '2024-03-12 15:00:00'),
+('887766554', 'BO9', '2024-02-12 16:00:00'),
+('445566778', 'BO10', '2024-01-12 17:00:00'),
+('556677889', 'BO11', '2024-11-12 18:00:00'),
+
+
+('334455667', 'BO1', '2023-12-12 08:00:00'), --12
+('998877665', 'BO2', '2024-11-12 09:00:00'), --13
+('654321987', 'BO3', '2024-10-12 10:00:00'), --14
+('223344556', 'BO4', '2024-09-12 11:00:00'), --15
+('887766554', 'BO5', '2024-08-12 12:00:00'), --16
+('445566778', 'BO6', '2024-07-12 13:00:00'), --17
+('556677889', 'BO7', '2024-06-12 14:00:00'), --18
+('998877664', 'BO8', '2024-05-12 15:00:00'), --19
+('335577992', 'BO9', '2024-04-12 16:00:00'), --20
+('112244335', 'BO10', '2024-03-12 17:00:00'), --21
+('775566443', 'BO11', '2024-02-12 18:00:00'); --22
+
 
 CREATE TABLE ListaIngreso (
     IDIngreso INT NOT NULL,
@@ -1130,6 +1637,108 @@ CREATE TABLE ListaIngreso (
     FOREIGN KEY (IDIngreso, BodegaDestino) REFERENCES IngresoInventario(IDIngreso, BodegaDestino)
 );
 
+
+
+INSERT INTO ListaIngreso(IDIngreso, BodegaDestino, CodigoArticulo, CantidadIngresada) VALUES
+(1, 'BO1', 'ART1', 100),  
+(1, 'BO1', 'ART3', 50),   
+(1, 'BO1', 'ART4', 30),
+(1, 'BO1', 'ART32', 25),   
+(1, 'BO1', 'ART47', 15),   
+
+(2, 'BO2', 'ART6', 200),    
+(2, 'BO2', 'ART7', 150),  
+(2, 'BO2', 'ART8', 100),
+(2, 'BO2', 'ART74', 65),  
+(2, 'BO2', 'ART80', 23), 
+
+(3, 'BO3', 'ART11', 10),  
+(3, 'BO3', 'ART12', 15),  
+(3, 'BO3', 'ART13', 20),
+(3, 'BO3', 'ART19', 87),  
+(3, 'BO3', 'ART15', 70), 
+
+(4, 'BO4', 'ART16', 50),
+(4, 'BO4', 'ART17', 30), 
+(4, 'BO4', 'ART19', 10),
+(4, 'BO4', 'ART45', 55), 
+(4, 'BO4', 'ART9', 46),
+
+(5, 'BO5', 'ART22', 75),  
+(5, 'BO5', 'ART23', 50),  
+(5, 'BO5', 'ART25', 100),
+(5, 'BO5', 'ART29', 23),  
+(5, 'BO5', 'ART52', 42),
+
+(6, 'BO6', 'ART67', 35),  
+(6, 'BO6', 'ART73', 15),  
+(6, 'BO6', 'ART5', 70),
+
+(7, 'BO7', 'ART33', 100),  
+(7, 'BO7', 'ART78', 10),  
+(7, 'BO7', 'ART1', 69),
+
+(8, 'BO8', 'ART16', 95),  
+(8, 'BO8', 'ART4', 93),  
+(8, 'BO8', 'ART7', 14),
+
+(9, 'BO9', 'ART29', 25),  
+(9, 'BO9', 'ART13', 86),  
+(9, 'BO9', 'ART7', 18),
+
+
+(10, 'BO10', 'ART54', 34),  
+(10, 'BO10', 'ART58', 48),  
+(10, 'BO10', 'ART76', 97),
+
+
+(11, 'BO11', 'ART4', 43),  
+(11, 'BO11', 'ART31', 76),  
+(11, 'BO11', 'ART42', 93),
+
+(12, 'BO1', 'ART6', 45),  
+(12, 'BO1', 'ART21', 38),  
+(12, 'BO1', 'ART22', 86),
+
+(13, 'BO2', 'ART73', 32),  
+(13, 'BO2', 'ART68', 65),  
+(13, 'BO2', 'ART81', 96),
+
+(14, 'BO3', 'ART53', 43),  
+(14, 'BO3', 'ART66', 65),  
+(14, 'BO3', 'ART47', 86),
+
+(15, 'BO4', 'ART56', 21),  
+(15, 'BO4', 'ART43', 57),  
+(15, 'BO4', 'ART48', 23),
+
+(16, 'BO5', 'ART28', 12),  
+(16, 'BO5', 'ART45', 64),  
+(16, 'BO5', 'ART80', 37),
+
+(17, 'BO6', 'ART53', 53),  
+(17, 'BO6', 'ART28', 38),  
+(17, 'BO6', 'ART63', 86),
+
+(18, 'BO7', 'ART36', 53),  
+(18, 'BO7', 'ART53', 67),  
+(18, 'BO7', 'ART26', 86),
+
+(19, 'BO8', 'ART20', 26),  
+(19, 'BO8', 'ART30', 150),  
+(19, 'BO8', 'ART40', 32),
+
+(20, 'BO9', 'ART21', 34),  
+(20, 'BO9', 'ART54', 53),  
+(20, 'BO9', 'ART75', 29),
+
+(21, 'BO10', 'ART64', 47),  
+(21, 'BO10', 'ART32', 74),  
+(21, 'BO10', 'ART37', 94),
+
+(22, 'BO11', 'ART10', 27),  
+(22, 'BO11', 'ART18', 63),  
+(22, 'BO11', 'ART41', 74);
 
 
 
@@ -1145,6 +1754,89 @@ CREATE TABLE SalidaMovimiento(
 	FOREIGN KEY (IDFactura) REFERENCES Factura(Codigo)
 );
 
+insert into SalidaMovimiento(IDFactura, CodigoProducto, CodigoBodega, Cantidad) values
+('FAC1', 'ART15', 'BO1', 15),
+('FAC2', 'ART20', 'BO2', 10),
+('FAC3', 'ART25', 'BO5', 5),
+('FAC4', 'ART10', 'BO3', 20),
+('FAC5', 'ART30', 'BO6', 12),
+('FAC6', 'ART35', 'BO8', 8),
+('FAC7', 'ART12', 'BO4', 18),
+('FAC8', 'ART18', 'BO7', 30),
+('FAC9', 'ART22', 'BO9', 7),
+('FAC10', 'ART27', 'BO10', 25),
+('FAC11', 'ART15', 'BO11', 11),
+('FAC12', 'ART31', 'BO3', 14),
+('FAC13', 'ART40', 'BO2', 6),
+('FAC14', 'ART36', 'BO1', 17),
+('FAC15', 'ART23', 'BO4', 9),
+('FAC16', 'ART19', 'BO5', 28),
+('FAC17', 'ART17', 'BO7', 22),
+('FAC18', 'ART29', 'BO8', 10),
+('FAC19', 'ART21', 'BO9', 16),
+('FAC20', 'ART28', 'BO3', 13),
+('FAC21', 'ART16', 'BO11', 20),
+('FAC22', 'ART24', 'BO2', 15),
+('FAC23', 'ART32', 'BO3', 9),
+('FAC24', 'ART37', 'BO9', 7),
+('FAC25', 'ART11', 'BO9', 18),
+('FAC26', 'ART33', 'BO5', 23),
+('FAC27', 'ART38', 'BO5', 11),
+('FAC28', 'ART26', 'BO11', 21),
+('FAC29', 'ART34', 'BO2', 16),
+('FAC30', 'ART13', 'BO4', 8),
+('FAC31', 'ART14', 'BO3', 12),
+('FAC32', 'ART39', 'BO10', 14),
+('FAC33', 'ART10', 'BO4', 26),
+('FAC34', 'ART35', 'BO7', 19),
+('FAC35', 'ART29', 'BO8', 6),
+('FAC36', 'ART25', 'BO9', 5),
+('FAC37', 'ART22', 'BO2', 17),
+('FAC38', 'ART30', 'BO3', 13),
+('FAC39', 'ART18', 'BO1', 27),
+('FAC40', 'ART16', 'BO2', 24),
+
+('FAC1', 'ART14', 'BO1', 15),
+('FAC2', 'ART22', 'BO2', 10),
+('FAC3', 'ART27', 'BO5', 5),
+('FAC4', 'ART19', 'BO3', 20),
+('FAC5', 'ART35', 'BO6', 12),
+('FAC6', 'ART43', 'BO8', 8),
+('FAC7', 'ART25', 'BO4', 18),
+('FAC8', 'ART67', 'BO7', 30),
+('FAC9', 'ART74', 'BO9', 7),
+('FAC10', 'ART81', 'BO10', 25),
+('FAC11', 'ART32', 'BO11', 11),
+('FAC12', 'ART37', 'BO3', 14),
+('FAC13', 'ART76', 'BO2', 6),
+('FAC14', 'ART21', 'BO1', 17),
+('FAC15', 'ART4', 'BO4', 9),
+('FAC16', 'ART3', 'BO5', 28),
+
+('FAC17', 'ART1', 'BO7', 22),
+('FAC18', 'ART2', 'BO8', 10),
+('FAC19', 'ART25', 'BO9', 16),
+('FAC20', 'ART24', 'BO3', 13),
+('FAC21', 'ART12', 'BO11', 20),
+('FAC22', 'ART29', 'BO2', 15),
+('FAC23', 'ART30', 'BO3', 9),
+('FAC24', 'ART74', 'BO9', 7),
+('FAC25', 'ART64', 'BO9', 18),
+('FAC26', 'ART46', 'BO5', 23),
+('FAC27', 'ART58', 'BO5', 11),
+('FAC28', 'ART54', 'BO11', 21),
+('FAC29', 'ART32', 'BO2', 16),
+('FAC30', 'ART75', 'BO4', 8),
+('FAC31', 'ART27', 'BO3', 12),
+('FAC32', 'ART64', 'BO10', 14),
+('FAC33', 'ART45', 'BO4', 26),
+('FAC34', 'ART78', 'BO7', 19),
+('FAC35', 'ART55', 'BO8', 6),
+('FAC36', 'ART54', 'BO9', 5),
+('FAC37', 'ART61', 'BO2', 17),
+('FAC38', 'ART53', 'BO3', 13),
+('FAC39', 'ART73', 'BO1', 27),
+('FAC40', 'ART79', 'BO2', 24);
 
 
 
@@ -1414,3 +2106,12 @@ insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) va
 
 ('ART79', 8, 55),
 ('ART25', 3, 55);
+
+
+go
+create view verTop15Tareas as
+select top 20 CodigoTarea, TipoTareaCotizacion, TipoTareaCaso, Fecha, Descripcion, Estado 
+from Tarea 
+where Estado = 'En proceso' or Estado = 'Iniciada'
+order by Fecha asc
+go
