@@ -27,6 +27,10 @@ public class IndexModel : PageModel
     public List<string> DescripcionSector { get; set; }
     public List<decimal> MontoSector { get; set; }
 
+    public List<string> NombreZona { get; set; }
+    public List<string> DescripcionZona { get; set; }
+    public List<decimal> MontoZona{ get; set; }
+
 
 
 
@@ -46,7 +50,10 @@ public class IndexModel : PageModel
         DescripcionSector = new List<string>();
         MontoSector = new List<decimal>();
         Meses2 = new List<string>();
-    }
+        NombreZona = new List<string>();
+        DescripcionZona = new List<string>();
+        MontoZona = new List<decimal>();
+   }
 
     public async Task OnPostAsync()
     {
@@ -333,6 +340,51 @@ public class IndexModel : PageModel
     }
 
 
+
+
+
+    public async Task<IActionResult> OnPostShowZonasVentas(DateOnly fechaPago5, string formatoFecha5, DateOnly? fechaPago6)
+    {
+        Console.WriteLine("Entre");
+
+        using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+        {
+            await connection.OpenAsync();
+
+            SqlCommand command = new SqlCommand("SELECT * FROM dbo.VentaSector(@tipo, @fecha, @fechafin)", connection);
+
+
+            command.Parameters.AddWithValue("@tipo", formatoFecha5);
+            command.Parameters.AddWithValue("@fecha", fechaPago5.ToString("yyyy-MM-dd"));
+            if (fechaPago6.HasValue)
+            {
+                command.Parameters.AddWithValue("@fechafin", fechaPago6.Value);
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@fechafin", DBNull.Value);
+            }
+
+
+            SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                string zona = reader.IsDBNull(0) ? "Sin sector" : reader.GetString(0);
+                NombreZona.Add(zona);
+
+                string descripcionZona = reader.IsDBNull(1) ? "Sin descripción" : reader.GetString(1);
+                DescripcionZona.Add(descripcionZona);
+
+                decimal monto = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
+                MontoZona.Add(monto);
+            }
+
+
+        }
+
+        return Page();
+    }
 
 
 

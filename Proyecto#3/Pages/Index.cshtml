@@ -46,6 +46,13 @@
 </form>
 <br />
 
+<form method="post" id="formShowVerZonas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalZonas">
+        Ventas por zona
+    </button>
+</form>
+<br />
+
 
 
 
@@ -481,6 +488,127 @@ else
 
 
 
+<div class="modal fade" id="modalZonas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowZonasVentas">
+                    <div class="mb-3">
+                        <label for="fechaPago5" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago5" name="fechaPago5" />
+                    </div>
+                    <div class="mb-3" id="fechaPago5Container" style="display: none;">
+                        <label for="fechaPago6" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago6" name="fechaPago6" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha5" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha5" name="formatoFecha5" required onchange="toggleFechaPago5()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago5() {
+        const formato = document.getElementById("formatoFecha5").value;
+        const fechaPago5Container = document.getElementById("fechaPago5Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago5Container.style.display = "block";
+        } else {
+            fechaPago5Container.style.display = "none";
+        }
+    }
+</script>
+
+
+<canvas id="pieChartZona" width="400" height="400"></canvas>
+
+@if (Model.NombreZona != null && Model.MontoZona != null && Model.DescripcionZona.Count > 0)
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('pieChartZona').getContext('2d');
+
+            var sectores = @Html.Raw(Json.Serialize(Model.NombreZona));
+            var montos = @Html.Raw(Json.Serialize(Model.MontoZona));
+            var descripciones = @Html.Raw(Json.Serialize(Model.DescripcionZona));
+
+            var backgroundColors = sectores.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`);
+            var borderColors = backgroundColors.map(color => color.replace('0.5', '1'));
+
+            var data = {
+                labels: sectores,
+                datasets: [{
+                    data: montos,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        color: '#000',
+                        formatter: function (value, context) {
+                            return `${value}`;
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        anchor: 'center',
+                        align: 'center'
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+
+                            generateLabels: function(chart) {
+                                var labels = chart.data.labels;
+                                var datasets = chart.data.datasets;
+                                var legend = [];
+                                datasets.forEach(function(dataset, i) {
+                                    dataset.data.forEach(function(data, j) {
+                                        legend.push({
+                                            text: `${labels[j]} - ${descripciones[j]}`,
+                                            fillStyle: dataset.backgroundColor[j],
+                                            strokeStyle: dataset.borderColor[j]
+                                        });
+                                    });
+                                });
+                                return legend;
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Inicializar el gráfico
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options,
+                plugins: [ChartDataLabels]
+            });
+        });
+    </script>
+}
 
 
 
