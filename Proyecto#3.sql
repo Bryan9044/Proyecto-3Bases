@@ -306,7 +306,6 @@ CREATE TABLE HistoricoSalario (
 );
 
 
-
 --En este probablemente vamos a ocupar la función que habíamos creado pero con un cursor para que se hagan todos
 CREATE TABLE Planilla (
 	CodigoPlanilla VARCHAR(15) NOT NULL,
@@ -317,7 +316,7 @@ CREATE TABLE Planilla (
 	foreign key (CedulaEmpleado) references Empleado(Cedula),
 	Primary key (CodigoPlanilla, CedulaEmpleado)
 );
-
+--Creo que tenemos que cambiar la planilla pues de una se pueden pagar varios empleados
 insert into Planilla (CodigoPlanilla, FechaPlanilla, CedulaEmpleado, HorasRealizadas, Salario) values
 ('PL001', '2024-11-01', '123456789', 180, NULL),
 ('PL002', '2024-11-01', '987654321', 200, NULL),
@@ -796,6 +795,7 @@ CREATE TABLE Articulo (
 
 
 
+
 INSERT INTO Articulo (CodigoFamilia, Codigo, Nombre,Activo, Peso, Costo,PrecioEstandar,Descripcion) VALUES
 ('Fam1', 'ART1', 'Lápiz HB', 'Si', 0.02, 0.5, 100.0, 'Lápiz de grafito para escritura.'),
 ('Fam1', 'ART2', 'Cuaderno 100 hojas', 'No', 0.3, 1.5, 3000.0, 'Cuaderno de con 100 hojas rayadas.'),
@@ -1160,6 +1160,8 @@ CREATE TABLE Cotizacion (
 );
 
 
+
+
 insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectadoCierre,TipoCotizacion,Estado,Probabilidad,Zona,Sector) values
 ('432124368','123456789','2020/10/15','2020/12/15','Cotizacion abierta','Abierta' ,0.25, 'Caribe norte','Alimentación'), --
 ('325543227','123456789','2024/11/05','2024/12/31','Cotizacion abierta','Abierta' ,0.50, 'Pacifico norte','Económico'),--
@@ -1230,14 +1232,15 @@ insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectad
 ('123456789','998877665','2021/12/09','2029/04/05','Cotizacion abierta','Abierta' ,0.25, 'Pacifico central','Económico');--
 
 --Hay 55
-SELECT Codigo
-FROM Cotizacion
-WHERE Codigo IN (1, 2, 3, 4, 5, 6);
 
+
+
+--Me falta hacer inserts
 CREATE TABLE Caso (
     CodigoCaso VARCHAR(15) NOT NULL,
     PropietarioCaso VARCHAR(9) NOT NULL,
-    OrigenCaso INT NOT NULL,
+    OrigenCasoC INT ,
+	OrigenCasoF varchar(15) ,
     NombreCuenta VARCHAR(40) NOT NULL,
     NombreContacto VARCHAR(40) NOT NULL,
     Asunto VARCHAR(200) NOT NULL,
@@ -1249,12 +1252,13 @@ CREATE TABLE Caso (
     PRIMARY KEY (CodigoCaso),
     FOREIGN KEY (TipoCaso) REFERENCES TipoCaso(TipoCaso),
     FOREIGN KEY (EstadoCaso) REFERENCES Estado(TipoEstado),
-    FOREIGN KEY (OrigenCaso) REFERENCES Cotizacion(Codigo),
+    FOREIGN KEY (OrigenCasoC) REFERENCES Cotizacion(Codigo),
+	foreign key (OrigenCasoF) references Factura(Codigo),
     FOREIGN KEY (PropietarioCaso) REFERENCES Cliente(Cedula),
     FOREIGN KEY (Prioridad) REFERENCES Prioridad(TipoPrioridad)
 );
 
-INSERT INTO Caso (CodigoCaso, PropietarioCaso, OrigenCaso, NombreCuenta, NombreContacto, Asunto, Direccion, Descripcion, EstadoCaso, TipoCaso, Prioridad) VALUES
+INSERT INTO Caso (CodigoCaso, PropietarioCaso, OrigenCasoC, OrigenCasoF, NombreCuenta, NombreContacto, Asunto, Direccion, Descripcion, EstadoCaso, TipoCaso, Prioridad) VALUES
 ('CS1', '754323489', 1, 'Personal', 'Salamar', 'Necesitamos una ayuda inmediata', 'San jose en el centro de la capital', 'Se tiene que verificar el tipo de ayuda que necesita', 'Abierta', 'Devolucion', 'Alta'),
 ('CS2', '369253247', 2, 'Empresarial', 'Dospinos', 'Queremos hablar con un encargado', 'Alajuela a un costado del mercado', 'Se procedera a enviar la queja al encargado', 'Aprobado', 'Devolucion', 'Alta'),
 ('CS3', '432124368', 3, 'Personal', 'Aurua', 'Tuvimos problemas', 'En San carlos debajo de una catarata', 'Se busca el tipo de problemas', 'Rechazado', 'Garantia', 'Baja'),
@@ -1322,6 +1326,8 @@ CREATE TABLE Factura (
 	FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo),
 	foreign key (estado) references estadoFactura(tipoFactura)
 );
+
+
 INSERT INTO Factura (Codigo, CodigoCotizacion, CedulaCliente, CedulaEmpleado, CedulaJuridica, TelefonoLocal, NombreLocal, FechaFactura, NombreCliente, estado)
 VALUES
 ('FAC1', null, '123456789', '123456789', '900123456', '22223334', 'Ferretería El Buen Precio', '2024-01-15', 'Juan Pérez', 'Emitida'),
@@ -1364,8 +1370,6 @@ VALUES
 ('FAC38', null, '369253247', '556677889', '456789321', '56723984', 'Gimnasio Power', '2024-05-28', 'Isabel Torres', 'Cancelada'),
 ('FAC39', null, '432123478', '334455667', '789654321', '39284576', 'Construcción Heredia', '2024-05-01', 'MYke Towers', 'Emitida'),
 ('FAC40', null, '564298645', '112233445', '678543219', '92384756', 'Tienda El Progreso', '2023-05-08', 'Rodrigo Chaves', 'Pagada');
-
-
 
 
 CREATE TABLE ListaFactura (
@@ -1626,217 +1630,175 @@ insert into IngresoInventario(CedulaEmpleado, BodegaDestino, Fecha) values
 ('112244335', 'BO10', '2024-03-12 17:00:00'), --21
 ('775566443', 'BO11', '2024-02-12 18:00:00'); --22
 
-
 CREATE TABLE ListaIngreso (
     IDIngreso INT NOT NULL,
     BodegaDestino VARCHAR(15) NOT NULL, 
     CodigoArticulo VARCHAR(15) NOT NULL,
     CantidadIngresada INT NOT NULL,
+	fecha date not null,
     PRIMARY KEY (CodigoArticulo, IDIngreso, BodegaDestino),
     FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo),
     FOREIGN KEY (IDIngreso, BodegaDestino) REFERENCES IngresoInventario(IDIngreso, BodegaDestino)
 );
 
 
+insert into ListaIngreso(IDIngreso, BodegaDestino, CodigoArticulo, CantidadIngresada, fecha) values
+(1, 'BO1', 'ART1', 100, '2022-01-05'),  
+(1, 'BO1', 'ART3', 50, '2022-01-10'),   
+(1, 'BO1', 'ART4', 30, '2022-01-15'),
+(1, 'BO1', 'ART32', 25, '2022-01-20'),   
+(1, 'BO1', 'ART47', 15, '2022-01-25'),   
 
-INSERT INTO ListaIngreso(IDIngreso, BodegaDestino, CodigoArticulo, CantidadIngresada) VALUES
-(1, 'BO1', 'ART1', 100),  
-(1, 'BO1', 'ART3', 50),   
-(1, 'BO1', 'ART4', 30),
-(1, 'BO1', 'ART32', 25),   
-(1, 'BO1', 'ART47', 15),   
+(2, 'BO2', 'ART6', 200, '2022-02-05'),    
+(2, 'BO2', 'ART7', 150, '2022-02-10'),  
+(2, 'BO2', 'ART8', 100, '2022-02-15'),
+(2, 'BO2', 'ART74', 65, '2022-02-20'),  
+(2, 'BO2', 'ART80', 23, '2022-02-25'), 
 
-(2, 'BO2', 'ART6', 200),    
-(2, 'BO2', 'ART7', 150),  
-(2, 'BO2', 'ART8', 100),
-(2, 'BO2', 'ART74', 65),  
-(2, 'BO2', 'ART80', 23), 
+(3, 'BO3', 'ART11', 10, '2022-03-01'),  
+(3, 'BO3', 'ART12', 15, '2022-03-05'),  
+(3, 'BO3', 'ART13', 20, '2022-03-10'),
+(3, 'BO3', 'ART19', 87, '2022-03-15'),  
+(3, 'BO3', 'ART15', 70, '2022-03-20'), 
 
-(3, 'BO3', 'ART11', 10),  
-(3, 'BO3', 'ART12', 15),  
-(3, 'BO3', 'ART13', 20),
-(3, 'BO3', 'ART19', 87),  
-(3, 'BO3', 'ART15', 70), 
+(4, 'BO4', 'ART16', 50, '2022-04-01'),
+(4, 'BO4', 'ART17', 30, '2022-04-05'), 
+(4, 'BO4', 'ART19', 10, '2022-04-10'),
+(4, 'BO4', 'ART45', 55, '2022-04-15'), 
+(4, 'BO4', 'ART9', 46, '2022-04-20'),
 
-(4, 'BO4', 'ART16', 50),
-(4, 'BO4', 'ART17', 30), 
-(4, 'BO4', 'ART19', 10),
-(4, 'BO4', 'ART45', 55), 
-(4, 'BO4', 'ART9', 46),
+(5, 'BO5', 'ART22', 75, '2023-01-01'),  
+(5, 'BO5', 'ART23', 50, '2023-01-05'),  
+(5, 'BO5', 'ART25', 100, '2023-01-10'),
+(5, 'BO5', 'ART29', 23, '2023-01-15'),  
+(5, 'BO5', 'ART52', 42, '2023-01-20'),
 
-(5, 'BO5', 'ART22', 75),  
-(5, 'BO5', 'ART23', 50),  
-(5, 'BO5', 'ART25', 100),
-(5, 'BO5', 'ART29', 23),  
-(5, 'BO5', 'ART52', 42),
+(6, 'BO6', 'ART67', 35, '2023-02-01'),  
+(6, 'BO6', 'ART73', 15, '2023-02-05'),  
+(6, 'BO6', 'ART5', 70, '2023-02-10'),
 
-(6, 'BO6', 'ART67', 35),  
-(6, 'BO6', 'ART73', 15),  
-(6, 'BO6', 'ART5', 70),
+(7, 'BO7', 'ART33', 100, '2023-02-15'),  
+(7, 'BO7', 'ART78', 10, '2023-02-20'),  
+(7, 'BO7', 'ART1', 69, '2023-02-25'),
 
-(7, 'BO7', 'ART33', 100),  
-(7, 'BO7', 'ART78', 10),  
-(7, 'BO7', 'ART1', 69),
+(8, 'BO8', 'ART16', 95, '2023-03-01'),  
+(8, 'BO8', 'ART4', 93, '2023-03-05'),  
+(8, 'BO8', 'ART7', 14, '2023-03-10'),
 
-(8, 'BO8', 'ART16', 95),  
-(8, 'BO8', 'ART4', 93),  
-(8, 'BO8', 'ART7', 14),
+(9, 'BO9', 'ART29', 25, '2023-03-15'),  
+(9, 'BO9', 'ART13', 86, '2023-03-20'),  
+(9, 'BO9', 'ART7', 18, '2023-03-25'),
 
-(9, 'BO9', 'ART29', 25),  
-(9, 'BO9', 'ART13', 86),  
-(9, 'BO9', 'ART7', 18),
+(10, 'BO10', 'ART54', 34, '2023-04-01'),  
+(10, 'BO10', 'ART58', 48, '2023-04-05'),  
+(10, 'BO10', 'ART76', 97, '2023-04-10'),
 
+(11, 'BO11', 'ART4', 43, '2023-04-15'),  
+(11, 'BO11', 'ART31', 76, '2023-04-20'),  
+(11, 'BO11', 'ART42', 93, '2023-04-25'),
 
-(10, 'BO10', 'ART54', 34),  
-(10, 'BO10', 'ART58', 48),  
-(10, 'BO10', 'ART76', 97),
+(12, 'BO1', 'ART6', 45, '2024-01-01'),  
+(12, 'BO1', 'ART21', 38, '2024-01-05'),  
+(12, 'BO1', 'ART22', 86, '2024-01-10'),
 
+(13, 'BO2', 'ART73', 32, '2024-01-15'),  
+(13, 'BO2', 'ART68', 65, '2024-01-20'),  
+(13, 'BO2', 'ART81', 96, '2024-01-25'),
 
-(11, 'BO11', 'ART4', 43),  
-(11, 'BO11', 'ART31', 76),  
-(11, 'BO11', 'ART42', 93),
+(14, 'BO3', 'ART53', 43, '2024-02-01'),  
+(14, 'BO3', 'ART66', 65, '2024-02-05'),  
+(14, 'BO3', 'ART47', 86, '2024-02-10'),
 
-(12, 'BO1', 'ART6', 45),  
-(12, 'BO1', 'ART21', 38),  
-(12, 'BO1', 'ART22', 86),
+(15, 'BO4', 'ART56', 21, '2024-02-15'),  
+(15, 'BO4', 'ART43', 57, '2024-02-20'),  
+(15, 'BO4', 'ART48', 23, '2024-02-25'),
 
-(13, 'BO2', 'ART73', 32),  
-(13, 'BO2', 'ART68', 65),  
-(13, 'BO2', 'ART81', 96),
+(16, 'BO5', 'ART28', 12, '2024-03-01'),  
+(16, 'BO5', 'ART45', 64, '2024-03-05'),  
+(16, 'BO5', 'ART80', 37, '2024-03-10'),
 
-(14, 'BO3', 'ART53', 43),  
-(14, 'BO3', 'ART66', 65),  
-(14, 'BO3', 'ART47', 86),
+(17, 'BO6', 'ART53', 53, '2024-03-15'),  
+(17, 'BO6', 'ART28', 38, '2024-03-20'),  
+(17, 'BO6', 'ART63', 86, '2024-03-25'),
 
-(15, 'BO4', 'ART56', 21),  
-(15, 'BO4', 'ART43', 57),  
-(15, 'BO4', 'ART48', 23),
+(18, 'BO7', 'ART36', 53, '2024-04-01'),  
+(18, 'BO7', 'ART53', 67, '2024-04-05'),  
+(18, 'BO7', 'ART26', 86, '2024-04-10'),
 
-(16, 'BO5', 'ART28', 12),  
-(16, 'BO5', 'ART45', 64),  
-(16, 'BO5', 'ART80', 37),
+(19, 'BO8', 'ART20', 26, '2024-04-15'),  
+(19, 'BO8', 'ART30', 150, '2024-04-20'),  
+(19, 'BO8', 'ART40', 32, '2024-04-25'),
 
-(17, 'BO6', 'ART53', 53),  
-(17, 'BO6', 'ART28', 38),  
-(17, 'BO6', 'ART63', 86),
+(20, 'BO9', 'ART21', 34, '2024-05-01'),  
+(20, 'BO9', 'ART54', 53, '2024-05-05'),  
+(20, 'BO9', 'ART75', 29, '2024-05-10'),
 
-(18, 'BO7', 'ART36', 53),  
-(18, 'BO7', 'ART53', 67),  
-(18, 'BO7', 'ART26', 86),
+(21, 'BO10', 'ART64', 47, '2024-05-15'),  
+(21, 'BO10', 'ART32', 74, '2024-05-20'),  
+(21, 'BO10', 'ART37', 94, '2024-05-25'),
 
-(19, 'BO8', 'ART20', 26),  
-(19, 'BO8', 'ART30', 150),  
-(19, 'BO8', 'ART40', 32),
+(22, 'BO11', 'ART10', 27, '2024-06-01'),  
+(22, 'BO11', 'ART18', 63, '2024-06-05'),  
+(22, 'BO11', 'ART41', 74, '2024-06-10');
 
-(20, 'BO9', 'ART21', 34),  
-(20, 'BO9', 'ART54', 53),  
-(20, 'BO9', 'ART75', 29),
-
-(21, 'BO10', 'ART64', 47),  
-(21, 'BO10', 'ART32', 74),  
-(21, 'BO10', 'ART37', 94),
-
-(22, 'BO11', 'ART10', 27),  
-(22, 'BO11', 'ART18', 63),  
-(22, 'BO11', 'ART41', 74);
-
-
-
---Esto iria despues de la creacion de la factura
+drop table SalidaMovimiento
 CREATE TABLE SalidaMovimiento(
 	IDFactura VARCHAR(15) not null,
 	CodigoProducto VARCHAR(15) not null,
 	CodigoBodega VARCHAR(15) not null,
 	Cantidad int not null,
+	fecha date
 	PRIMARY KEY(IDFactura, CodigoProducto,CodigoBodega),
 	FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo),
 	FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo),
 	FOREIGN KEY (IDFactura) REFERENCES Factura(Codigo)
 );
 
-insert into SalidaMovimiento(IDFactura, CodigoProducto, CodigoBodega, Cantidad) values
-('FAC1', 'ART15', 'BO1', 15),
-('FAC2', 'ART20', 'BO2', 10),
-('FAC3', 'ART25', 'BO5', 5),
-('FAC4', 'ART10', 'BO3', 20),
-('FAC5', 'ART30', 'BO6', 12),
-('FAC6', 'ART35', 'BO8', 8),
-('FAC7', 'ART12', 'BO4', 18),
-('FAC8', 'ART18', 'BO7', 30),
-('FAC9', 'ART22', 'BO9', 7),
-('FAC10', 'ART27', 'BO10', 25),
-('FAC11', 'ART15', 'BO11', 11),
-('FAC12', 'ART31', 'BO3', 14),
-('FAC13', 'ART40', 'BO2', 6),
-('FAC14', 'ART36', 'BO1', 17),
-('FAC15', 'ART23', 'BO4', 9),
-('FAC16', 'ART19', 'BO5', 28),
-('FAC17', 'ART17', 'BO7', 22),
-('FAC18', 'ART29', 'BO8', 10),
-('FAC19', 'ART21', 'BO9', 16),
-('FAC20', 'ART28', 'BO3', 13),
-('FAC21', 'ART16', 'BO11', 20),
-('FAC22', 'ART24', 'BO2', 15),
-('FAC23', 'ART32', 'BO3', 9),
-('FAC24', 'ART37', 'BO9', 7),
-('FAC25', 'ART11', 'BO9', 18),
-('FAC26', 'ART33', 'BO5', 23),
-('FAC27', 'ART38', 'BO5', 11),
-('FAC28', 'ART26', 'BO11', 21),
-('FAC29', 'ART34', 'BO2', 16),
-('FAC30', 'ART13', 'BO4', 8),
-('FAC31', 'ART14', 'BO3', 12),
-('FAC32', 'ART39', 'BO10', 14),
-('FAC33', 'ART10', 'BO4', 26),
-('FAC34', 'ART35', 'BO7', 19),
-('FAC35', 'ART29', 'BO8', 6),
-('FAC36', 'ART25', 'BO9', 5),
-('FAC37', 'ART22', 'BO2', 17),
-('FAC38', 'ART30', 'BO3', 13),
-('FAC39', 'ART18', 'BO1', 27),
-('FAC40', 'ART16', 'BO2', 24),
 
-('FAC1', 'ART14', 'BO1', 15),
-('FAC2', 'ART22', 'BO2', 10),
-('FAC3', 'ART27', 'BO5', 5),
-('FAC4', 'ART19', 'BO3', 20),
-('FAC5', 'ART35', 'BO6', 12),
-('FAC6', 'ART43', 'BO8', 8),
-('FAC7', 'ART25', 'BO4', 18),
-('FAC8', 'ART67', 'BO7', 30),
-('FAC9', 'ART74', 'BO9', 7),
-('FAC10', 'ART81', 'BO10', 25),
-('FAC11', 'ART32', 'BO11', 11),
-('FAC12', 'ART37', 'BO3', 14),
-('FAC13', 'ART76', 'BO2', 6),
-('FAC14', 'ART21', 'BO1', 17),
-('FAC15', 'ART4', 'BO4', 9),
-('FAC16', 'ART3', 'BO5', 28),
 
-('FAC17', 'ART1', 'BO7', 22),
-('FAC18', 'ART2', 'BO8', 10),
-('FAC19', 'ART25', 'BO9', 16),
-('FAC20', 'ART24', 'BO3', 13),
-('FAC21', 'ART12', 'BO11', 20),
-('FAC22', 'ART29', 'BO2', 15),
-('FAC23', 'ART30', 'BO3', 9),
-('FAC24', 'ART74', 'BO9', 7),
-('FAC25', 'ART64', 'BO9', 18),
-('FAC26', 'ART46', 'BO5', 23),
-('FAC27', 'ART58', 'BO5', 11),
-('FAC28', 'ART54', 'BO11', 21),
-('FAC29', 'ART32', 'BO2', 16),
-('FAC30', 'ART75', 'BO4', 8),
-('FAC31', 'ART27', 'BO3', 12),
-('FAC32', 'ART64', 'BO10', 14),
-('FAC33', 'ART45', 'BO4', 26),
-('FAC34', 'ART78', 'BO7', 19),
-('FAC35', 'ART55', 'BO8', 6),
-('FAC36', 'ART54', 'BO9', 5),
-('FAC37', 'ART61', 'BO2', 17),
-('FAC38', 'ART53', 'BO3', 13),
-('FAC39', 'ART73', 'BO1', 27),
-('FAC40', 'ART79', 'BO2', 24);
+
+insert into SalidaMovimiento(IDFactura, CodigoProducto, CodigoBodega, Cantidad,fecha) values
+('FAC1', 'ART15', 'BO1', 15, '2022-01-10'),
+('FAC2', 'ART20', 'BO2', 10, '2022-02-15'),
+('FAC3', 'ART25', 'BO5', 5, '2022-03-20'),
+('FAC4', 'ART10', 'BO3', 20, '2022-04-25'),
+('FAC5', 'ART30', 'BO6', 12, '2022-05-30'),
+('FAC6', 'ART35', 'BO8', 8, '2022-06-05'),
+('FAC7', 'ART12', 'BO4', 18, '2022-07-10'),
+('FAC8', 'ART18', 'BO7', 30, '2022-08-15'),
+('FAC9', 'ART22', 'BO9', 7, '2022-09-20'),
+('FAC10', 'ART27', 'BO10', 25, '2022-10-25'),
+('FAC11', 'ART15', 'BO11', 11, '2022-11-30'),
+('FAC12', 'ART31', 'BO3', 14, '2022-12-05'),
+('FAC13', 'ART40', 'BO2', 6, '2023-01-10'),
+('FAC14', 'ART36', 'BO1', 17, '2023-02-15'),
+('FAC15', 'ART23', 'BO4', 9, '2023-03-20'),
+('FAC16', 'ART19', 'BO5', 28, '2023-04-25'),
+('FAC17', 'ART17', 'BO7', 22, '2023-05-30'),
+('FAC18', 'ART29', 'BO8', 10, '2023-06-05'),
+('FAC19', 'ART21', 'BO9', 16, '2023-07-10'),
+('FAC20', 'ART28', 'BO3', 13, '2023-08-15'),
+('FAC21', 'ART16', 'BO11', 20, '2023-09-20'),
+('FAC22', 'ART24', 'BO2', 15, '2023-10-25'),
+('FAC23', 'ART32', 'BO3', 9, '2023-11-30'),
+('FAC24', 'ART37', 'BO9', 7, '2023-12-05'),
+('FAC25', 'ART11', 'BO9', 18, '2024-01-10'),
+('FAC26', 'ART33', 'BO5', 23, '2024-02-15'),
+('FAC27', 'ART38', 'BO5', 11, '2024-03-20'),
+('FAC28', 'ART26', 'BO11', 21, '2024-04-25'),
+('FAC29', 'ART34', 'BO2', 16, '2024-05-30'),
+('FAC30', 'ART13', 'BO4', 8, '2024-06-05'),
+('FAC31', 'ART14', 'BO3', 12, '2024-07-10'),
+('FAC32', 'ART39', 'BO10', 14, '2024-08-15'),
+('FAC33', 'ART10', 'BO4', 26, '2024-09-20'),
+('FAC34', 'ART35', 'BO7', 19, '2024-10-25'),
+('FAC35', 'ART29', 'BO8', 6, '2024-11-30'),
+('FAC36', 'ART25', 'BO9', 5, '2024-12-05'),
+('FAC37', 'ART22', 'BO2', 17, '2022-01-15'),
+('FAC38', 'ART30', 'BO3', 13, '2022-02-20'),
+('FAC39', 'ART18', 'BO1', 27, '2022-03-25'),
+('FAC40', 'ART16', 'BO2', 24, '2022-04-30');
+
 
 
 
@@ -2115,3 +2077,436 @@ from Tarea
 where Estado = 'En proceso' or Estado = 'Iniciada'
 order by Fecha asc
 go
+
+
+
+
+
+--exec CalcularPago;
+
+
+--Procedimiento almacenado para calcular todos los salarios o el pago en general de una planilla
+create procedure CalcularPago 
+as 
+begin 
+
+    declare @CodigoPlanilla varchar(15);
+    declare @HorasRealizadas int;
+    declare @Cedula varchar(9);
+    declare @SalarioActual int;
+    declare @NuevoSalario int;
+    declare @Excedente int;
+
+    declare CursorPlanilla cursor for
+    select CodigoPlanilla, HorasRealizadas, CedulaEmpleado
+    from Planilla
+    where Salario is null;
+
+    open CursorPlanilla;
+
+    fetch next from CursorPlanilla into @CodigoPlanilla, @HorasRealizadas, @Cedula;
+
+    while @@FETCH_STATUS = 0
+    begin
+        select @SalarioActual = SalarioActual
+        from Empleado
+        where Cedula = @Cedula;
+
+        if @HorasRealizadas > 200
+        begin
+            set @Excedente = @HorasRealizadas - 200;  
+            set @NuevoSalario = (@SalarioActual / 200) * @Excedente * 1.5 + @SalarioActual;
+        end
+        else
+        begin
+            set @NuevoSalario = @SalarioActual; -- Si no se exceden las 200 horas, el salario es el mismo
+        end
+
+        update Planilla
+        set Salario = @NuevoSalario
+        where CodigoPlanilla = @CodigoPlanilla;
+
+        fetch next from CursorPlanilla into @CodigoPlanilla, @HorasRealizadas, @Cedula;
+
+    end;
+
+    close CursorPlanilla;
+    deallocate CursorPlanilla;
+
+    print 'Salarios calculados y actualizados correctamente para todas las planillas.';
+end;
+
+
+--Tal vez asi puedo hacer los top
+--ta malo
+go
+create function pagosplanilla(
+    @fecha date, 
+    @tipo varchar(20),
+    @fechaFin date = NULL     -- Solo será usado si el tipo es 'RangoFecha'
+)
+returns table
+as
+return
+(
+    select p.salario as montopagado, p.CodigoPlanilla as Planilla, p.fechaplanilla
+    from planilla p
+    where 
+        (
+            (@tipo = 'mes-año' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) = year(@fecha))
+            or (@tipo = 'mes-año' and month(p.fechaplanilla) > month(@fecha) and year(p.fechaplanilla) = year(@fecha)) 
+            or (@tipo = 'mes-año' and year(p.fechaplanilla) > year(@fecha))
+
+			or (@tipo = 'año-mes' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) >= year(@fecha))
+
+
+            or (@tipo = 'mes(año)' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) = year(@fecha))
+
+            or (@tipo = 'RangoFecha' AND p.fechaplanilla BETWEEN @fecha AND @fechaFin)
+        )
+);
+
+
+
+
+go 
+create function pagosplanilladep(@mes date, @tipo varchar(20), @fechafin date null) 
+returns table
+as
+return (
+    select 
+        d.Nombre as nombredepar, 
+        sum(p.salario) as montopagado
+    from 
+        planilla as p
+    join 
+        empleado as e on p.cedulaempleado = e.cedula
+    join 
+        departamento as d on e.codigodepartamento = d.codigo
+    where 
+        (
+            (@tipo = 'mes' and month(@mes) = month(p.fechaplanilla) and year(@mes) = year(p.fechaplanilla)) 
+            OR 
+            (@tipo = 'mes(año)' and format(p.fechaplanilla, 'MM/yyyy') = format(@mes, 'MM/yyyy')) 
+            OR
+            (@tipo = 'rangofecha' and p.fechaplanilla between @mes and @fechafin)
+        )
+    group by 
+        d.Nombre
+);
+
+
+select * from pagosPlanillaDep('12/1/2024','mes(año)',null)
+
+
+
+
+
+
+
+
+
+
+
+create function VentaSector (
+    @tipo VARCHAR(20), 
+    @fecha DATE, 
+    @fechafin DATE NULL
+)
+returns table
+as
+return
+(
+    SELECT 
+        s.Nombre as Sector,
+        s.Descripcion as descripcionsector,
+        SUM(a.PrecioEstandar * lf.CantidadProducto) as monto
+    FROM 
+        ListaFactura as lf
+    JOIN 
+        Factura as f on lf.CodigoF = f.Codigo
+    JOIN 
+        Cliente as c on f.CedulaCliente = c.Cedula
+    JOIN 
+        Articulo as a on lf.Codigo = a.Codigo
+    JOIN 
+        Sector as s on c.Sector = s.Nombre
+    where 
+        (@tipo = 'mes(año)' and year(f.FechaFactura) = year(@fecha) and month(f.FechaFactura) = month(@fecha))
+        or 
+        (@tipo = 'RangoFecha' and f.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+    group by 
+        s.Nombre, s.Descripcion
+);
+SELECT * 
+FROM dbo.VentaSector('mes(año)', '2024-05-01', NULL);
+
+SELECT * 
+FROM dbo.VentaSector('RangoFecha', '2024-01-01', '2024-03-31');
+
+--Asi es como lo hacia antes
+go
+create view VentaSector as
+select 
+	s.Nombre as Sector,
+    s.Descripcion as descripcionsector, 
+    sum(a.PrecioEstandar * lf.CantidadProducto) as monto
+from ListaFactura as lf
+join Factura as f on lf.CodigoF = f.Codigo
+join Cliente as c on f.CedulaCliente = c.Cedula
+join Articulo as a on lf.Codigo = a.Codigo
+join Sector as s on c.Sector = s.Nombre  
+group by 
+	s.Nombre,
+    s.Descripcion;  
+
+
+--select * from VentaSector
+
+
+
+--Forma nueva de ver las ventas por zona 
+create function ventazona (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date = null
+)
+returns table
+as
+return
+(
+    select 
+        z.nombre as zona,
+        z.descripcion as descripcionzona,
+        sum(a.precioestandar * lf.cantidadproducto) as monto
+    from 
+        listafactura as lf
+    join 
+        factura as f on lf.codigof = f.codigo
+    join 
+        cliente as c on f.cedulacliente = c.cedula
+    join 
+        articulo as a on lf.codigo = a.codigo
+    join 
+        zona as z on c.zona = z.nombre
+    where 
+        (@tipo = 'mes(año)' and year(f.fechafactura) = year(@fecha) and month(f.fechafactura) = month(@fecha))
+        or 
+        (@tipo = 'rangofecha' and f.fechafactura between @fecha and isnull(@fechafin, @fecha))
+    group by 
+        z.nombre, z.descripcion
+);
+
+--Forma vieja
+go
+create view VentaZona as
+select 
+	z.Nombre as Zona,
+    z.Descripcion as descripcionZona, 
+    sum(a.PrecioEstandar * lf.CantidadProducto) as monto
+from ListaFactura as lf
+join Factura as f on lf.CodigoF = f.Codigo
+join Cliente as c on f.CedulaCliente = c.Cedula
+join Articulo as a on lf.Codigo = a.Codigo
+join Zona as z on c.Zona = z.Nombre  
+group by 
+	z.Nombre
+    z.Descripcion;  
+--	select * from VentaZona
+
+
+--Este es es el de Ventas por departamento
+go 
+create view comparacionDepartamento as
+select d.Nombre as Departamento, sum(lf.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento from ListaFactura as lf 
+join Factura as f on lf.CodigoF = f.Codigo
+join Empleado as e on f.CedulaEmpleado = e.Cedula
+join Articulo as a on lf.Codigo = a.Codigo
+join Departamento as d on e.CodigoDepartamento = d.Codigo
+group by 
+	d.Nombre
+
+	--select * from comparacionDepartamento
+
+
+  --Todo esto es para ver cliente top 10
+go
+create view vistatopclientesascendente as
+select top 10 
+    c.nombre as cliente,
+    sum(lf.cantidadproducto * a.precioestandar) as monto
+from listafactura as lf
+join factura as f on lf.codigof = f.codigo
+join cliente as c on f.cedulacliente = c.cedula
+join articulo as a on lf.codigo = a.codigo
+group by c.nombre
+order by monto asc;
+
+
+go
+create view vistatopclientesdescendente as
+select top 10 
+    c.nombre as cliente,
+    sum(lf.cantidadproducto * a.precioestandar) as monto
+from listafactura as lf
+join factura as f on lf.codigof = f.codigo
+join cliente as c on f.cedulacliente = c.cedula
+join articulo as a on lf.codigo = a.codigo
+group by c.nombre
+order by monto desc;
+
+go
+create procedure top10cliente
+    @tipo varchar(10)
+as
+begin
+    if @tipo = 'ascendente'
+    begin
+        select * from vistatopclientesascendente;
+    end
+    else
+    begin
+        select * from vistatopclientesdescendente;
+    end
+end;
+
+  --Todo esto es para ver cliente top 10
+
+
+  --Esto es para la cantidad de clientes por zona y sus ventas
+go
+  create view ClientesZona as
+  select count(distinct f.Codigo) as CantidadClientes, z.Nombre as Zona, sum(lf.cantidadproducto * a.precioestandar) as Ventas  from ListaFactura as lf
+  join Factura as f on lf.CodigoF = f.Codigo
+  join Cliente as c on f.CedulaCliente = c.Cedula
+  join Articulo as a on lf.Codigo = a.Codigo
+  join Zona as z on c.Zona = z.Nombre
+  group by z.Nombre
+
+  select * from ClientesZona
+
+
+
+
+
+
+
+
+
+  
+--Ver familia de productos más vendidos
+--Asi pueden ser las demás jejeje
+go
+create function FamiliaArt (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date NULL
+)
+returns table 
+as
+return
+(
+    select 
+        fm.Nombre as NombreFamilia, 
+        sum(lf.CantidadProducto * a.PrecioEstandar) as MontoVendido
+    from 
+        ListaFactura as lf
+    join 
+        Factura as f on lf.CodigoF = f.Codigo
+    join 
+        Articulo as a on lf.Codigo = a.Codigo
+    join 
+        Familia as fm on a.CodigoFamilia = fm.CodigoFamilia
+    where 
+        (@tipo = 'mes(año)' and year(f.FechaFactura) = year(@fecha) AND month(f.FechaFactura) = month(@fecha))
+        or 
+        (@tipo = 'RangoFecha' and f.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+    group by 
+        fm.Nombre
+);
+
+
+
+--select * from FamiliaArt
+
+
+
+--Lo que es el movimiento todavia no lo hare
+--Este es para la cantidad de movimientos de entrada
+go
+create view SacarIngreso as
+select b.Nombre as Bodega,count(li.IDIngreso) CantidadEntrada from ListaIngreso as li 
+join Bodega as b on li.BodegaDestino = b.Codigo
+group by b.Nombre;
+
+
+
+select * from SacarIngreso
+
+go
+create view SacarSalida as
+select b.Nombre as Bodega,count(sl.IDFactura) CantidadEntrada from SalidaMovimiento as sl
+join Bodega as b on sl.CodigoBodega = b.Codigo
+group by b.Nombre;
+
+
+--Funcion por si el usuario prefiere si es de entrada o salida
+
+--Este no funciona hay que cambiarlo
+
+
+--Este no funciona hay que cambiarlo
+
+
+
+
+
+
+
+
+
+--Esto es para ver las cotizaciones por departamento
+go 
+create view comparacionDepartamentoC as
+select d.Nombre as Departamento, sum(lc.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento from ListaCotizacion as lc 
+join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
+join Empleado as e on c.CedulaEmpleado = e.Cedula
+join Articulo as a on lc.CodigoProducto = a.Codigo
+join Departamento as d on e.CodigoDepartamento = d.Codigo
+group by 
+	d.Nombre
+
+--	select * from comparacionDepartamentoC
+
+
+
+--Este es para ver el top 10 productos cotizados
+go
+create procedure productoscot
+    @tipo varchar(20)
+as
+begin
+    if @tipo = 'ascendente'
+    begin
+        select top 10 
+            a.descripcion as descripcion, 
+            sum(lc.cantidadproducto) as cantidadtotal
+        from listacotizacion as lc
+        join articulo as a on lc.codigoproducto = a.codigo
+        group by a.descripcion
+        order by sum(lc.cantidadproducto) asc;
+    end
+    else
+    begin
+        select top 10 
+            a.descripcion as descripcion, 
+            sum(lc.cantidadproducto) as cantidadtotal
+        from listacotizacion as lc
+        join articulo as a on lc.codigoproducto = a.codigo
+        group by a.descripcion
+        order by sum(lc.cantidadproducto) desc;
+    end
+end;
+
+
+--exec ProductosCot 'Ascendente'
