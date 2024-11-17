@@ -2070,13 +2070,6 @@ insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) va
 ('ART25', 3, 55);
 
 
-go
-create view verTop15Tareas as
-select top 20 CodigoTarea, TipoTareaCotizacion, TipoTareaCaso, Fecha, Descripcion, Estado 
-from Tarea 
-where Estado = 'En proceso' or Estado = 'Iniciada'
-order by Fecha asc
-go
 
 
 
@@ -2137,45 +2130,71 @@ begin
 end;
 
 
---Tal vez asi puedo hacer los top
---ta malo
+--TODO ESTO ES PARA MOSTRAR EL PAGO DE PLANILLA
+go
+create view verPago as
+select 
+    p.CodigoPlanilla as Planilla, 
+    p.FechaPlanilla, 
+    SUM(p.Salario) as MontoPagado
+from 
+    Planilla as p
+group by 
+    p.CodigoPlanilla, 
+    p.FechaPlanilla;
+
+
+
 go
 create function pagosplanilla(
     @fecha date, 
     @tipo varchar(20),
-    @fechaFin date = NULL     -- Solo será usado si el tipo es 'RangoFecha'
+    @fechaFin date null     
 )
 returns table
 as
 return
 (
-    select p.salario as montopagado, p.CodigoPlanilla as Planilla, p.fechaplanilla
-    from planilla p
+    select 
+        Planilla, 
+        FechaPlanilla, 
+        MontoPagado
+    from 
+        verPago
     where 
         (
-            (@tipo = 'mes-año' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) = year(@fecha))
-            or (@tipo = 'mes-año' and month(p.fechaplanilla) > month(@fecha) and year(p.fechaplanilla) = year(@fecha)) 
-            or (@tipo = 'mes-año' and year(p.fechaplanilla) > year(@fecha))
-
-			or (@tipo = 'año-mes' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) >= year(@fecha))
-
-
-            or (@tipo = 'mes(año)' and month(p.fechaplanilla) = month(@fecha) and year(p.fechaplanilla) = year(@fecha))
-
-            or (@tipo = 'RangoFecha' AND p.fechaplanilla BETWEEN @fecha AND @fechaFin)
+            (@tipo = 'mes-año' 
+                and (
+                    (month(FechaPlanilla) >= month(@fecha) and year(FechaPlanilla) = year(@fecha))
+                    or (year(FechaPlanilla) > year(@fecha))
+                )
+            )
+            or (@tipo = 'año-mes' 
+                and (
+                    (month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) >= year(@fecha))
+                )
+            )
+            or (@tipo = 'mes(año)' 
+                and (month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) = year(@fecha))
+            )
+            or (@tipo = 'RangoFecha' 
+                and FechaPlanilla between @fecha and isnull(@fechaFin, @fecha))
         )
 );
 
+--TODO ESTO ES PARA MOSTRAR EL PAGO DE PLANILLA
+--SELECT * 
+--FROM pagosplanilla('2024-11-01', 'mes(año)',null);
 
 
 
-go 
-create function pagosplanilladep(@mes date, @tipo varchar(20), @fechafin date null) 
-returns table
-as
-return (
+
+--TODO ESTO ES PARA PLANILLA DEPARTAMENTO
+go
+create view depPlanilla as 
     select 
         d.Nombre as nombredepar, 
+		p.FechaPlanilla ,
         sum(p.salario) as montopagado
     from 
         planilla as p
@@ -2183,101 +2202,126 @@ return (
         empleado as e on p.cedulaempleado = e.cedula
     join 
         departamento as d on e.codigodepartamento = d.codigo
-    where 
-        (
-            (@tipo = 'mes' and month(@mes) = month(p.fechaplanilla) and year(@mes) = year(p.fechaplanilla)) 
-            OR 
-            (@tipo = 'mes(año)' and format(p.fechaplanilla, 'MM/yyyy') = format(@mes, 'MM/yyyy')) 
-            OR
-            (@tipo = 'rangofecha' and p.fechaplanilla between @mes and @fechafin)
-        )
-    group by 
-        d.Nombre
-);
+	group by
+	d.Nombre, 
+	p.FechaPlanilla 
 
-
-select * from pagosPlanillaDep('12/1/2024','mes(año)',null)
-
-
-
-
-
-
-
-
-
-
-
-create function VentaSector (
-    @tipo VARCHAR(20), 
-    @fecha DATE, 
-    @fechafin DATE NULL
+--select * from depPlanilla
+--drop function pagosplanilladep
+go
+create function pagosplanilladep(
+    @mes date, 
+    @tipo varchar(20), 
+    @fechafin date null
 )
 returns table
 as
-return
-(
-    SELECT 
+return (
+    select 
+        dp.nombredepar, 
+        dp.montopagado
+    from 
+        depPlanilla dp
+    where 
+        (
+            (@tipo = 'mes' and month(@mes) = month(dp.FechaPlanilla) and year(@mes) = year(dp.FechaPlanilla)) 
+            OR 
+            (@tipo = 'mes(año)' and format(dp.FechaPlanilla, 'MM/yyyy') = format(@mes, 'MM/yyyy')) 
+            OR
+            (@tipo = 'rangofecha' and dp.FechaPlanilla between @mes and @fechafin)
+        )
+);
+
+
+
+--select * from pagosPlanillaDep('11/1/2024','mes(año)',null)
+--TODO ESTO ES PARA PLANILLA DEPARTAMENTO
+
+
+
+--------------------------------------------------------------------------------------
+--TODO ESTO ES PARA LAS VENTAS POR ZONA Y LA FUNCION EL COMO LA USE
+
+go
+create view VentasZonas as 
+
+    select 
         s.Nombre as Sector,
         s.Descripcion as descripcionsector,
-        SUM(a.PrecioEstandar * lf.CantidadProducto) as monto
-    FROM 
+		f.FechaFactura,
+        sum(a.PrecioEstandar * lf.CantidadProducto) as monto
+    from 
         ListaFactura as lf
-    JOIN 
+    join 
         Factura as f on lf.CodigoF = f.Codigo
-    JOIN 
+    join 
         Cliente as c on f.CedulaCliente = c.Cedula
-    JOIN 
+    join 
         Articulo as a on lf.Codigo = a.Codigo
-    JOIN 
+    join 
         Sector as s on c.Sector = s.Nombre
-    where 
-        (@tipo = 'mes(año)' and year(f.FechaFactura) = year(@fecha) and month(f.FechaFactura) = month(@fecha))
-        or 
-        (@tipo = 'RangoFecha' and f.FechaFactura between @fecha and isnull(@fechafin, @fecha))
-    group by 
-        s.Nombre, s.Descripcion
-);
-SELECT * 
-FROM dbo.VentaSector('mes(año)', '2024-05-01', NULL);
-
-SELECT * 
-FROM dbo.VentaSector('RangoFecha', '2024-01-01', '2024-03-31');
-
---Asi es como lo hacia antes
-go
-create view VentaSector as
-select 
-	s.Nombre as Sector,
-    s.Descripcion as descripcionsector, 
-    sum(a.PrecioEstandar * lf.CantidadProducto) as monto
-from ListaFactura as lf
-join Factura as f on lf.CodigoF = f.Codigo
-join Cliente as c on f.CedulaCliente = c.Cedula
-join Articulo as a on lf.Codigo = a.Codigo
-join Sector as s on c.Sector = s.Nombre  
-group by 
+	group by
 	s.Nombre,
-    s.Descripcion;  
-
-
---select * from VentaSector
-
-
-
---Forma nueva de ver las ventas por zona 
-create function ventazona (
+	s.Descripcion,
+	f.FechaFactura
+	
+go
+create function VentaSector (
     @tipo varchar(20), 
     @fecha date, 
-    @fechafin date = null
+    @fechafin date null
 )
 returns table
 as
 return
 (
     select 
+        v.Sector,
+        v.DescripcionSector,
+        SUM(v.monto) as Monto
+    from 
+        VentasZonas as v
+    where 
+        (
+            -- Filtro por mes y año
+            (@tipo = 'mes(año)' and year(v.FechaFactura) = year(@fecha) and month(v.FechaFactura) = month(@fecha))
+            or 
+            -- Filtro por rango de fechas
+            (@tipo = 'RangoFecha' and v.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+        )
+    group by 
+        v.Sector, v.DescripcionSector
+);
+
+--SELECT * 
+--FROM dbo.VentaSector('mes(año)', '2024-05-01', NULL);
+
+--SELECT * 
+--FROM dbo.VentaSector('RangoFecha', '2024-01-01', '2024-03-31');
+--TODO ESTO ES PARA LAS VENTAS POR ZONA Y LA FUNCION EL COMO LA USE
+
+
+--------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------
+--select * from VentaSector
+go
+create view ZonaVenta as 
+ select 
         z.nombre as zona,
         z.descripcion as descripcionzona,
+		f.FechaFactura,
         sum(a.precioestandar * lf.cantidadproducto) as monto
     from 
         listafactura as lf
@@ -2289,86 +2333,120 @@ return
         articulo as a on lf.codigo = a.codigo
     join 
         zona as z on c.zona = z.nombre
+	group by
+	z.Nombre,
+	z.descripcion,
+	f.FechaFactura
+
+
+go
+create function ventazona2 (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date null
+)
+returns table
+as
+return
+(
+    select 
+        z.zona,
+        z.descripcionzona,
+        sum(z.monto) as monto
+    from 
+        ZonaVenta as z
     where 
-        (@tipo = 'mes(año)' and year(f.fechafactura) = year(@fecha) and month(f.fechafactura) = month(@fecha))
-        or 
-        (@tipo = 'rangofecha' and f.fechafactura between @fecha and isnull(@fechafin, @fecha))
+        (
+            -- Filtro por mes y año
+            (@tipo = 'mes(año)' and year(z.FechaFactura) = year(@fecha) and month(z.FechaFactura) = month(@fecha))
+            OR 
+            -- Filtro por rango de fechas
+            (@tipo = 'rangofecha' and z.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+        )
     group by 
-        z.nombre, z.descripcion
+        z.zona, z.descripcionzona
 );
 
---Forma vieja
-go
-create view VentaZona as
-select 
-	z.Nombre as Zona,
-    z.Descripcion as descripcionZona, 
-    sum(a.PrecioEstandar * lf.CantidadProducto) as monto
-from ListaFactura as lf
-join Factura as f on lf.CodigoF = f.Codigo
-join Cliente as c on f.CedulaCliente = c.Cedula
-join Articulo as a on lf.Codigo = a.Codigo
-join Zona as z on c.Zona = z.Nombre  
-group by 
-	z.Nombre
-    z.Descripcion;  
---	select * from VentaZona
+--SELECT * 
+--FROM dbo.ventazona2('mes(año)', '2024-05-01', NULL);
+--Forma nueva de ver las ventas por zona 
+
+--------------------------------------------------------------------------------------
 
 
---Este es es el de Ventas por departamento
-go 
-create view comparacionDepartamento as
-select d.Nombre as Departamento, sum(lf.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento from ListaFactura as lf 
-join Factura as f on lf.CodigoF = f.Codigo
-join Empleado as e on f.CedulaEmpleado = e.Cedula
-join Articulo as a on lf.Codigo = a.Codigo
-join Departamento as d on e.CodigoDepartamento = d.Codigo
-group by 
-	d.Nombre
-
-	--select * from comparacionDepartamento
-
-
+--drop view topclientes
   --Todo esto es para ver cliente top 10
 go
-create view vistatopclientesascendente as
+create view topclientes as
 select top 10 
     c.nombre as cliente,
-    sum(lf.cantidadproducto * a.precioestandar) as monto
+    sum(lf.cantidadproducto * a.precioestandar) as monto,
+	f.FechaFactura
 from listafactura as lf
 join factura as f on lf.codigof = f.codigo
 join cliente as c on f.cedulacliente = c.cedula
 join articulo as a on lf.codigo = a.codigo
-group by c.nombre
-order by monto asc;
+group by c.nombre, 
+f.FechaFactura
 
-
+--select * from topclientes
+--drop function top10ClientesAscendente
 go
-create view vistatopclientesdescendente as
-select top 10 
-    c.nombre as cliente,
-    sum(lf.cantidadproducto * a.precioestandar) as monto
-from listafactura as lf
-join factura as f on lf.codigof = f.codigo
-join cliente as c on f.cedulacliente = c.cedula
-join articulo as a on lf.codigo = a.codigo
-group by c.nombre
-order by monto desc;
-
-go
-create procedure top10cliente
-    @tipo varchar(10)
+create function top10ClientesAscendente(@tipo varchar(20) = null, @fecha date = null, @fin date = null)
+returns table
 as
-begin
-    if @tipo = 'ascendente'
-    begin
-        select * from vistatopclientesascendente;
-    end
-    else
-    begin
-        select * from vistatopclientesdescendente;
-    end
-end;
+return (
+    select top 10
+        t.cliente,
+        t.monto,
+        t.FechaFactura
+    from topclientes t
+    -- Filtrado de fechas según el tipo
+    where 
+        (
+            -- Si el tipo es 'mes(año)', se filtra por el mes y año de @fecha
+            (@tipo = 'mes(año)' and format(t.FechaFactura, 'MM/yyyy') = format(@fecha, 'MM/yyyy')) 
+            
+            -- Si el tipo es 'rangofecha', se filtra entre las fechas @fecha y @fin
+            or (@tipo = 'rangofecha' and t.FechaFactura between @fecha and @fin)
+            
+            -- Si el tipo es 'cualquier' o es nulo, no se filtra por fecha
+            or (@tipo is null or @tipo = 'cualquier') 
+        )
+    -- Ordenar Ascendentemente
+    order by t.monto ASC  -- Orden ascendente
+);
+
+
+--select * from dbo.top10ClientesAscendente(null, null, null);
+
+go
+create function top10ClientesDescendente(@tipo varchar(20) null, @fecha date null, @fin date null)
+returns table
+as
+return (
+    select top 10
+        t.cliente,
+        t.monto,
+        t.FechaFactura
+    from topclientes t
+    -- Filtrado de fechas según el tipo
+    where 
+        (
+            (@tipo = 'mes(año)' and format(t.FechaFactura, 'MM/yyyy') = format(@fecha, 'MM/yyyy')) 
+            or
+            (@tipo = 'rangofecha' and t.FechaFactura between @fecha and @fin)
+            or
+            (@tipo is null or @tipo = 'cualquier') -- Si @tipo es nulo o 'cualquier', no se filtra por fecha
+        )
+    -- Ordenar Descendentemente
+    order by t.monto DESC  -- Orden descendente
+);
+
+--select * from dbo.top10ClientesDescendente(null, null, null);
+
+
+
 
   --Todo esto es para ver cliente top 10
 
@@ -2387,43 +2465,53 @@ go
 
 
 
-
-
-
-
-
-
-  
---Ver familia de productos más vendidos
---Asi pueden ser las demás jejeje
-go
-create function FamiliaArt (
-    @tipo varchar(20), 
-    @fecha date, 
-    @fechafin date NULL
-)
-returns table 
-as
-return
-(
+  go
+  create view familiaA as
     select 
         fm.Nombre as NombreFamilia, 
+		f.FechaFactura,
         sum(lf.CantidadProducto * a.PrecioEstandar) as MontoVendido
     from 
         ListaFactura as lf
     join 
-        Factura as f on lf.CodigoF = f.Codigo
+        Factura as f on lf.CodigoF = f.Codigo 
     join 
         Articulo as a on lf.Codigo = a.Codigo
     join 
         Familia as fm on a.CodigoFamilia = fm.CodigoFamilia
+	group by 
+	fm.Nombre,
+	F.FechaFactura
+
+
+  --drop function FamiliaArt
+--Ver familia de productos más vendidos
+--Asi pueden ser las demás jejeje
+go
+CREATE FUNCTION FamiliaArt (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date null
+)
+returns table
+as
+return
+(
+    select 
+        fa.NombreFamilia,
+        sum(fa.MontoVendido) as TotalVendido
+    from 
+        familiaA as fa
     where 
-        (@tipo = 'mes(año)' and year(f.FechaFactura) = year(@fecha) AND month(f.FechaFactura) = month(@fecha))
-        or 
-        (@tipo = 'RangoFecha' and f.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+        (
+            (@tipo = 'mes(año)' and year(fa.FechaFactura) = year(@fecha) and month(fa.FechaFactura) = month(@fecha))
+            OR 
+            (@tipo = 'rangofecha' and fa.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+        )
     group by 
-        fm.Nombre
+        fa.NombreFamilia
 );
+
 
 
 
@@ -2441,13 +2529,82 @@ group by b.Nombre;
 
 
 
-select * from SacarIngreso
+--select * from SacarIngreso
 
 go
 create view SacarSalida as
 select b.Nombre as Bodega,count(sl.IDFactura) CantidadEntrada from SalidaMovimiento as sl
 join Bodega as b on sl.CodigoBodega = b.Codigo
 group by b.Nombre;
+
+
+
+GO
+CREATE FUNCTION tipoMovimientoS(
+    @tipo varchar(20) null, 
+    @fecha date null, 
+    @fin date null
+)
+returns table
+as
+return
+(
+    select 
+        Bodega, 
+        CantidadEntrada
+    from 
+        SacarSalida
+    where
+        (
+            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate())
+        )
+        OR 
+        (
+            @tipo = 'RangoFecha' and @fecha between @fecha and @fin
+        )
+        OR 
+        (
+            @tipo is null
+        )
+);
+
+--select * from tipoMovimientoM(null,null,null)
+
+
+
+
+GO
+create function tipoMovimientoM(
+    @tipo varchar(20) null, 
+    @fecha date null, 
+    @fin date null
+)
+returns table
+as
+return
+(
+    select 
+        Bodega, 
+        CantidadEntrada
+    from 
+        SacarIngreso
+    where
+        (
+            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate())
+        )
+        or 
+        (
+            @tipo = 'RangoFecha' and @fecha between @fecha and @fin
+        )
+        or 
+        (
+            @tipo is null
+        )
+
+);
+
+
+
 
 
 --Funcion por si el usuario prefiere si es de entrada o salida
@@ -2463,20 +2620,127 @@ group by b.Nombre;
 
 
 
-
+--TODO ESTO ES PARA LAS COTIZACIONES POR DEPARTAMENTO
 
 --Esto es para ver las cotizaciones por departamento
 go 
 create view comparacionDepartamentoC as
-select d.Nombre as Departamento, sum(lc.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento from ListaCotizacion as lc 
+select d.Nombre as Departamento, sum(lc.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, C.FechaCotizacion from ListaCotizacion as lc 
 join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
 join Empleado as e on c.CedulaEmpleado = e.Cedula
 join Articulo as a on lc.CodigoProducto = a.Codigo
 join Departamento as d on e.CodigoDepartamento = d.Codigo
 group by 
-	d.Nombre
+	d.Nombre,
+	C.FechaCotizacion
 
---	select * from comparacionDepartamentoC
+	--select * from comparacionDepartamentoC
+go
+CREATE FUNCTION cotizacionespordepartamento (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date null
+)
+returns table
+as
+return
+(
+    select 
+        Departamento,
+        sum(MontoxDeparmento) as MontoCotizaciones
+    from 
+        comparacionDepartamentoC
+    where 
+        (@tipo = 'mes(año)' 
+         and year(FechaCotizacion) = year(@fecha) 
+         and month(FechaCotizacion) = month(@fecha))
+        or 
+        (@tipo = 'rangofecha' 
+         and FechaCotizacion between @fecha and isnull(@fechafin, @fecha))
+    group by 
+        Departamento
+);
+
+
+--TODO ESTO ES PARA LAS COTIZACIONES POR DEPARTAMENTO
+
+
+
+--TODO ESTO ES PARA LAS COTIZACIONES POR FACTURA
+
+drop view comparacionDepartamento
+	--Este es es el de Ventas por departamento
+go 
+create view comparacionDepartamento as
+select d.Nombre as Departamento, sum(lf.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, f.FechaFactura as Fecha from ListaFactura as lf  
+join Factura as f on lf.CodigoF = f.Codigo
+join Empleado as e on f.CedulaEmpleado = e.Cedula
+join Articulo as a on lf.Codigo = a.Codigo
+join Departamento as d on e.CodigoDepartamento = d.Codigo
+group by 
+	d.Nombre,
+	f.FechaFactura
+
+--Este es el nuevo de ventas por departamento 
+go
+create function ventaspordepartamento (
+    @tipo varchar(20), 
+    @fecha date, 
+    @fechafin date null
+)
+returns table
+as
+return
+(
+    select 
+        Departamento as Departamento,
+        sum(MontoxDeparmento) as MontoVentas
+    from 
+        comparacionDepartamento
+    where 
+        (@tipo = 'mes(año)' 
+         and year(Fecha) = year(@fecha) 
+         and month(Fecha) = month(@fecha))
+        or 
+        (@tipo = 'rangofecha' 
+         and Fecha between @fecha and isnull(@fechafin, @fecha))
+    group by 
+        Departamento
+);
+--TODO ESTO ES PARA LAS  VENTAS POR FACTURA
+
+
+
+
+--ASI ES COMO DEBE DE FUNCIONAR LAS FUNCIONES s
+go
+create function ventaspordepartamento2(
+    @tipo varchar(20),
+    @fecha date,
+    @fechafin date null
+)
+returns table
+as
+return
+(
+    select 
+        cd.Departamento,
+        cd.MontoxDeparmento as montoventas
+    from comparacionDepartamento as cd
+    where 
+        (@tipo = 'mes(año)' and year(cd.Fecha) = year(@fecha) and month(cd.Fecha) = month(@fecha))
+        or 
+        (@tipo = 'rangofecha' and cd.Fecha between @fecha and isnull(@fechafin, @fecha))
+);
+
+-- Probar la función para un mes específico del año
+--select * 
+--from dbo.ventaspordepartamento('mes(año)', '2024-11-01', null);
+
+
+
+
+
 
 
 
@@ -2510,3 +2774,462 @@ end;
 
 
 --exec ProductosCot 'Ascendente'
+
+
+
+
+
+--Ventas y cotizaciones por mes, por año
+--drop view cotizacionesMes
+go
+create view  cotizacionesMes as
+select month(c.FechaCotizacion) as mesCotizacion, year(c.FechaCotizacion) as añoCotizacion ,  sum(lc.CantidadProducto * a.PrecioEstandar) as total, 'Cotizacion' as tipo from ListaCotizacion as lc
+join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
+join Articulo as a on lc.CodigoProducto = a.Codigo
+group by month(c.FechaCotizacion), year(c.FechaCotizacion)
+select * from cotizacionesMes
+
+--drop view VentasMes
+go
+create view VentasMes as 
+select month(f.FechaFactura) as mesFactura,  year(f.FechaFactura) as añoFactura,  sum(lf.CantidadProducto *  a.PrecioEstandar) as total, 'Venta' as tipo
+ from ListaFactura as lf
+join Factura as f on lf.CodigoF = f.Codigo
+join Articulo as a on lf.Codigo = a.Codigo
+group by month(f.FechaFactura), year(f.FechaFactura)
+
+--select * from VentasMes
+
+go
+create function Combinado()
+returns table
+as
+return
+(
+    select 
+        mesCotizacion as mes, 
+        añoCotizacion as año, 
+        total, 
+        tipo
+    from 
+        cotizacionesMes
+    union all
+    select 
+        mesFactura as mes, 
+        añoFactura as año, 
+        total, 
+        tipo
+    from 
+        VentasMes
+)
+
+--select * from Combinado()
+
+
+
+--Todo esto es Cantidad de clientes por zona y monto ventas por zona. 
+
+--drop view ClientesZonaVentas
+go
+create view ClientesZonaVentas as
+select 
+    z.Nombre as Zona, 
+    count(distinct c.Cedula) as ClientesZona, 
+    sum(lf.CantidadProducto * a.PrecioEstandar) as TotalVenta,  
+	f.FechaFactura
+from 
+    ListaFactura as lf
+join 
+    Factura as f on lf.CodigoF = f.Codigo
+join 
+    Cliente as c on f.CedulaCliente = c.Cedula
+join 
+    Articulo as a on lf.Codigo = a.Codigo
+join 
+    Zona as z on c.Zona = z.Nombre
+group by 
+    z.Nombre,
+	f.FechaFactura
+
+	--select * from ClientesZonaVentas
+
+
+go	
+create function verClientesZonasAscendente(@tipo varchar(20) null, @fecha date null, @fin date null)
+returns table
+as
+return
+(
+    select top 100 
+        Zona,
+        ClientesZona,
+        TotalVenta,
+        FechaFactura
+    from 
+        ClientesZonaVentas
+    where 
+        (
+            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)
+        )
+        or 
+        (
+            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin
+        )
+        or 
+        (
+            @tipo is null
+        )
+    order by ClientesZona asc  -- Orden ascendente
+);
+
+
+
+
+go
+create function verClientesZonasDescendente(@tipo varchar(20) null, @fecha date null, @fin date null)
+returns table
+as
+return
+(
+    select top 100 
+        Zona,
+        ClientesZona,
+        TotalVenta,
+        FechaFactura
+    from 
+        ClientesZonaVentas
+    where 
+        (
+            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)
+        )
+        or 
+        (
+            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin
+        )
+        or 
+        (
+            @tipo is null
+        )
+    order by ClientesZona desc  
+);
+
+
+--drop view verTop15Tareas
+go
+create view verTop15TareasASC as
+select top 15 CodigoTarea, Fecha, Descripcion, Estado 
+from Tarea 
+where Estado = 'En proceso' or Estado = 'Iniciada'
+order by Fecha ASC
+
+
+
+go
+create view verTop15TareasDESC as
+select top 15 CodigoTarea, Fecha, Descripcion, Estado 
+from Tarea 
+where Estado = 'En proceso' or Estado = 'Iniciada'
+order by Fecha desc
+
+--select * from verTop15Tareas
+
+
+--drop function verTareasAsc
+-- Crear la función que devuelve tareas filtradas según tipo y rango de fechas
+go
+create function verTareasDesc(
+    @tipo varchar(20) null, 
+    @fecha date null, 
+    @fin date null
+)
+returns table
+as
+return
+(
+    select 
+        CodigoTarea, 
+        Fecha, 
+        Descripcion, 
+        Estado
+    from 
+        verTop15TareasDESC  
+    where 
+        (
+            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) and month(Fecha) = month(@fecha)
+        )
+        or 
+        (
+            @tipo = 'RangoFecha' and Fecha between @fecha and @fin
+        )
+        or 
+        (
+            @tipo is null
+        )
+);
+GO
+
+
+
+--select * from verTareasAsc(null,null,null)
+
+go
+create function verTareasAsc(
+    @tipo varchar(20) null, 
+    @fecha date null, 
+    @fin date null
+)
+returns table
+as
+return
+(
+    select 
+        CodigoTarea, 
+        Fecha, 
+        Descripcion, 
+        Estado
+    from 
+        verTop15TareasASC 
+    where 
+        (
+            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) AND month(Fecha) = month(@fecha)
+        )
+        or 
+        (
+            @tipo = 'RangoFecha' AND Fecha BETWEEN @fecha AND @fin
+        )
+        or 
+        (
+            @tipo is null
+        )
+);
+GO
+
+
+--drop view
+--Revisar si borrar
+select b.Nombre as Bodega, sum(lf.CantidadProducto) as TotalTransados
+from ListaFactura as lf
+join Factura as f on lf.CodigoF = f.Codigo
+join Articulo as a on lf.Codigo = a.Codigo
+join FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
+join Bodega as b on fb.CodigoBodega = b.Codigo
+group by b.Nombre
+
+
+--drop view transadosentrada
+
+create view transadosentrada as
+select 
+    b.Nombre as Bodega, 
+    sum(lf.CantidadProducto) as TotalTransados, 
+    f.FechaFactura
+from 
+    ListaFactura as lf
+join 
+    Factura as f on lf.CodigoF = f.Codigo
+join 
+    Articulo as a on lf.Codigo = a.Codigo
+join 
+    FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
+join 
+    Bodega as b on fb.CodigoBodega = b.Codigo
+group by 
+    b.Nombre, f.FechaFactura;
+
+
+--	select * from transadosentrada
+	--drop view transadosTotales
+
+create view transadosTotales as
+select 
+    te.Bodega,
+    isnull(te.TotalTransados, 0) + isnull(ts.TotalTransados, 0) as TotalTransados,
+    te.FechaFactura as FechaEntrada,
+    ts.Fecha as FechaSalida
+from 
+    transadosentrada as te
+left join 
+    transadosSalida as ts ON te.Bodega = ts.Bodega;
+
+
+	--select * from transadosTotales
+go
+create view transadosSalida as
+SELECT 
+    b.Nombre as Bodega, 
+    sum(sm.Cantidad) as TotalTransados, 
+    sm.Fecha
+from 
+    SalidaMovimiento as sm
+join 
+    Bodega as b on sm.CodigoBodega = b.Codigo
+join 
+    Articulo as a on sm.CodigoProducto = a.Codigo
+group by 
+    b.Nombre, sm.Fecha;
+
+
+
+	--select * from transadosSalida
+
+
+	--drop function BodegasTransadosf
+
+create function BodegasTransadosf (
+    @tipo varchar(20) NULL, 
+    @fecha date NULL, 
+    @fin date NULL
+)
+returns table
+as
+return
+(
+    select 
+        te.Bodega,
+        isnull(sum(te.TotalTransados), 0) + isnull(sum(ts.TotalTransados), 0) as TotalTransados,
+        te.FechaFactura 
+    from 
+        transadosentrada as te
+    left join 
+        transadosSalida as ts on te.Bodega = ts.Bodega
+    where
+        (
+            (@tipo is null) or
+
+            (@tipo = 'mes(año)' and 
+                year(te.FechaFactura) = year(@fecha) and 
+                month(te.FechaFactura) = month(@fecha)
+            ) or
+
+            (@tipo = 'rangoFecha' and 
+                te.FechaFactura between @fecha and isnull(@fin, @fecha)
+            )
+        )
+    group by
+        te.Bodega, te.FechaFactura  -- Agrupar por Bodega y FechaFactura
+);
+
+
+
+
+--select * from dbo.BodegasTransadosf(null,null,null)
+
+
+
+
+
+
+
+
+
+
+
+
+go
+create function BodegasTransados (
+    @tipo varchar(20) NULL, 
+    @fecha date NULL, 
+    @fin date NULL
+)
+returns table
+as
+return
+(
+    select 
+        te.Bodega,
+        isnull(sum(te.TotalTransados), 0) + isnull(sum(ts.TotalTransados), 0) as TotalTransados
+    from 
+        transadosentrada as te
+    left join 
+        transadosSalida as ts on te.Bodega = ts.Bodega
+    where
+        (
+            (@tipo is null) or
+
+            (@tipo = 'mes(año)' and 
+                year(te.FechaFactura) = year(@fecha) AND 
+                month(te.FechaFactura) = month(@fecha)
+            ) or
+
+            (@tipo = 'rangoFecha' and 
+                te.FechaFactura between @fecha and isnull(@fin, @fecha)
+            )
+        )
+    group by
+        te.Bodega  
+);
+
+--select *
+
+
+
+--select * from dbo.BodegasTransados(null,null,null)
+
+
+
+
+
+--Estos son sin filtro
+
+--drop view transadosentradaNOF
+go
+create view transadosentradaNOF as
+select 
+    b.Nombre as Bodega, 
+    sum(lf.CantidadProducto) as TotalTransados
+from 
+    ListaFactura as lf
+join 
+    Factura as f on lf.CodigoF = f.Codigo
+join 
+    Articulo as a on lf.Codigo = a.Codigo
+join 
+    FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
+join 
+    Bodega as b on fb.CodigoBodega = b.Codigo
+group by 
+    b.Nombre;
+
+
+	--select * from transadosentradaNOF
+
+	--drop view transadosTotalesNOF
+go
+create view transadosTotalesNOF as
+select 
+    te.Bodega,
+    isnull(sum(te.TotalTransados), 0) + isnull(sum(ts.TotalTransados), 0) as TotalTransados
+from 
+    transadosentrada te
+left join 
+    transadosSalida ts on te.Bodega = ts.Bodega
+group by 
+    te.Bodega;
+
+
+	--select * from transadosTotalesNOF
+
+
+--	select * from transadosTotalesNOF
+
+create view transadosSalidaNOF as
+select 
+    b.Nombre as Bodega, 
+    sum(sm.Cantidad) as TotalTransados
+from 
+    SalidaMovimiento as sm
+join 
+    Bodega as b on sm.CodigoBodega = b.Codigo
+join 
+    Articulo as a on sm.CodigoProducto = a.Codigo
+group by 
+    b.Nombre;
+
+	--select * from transadosSalidaNOF
+
+
+
+
+
+
+--SELECT * FROM dbo.BodegasTransados(null,null,null) ORDER BY TotalTransados desc

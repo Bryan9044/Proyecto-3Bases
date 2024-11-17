@@ -1,0 +1,1504 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h2>Proyecto #3 de bases</h2>
+
+<form method="post">
+    <button type="submit" class="btn btn-primary">Mostrar Tareas</button>
+</form>
+<br />
+
+<form method="post" id="formShowPagoPlanillas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFechaPagoPlanillas">
+        Mostrar Pago de Planillas
+    </button>
+</form>
+<br />
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFechaPagoPlanillasDEP">
+    Pago de planillas por departamento
+</button>
+
+<br />
+
+
+<form method="post" id="formShowVerTipoMovimiento">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTipoMovimiento">
+        Cantidad de movimientos
+    </button>
+</form>
+<br />
+<form method="post" id="formShowVerProductos">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTopProductos">
+        Top productos
+    </button>
+</form>
+<br />
+
+
+
+<form method="post" id="formShowVerSectores">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSectores">
+        Ventas por sector
+    </button>
+</form>
+<br />
+
+<form method="post" id="formShowVerZonas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalZonas">
+        Ventas por zona
+    </button>
+</form>
+<br />
+
+<form method="post" id="formShowVercotizacionesVentas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCotizacionesVentas">
+        Cotizaciones y ventas por Departamento
+    </button>
+</form>
+<br />
+
+
+<form method="post" id="formShowVerVentas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalVentas">
+        Ventas por departamento
+    </button>
+</form>
+<br />
+<form method="post" asp-page-handler="ShowVentasCotizacionesFactura">
+    <button type="submit" class="btn btn-primary" id="openModalButton">
+        Ventas y cotizaciones
+    </button>
+</form>
+
+
+<br />
+<form method="post" id="formShowTOP10CLIENTES">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal10Clientes">
+         Top 10 clientes 
+    </button>
+</form>
+<br />
+
+<form method="post" id="formShowClientesZona">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalZonaClientes">
+        Mostrar clientes y zonas
+    </button>
+</form>
+<br />
+
+<form method="post" id="formShowTopTareas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTop15Tareas">
+        Top 15 tareas sin cerrar
+    </button>
+</form>
+<br />
+
+
+
+<form method="post" id="formShowTopBodegas">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTOPBODEGAS">
+        Top Bodegas
+    </button>
+</form>
+<br />
+
+
+
+<!-- Esto es para ver si se mostraban los clientes-->
+
+<div class="container mt-4">
+    @if (Model.Clientes != null && Model.Clientes.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Fecha de Factura</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cliente in Model.Clientes)
+                {
+                    <tr>
+                        <td>@cliente.Cliente</td>
+                        <td>@cliente.Monto</td>
+                        <td>@cliente.FechaFactura.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No se encontraron resultados para la consulta.</p>
+    }
+</div>
+<!-- Esto es para ver si se mostraban los clientes-->
+
+<div class="modal fade" id="modalCotizacionesVentas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowVentasCotizaciones">
+                    <div class="mb-3">
+                        <label for="fechaPago6" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago6" name="fechaPago6" />
+                    </div>
+                    <div class="mb-3" id="fechaPago6Container" style="display: none;">
+                        <label for="fechaPago7" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago7" name="fechaPago7" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha6" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha6" name="formatoFecha6" required onchange="toggleFechaPago6()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago6() {
+        const formato = document.getElementById("formatoFecha6").value;
+        const fechaPago6Container = document.getElementById("fechaPago6Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago6Container.style.display = "block";
+        } else {
+            fechaPago6Container.style.display = "none";
+        }
+    }
+</script>
+
+<canvas id="bartComparacion" width="400" height="200"></canvas>
+
+@if (Model.DeparmentosJuntos != null && Model.VentasDEP != null && Model.CotizacionesDEP.Count > 0)
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('bartComparacion').getContext('2d');
+
+            // Obtenemos los datos desde el backend (pasados a través de Razor)
+            var departamentos = @Html.Raw(Json.Serialize(Model.DeparmentosJuntos)); // Departamentos
+            var ventas = @Html.Raw(Json.Serialize(Model.VentasDEP)); // Valores de Ventas
+            var cotizaciones = @Html.Raw(Json.Serialize(Model.CotizacionesDEP)); // Valores de Cotizaciones
+
+            // Creamos los datos para el gráfico
+            var ventasData = {
+                label: 'Ventas',
+                data: ventas,  // Datos de ventas
+                backgroundColor: 'blue' // Color para las ventas
+            };
+
+            var cotizacionesData = {
+                label: 'Cotizaciones',
+                data: cotizaciones,  // Datos de cotizaciones
+                backgroundColor: 'green' // Color para las cotizaciones
+            };
+
+            // Combina las ventas y las cotizaciones en un solo conjunto de datos
+            var data = {
+                labels: departamentos,  // Departamentos
+                datasets: [ventasData, cotizacionesData] // Añade los datasets para ventas y cotizaciones
+            };
+
+            // Configuración del gráfico
+            var config = {
+                type: 'bar',  // Tipo de gráfico (barra)
+                data: data,   // Datos
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            // Crear el gráfico
+            var myChart = new Chart(ctx, config); // Aquí usas el ctx correcto
+        });
+    </script>
+}
+
+
+
+
+<div class="modal fade" id="modalSectores" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowSectorVentas">
+                    <div class="mb-3">
+                        <label for="fechaPago4" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago4" name="fechaPago4" />
+                    </div>
+                    <div class="mb-3" id="fechaPago4Container" style="display: none;">
+                        <label for="fechaPago5" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago5" name="fechaPago5" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha4" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha4" name="formatoFecha4" required onchange="toggleFechaPago4()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago4() {
+        const formato = document.getElementById("formatoFecha4").value;
+        const fechaPago4Container = document.getElementById("fechaPago4Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago4Container.style.display = "block";
+        } else {
+            fechaPago4Container.style.display = "none";
+        }
+    }
+</script>
+
+
+<canvas id="pieChartSector" width="400" height="400"></canvas>
+
+@if (Model.NombreSector != null && Model.MontoSector != null && Model.DescripcionSector.Count > 0)
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('pieChartSector').getContext('2d');
+
+            var sectores = @Html.Raw(Json.Serialize(Model.NombreSector));
+            var montos = @Html.Raw(Json.Serialize(Model.MontoSector));
+            var descripciones = @Html.Raw(Json.Serialize(Model.DescripcionSector));
+
+            var backgroundColors = sectores.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`);
+            var borderColors = backgroundColors.map(color => color.replace('0.5', '1'));
+
+            var data = {
+                labels: sectores, 
+                datasets: [{
+                    data: montos, 
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        color: '#000',
+                        formatter: function (value, context) {
+                            return `${value}`; 
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 12 
+                        },
+                        anchor: 'center', 
+                        align: 'center'   
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            
+                            generateLabels: function(chart) {
+                                var labels = chart.data.labels;
+                                var datasets = chart.data.datasets;
+                                var legend = [];
+                                datasets.forEach(function(dataset, i) {
+                                    dataset.data.forEach(function(data, j) {
+                                        legend.push({
+                                            text: `${labels[j]} - ${descripciones[j]}`, 
+                                            fillStyle: dataset.backgroundColor[j], 
+                                            strokeStyle: dataset.borderColor[j] 
+                                        });
+                                    });
+                                });
+                                return legend;
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Inicializar el gráfico
+            new Chart(ctx, {
+                type: 'pie', 
+                data: data,
+                options: options,
+                plugins: [ChartDataLabels]
+            });
+        });
+    </script>
+}
+
+
+<div class="modal fade" id="modalFechaPagoPlanillasDEP" tabindex="-1" aria-labelledby="modalFechaPagoPlanillasDEPLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFechaPagoPlanillasDEPLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowPagoPlanillasDEPA">
+                    <div class="mb-3">
+                        <label for="fechaPago" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago" name="fechaPago" />
+                    </div>
+                    <div class="mb-3" id="fechaPago2Container" style="display: none;">
+                        <label for="fechaPago2" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago2" name="fechaPago2" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha2" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha2" name="formatoFecha2" required onchange="toggleFechaPago2()">
+                            <option value="mes">Mes</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFechaPago2() {
+        const formato = document.getElementById("formatoFecha2").value;
+        const fechaPago2Container = document.getElementById("fechaPago2Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago2Container.style.display = "block";
+        } else {
+            fechaPago2Container.style.display = "none";
+        }
+    }
+</script>
+
+<canvas id="pieChartDEP" width="400" height="400"></canvas>
+
+
+@if (Model.Departamentos != null && Model.MontoPagadoPorMesDEP != null)
+{
+    <div>@Html.Raw(Json.Serialize(Model.Departamentos))</div>
+    <div>@Html.Raw(Json.Serialize(Model.MontoPagadoPorMesDEP))</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <script>
+        // Datos desde el backend
+        var Departamentos = @Html.Raw(Json.Serialize(Model.Departamentos)); // Departamentos
+        var montos = @Html.Raw(Json.Serialize(Model.MontoPagadoPorMesDEP)); // Montos de ventas
+
+        // Función para generar un color aleatorio en formato rgba
+        function generateRandomColor() {
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            var a = 0.6; // Opacidad
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        }
+
+        // Generar colores aleatorios para cada departamento
+        var generatedColors = Departamentos.map(function() {
+            return generateRandomColor();
+        });
+
+        // Calcular el total de ventas para los porcentajes
+        var totalVentas = montos.reduce(function(sum, value) {
+            return sum + value;
+        }, 0);
+
+        // Calcular los porcentajes y almacenarlos
+        var porcentajes = montos.map(function(monto) {
+            return totalVentas > 0 ? ((monto / totalVentas) * 100).toFixed(2) : 0;
+        });
+
+        // Crear el gráfico
+        var ctx = document.getElementById('pieChartDEP').getContext('2d');
+        var ventasChart = new Chart(ctx, {
+            type: 'pie', // Tipo de gráfico "pie"
+            data: {
+                labels: Departamentos,  // Los nombres de los departamentos
+                datasets: [{
+                    label: 'Ventas por Departamento',
+                    data: montos,  // Los montos de ventas
+                    backgroundColor: generatedColors, // Colores aleatorios generados
+                    borderColor: generatedColors,     // Bordes con los mismos colores
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                // Usar el porcentaje calculado previamente
+                                var percentage = porcentajes[tooltipItem.dataIndex];
+                                return tooltipItem.label + ': ' + percentage + '%'; // Mostrar el porcentaje en el tooltip
+                            }
+                        }
+                    },
+                    datalabels: {
+                        // Mostrar el porcentaje dentro de la porción del gráfico
+                        formatter: function(value, context) {
+                            // Usar el porcentaje calculado previamente
+                            var percentage = porcentajes[context.dataIndex];
+                            return percentage + '%';  // Mostrar el porcentaje dentro de las porciones
+                        },
+                        color: '#fff',  // Color de las etiquetas (puedes cambiar este valor)
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        },
+                        anchor: 'center',  // Centrar el texto dentro de cada porción
+                        align: 'center',   // Alineación centrada
+                        offset: 0,         // Sin desplazamiento para estar centrado
+                        padding: 0,        // Sin espaciado entre el texto y la porción
+                        display: function(context) {
+                            // Solo mostrar la etiqueta si el valor es suficientemente grande
+                            return context.dataset.data[context.dataIndex] > 0;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels] // Asegúrate de que el plugin esté incluido aquí
+        });
+    </script>
+}
+else
+{
+    <p>No hay datos disponibles para generar el gráfico.</p>
+}
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="modalFechaPagoPlanillas" tabindex="-1" aria-labelledby="modalFechaPagoPlanillasLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFechaPagoPlanillasLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowPagoPlanillas">
+                    <div class="mb-3">
+                        <label for="fechaPago20" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago20" name="fechaPago20" />
+                    </div>
+                    <div class="mb-3" id="fechaPago1Container" style="display: none;">
+                        <label for="fechaPago21" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago21" name="fechaPago21" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha" name="formatoFecha" required onchange="toggleFechaPago1()">
+                            <option value="mes-año">Mes-Año</option>
+                            <option value="año-mes">Año-Mes</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleFechaPago1() {
+        const formato = document.getElementById("formatoFecha").value;
+        const fechaPago1Container = document.getElementById("fechaPago1Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago1Container.style.display = "block";
+        } else {
+            fechaPago1Container.style.display = "none";
+        }
+    }
+</script>
+
+
+
+<canvas id="barChartPlanilla" width="400" height="200"></canvas>
+
+
+@if (Model.MontoPagadoPorMes != null && Model.MontoPagadoPorMes.Count > 0 && Model.Meses != null && Model.Meses.Count > 0)
+{
+    <script>
+        var ctx = document.getElementById('barChartPlanilla').getContext('2d');
+        var data = {
+            labels: @Html.Raw(Json.Serialize(Model.Meses)),
+            datasets: [{
+                label: 'Monto Pagado por Planilla',
+                data: @Html.Raw(Json.Serialize(Model.MontoPagadoPorMes)),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+        var options = {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+        new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
+    </script>
+}
+
+
+
+<div class="modal fade" id="modalTopProductos" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowTopFamilias">
+                    <div class="mb-3">
+                        <label for="fechaPago3" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago3" name="fechaPago3" />
+                    </div>
+                    <div class="mb-3" id="fechaPago3Container" style="display: none;">
+                        <label for="fechaPago2" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago4" name="fechaPago4" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha3" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha3" name="formatoFecha3" required onchange="toggleFechaPago3()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago3() {
+        const formato = document.getElementById("formatoFecha3").value;
+        const fechaPago3Container = document.getElementById("fechaPago3Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago3Container.style.display = "block";
+        } else {
+            fechaPago3Container.style.display = "none";
+        }
+    }
+</script>
+
+
+
+<br />
+<canvas id="pieChartFAM" width="400" height="400"></canvas>
+
+@if (Model.NombreFamilia != null && Model.MontoFamilia != null)
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('pieChartFAM').getContext('2d');
+
+            var bodegas = @Html.Raw(Json.Serialize(Model.NombreFamilia));
+            var cantidades = @Html.Raw(Json.Serialize(Model.MontoFamilia));
+
+            var backgroundColors = bodegas.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`);
+            var borderColors = backgroundColors.map(color => color.replace('0.5', '1'));
+
+            var data = {
+                labels: bodegas,
+                datasets: [{
+                    data: cantidades,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        color: '#000',
+                        formatter: function (value, context) {
+                            return `${value}`;
+                        },
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            };
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options,
+                plugins: [ChartDataLabels]
+            });
+        });
+    </script>
+}
+
+
+
+
+<div class="modal fade" id="modalZonas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowZonasVentas">
+                    <div class="mb-3">
+                        <label for="fechaPago5" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago5" name="fechaPago5" />
+                    </div>
+                    <div class="mb-3" id="fechaPago5Container" style="display: none;">
+                        <label for="fechaPago6" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago6" name="fechaPago6" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha5" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha5" name="formatoFecha5" required onchange="toggleFechaPago5()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago5() {
+        const formato = document.getElementById("formatoFecha5").value;
+        const fechaPago5Container = document.getElementById("fechaPago5Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago5Container.style.display = "block";
+        } else {
+            fechaPago5Container.style.display = "none";
+        }
+    }
+</script>
+
+
+<canvas id="pieChartZona" width="400" height="400"></canvas>
+
+@if (Model.NombreZona != null && Model.MontoZona != null && Model.DescripcionZona.Count > 0)
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('pieChartZona').getContext('2d');
+
+            var sectores = @Html.Raw(Json.Serialize(Model.NombreZona));
+            var montos = @Html.Raw(Json.Serialize(Model.MontoZona));
+            var descripciones = @Html.Raw(Json.Serialize(Model.DescripcionZona));
+
+            var backgroundColors = sectores.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`);
+            var borderColors = backgroundColors.map(color => color.replace('0.5', '1'));
+
+            var data = {
+                labels: sectores,
+                datasets: [{
+                    data: montos,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            };
+
+            var options = {
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        color: '#000',
+                        formatter: function (value, context) {
+                            return `${value}`;
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        anchor: 'center',
+                        align: 'center'
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+
+                            generateLabels: function(chart) {
+                                var labels = chart.data.labels;
+                                var datasets = chart.data.datasets;
+                                var legend = [];
+                                datasets.forEach(function(dataset, i) {
+                                    dataset.data.forEach(function(data, j) {
+                                        legend.push({
+                                            text: `${labels[j]} - ${descripciones[j]}`,
+                                            fillStyle: dataset.backgroundColor[j],
+                                            strokeStyle: dataset.borderColor[j]
+                                        });
+                                    });
+                                });
+                                return legend;
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Inicializar el gráfico
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options,
+                plugins: [ChartDataLabels]
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="modalVentas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowVentas">
+                    <div class="mb-3">
+                        <label for="fechaPago7" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago7" name="fechaPago7" />
+                    </div>
+                    <div class="mb-3" id="fechaPago7Container" style="display: none;">
+                        <label for="fechaPago8" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago8" name="fechaPago8" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="formatoFecha7" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha7" name="formatoFecha7" required onchange="toggleFechaPago7()">
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago7() {
+        const formato = document.getElementById("formatoFecha7").value;
+        const fechaPago6Container = document.getElementById("fechaPago7Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago7Container.style.display = "block";
+        } else {
+            fechaPago7Container.style.display = "none";
+        }
+    }
+</script>
+<canvas id="piechartVentas" width="400" height="200"></canvas>
+
+
+<script>
+    var Departamentos = @Html.Raw(Json.Serialize(Model.DEPVENTAS2)); 
+    var montos = @Html.Raw(Json.Serialize(Model.VentasDEP2));   
+
+    function generateRandomColor() {
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+        var a = 0.6; 
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+    var generatedColors = Departamentos.map(function() {
+        return generateRandomColor();
+    });
+
+    var totalVentas = montos.reduce(function(sum, value) {
+        return sum + value;
+    }, 0);
+
+    var ctx = document.getElementById('piechartVentas').getContext('2d');
+    var ventasChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Departamentos,  
+            datasets: [{
+                label: 'Ventas por Departamento',
+                data: montos,  
+                backgroundColor: generatedColors, 
+                borderColor: generatedColors,     
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var percentage = ((tooltipItem.raw / totalVentas) * 100).toFixed(2);
+                            return tooltipItem.label + ': ' + percentage + '%'; 
+                        }
+                    }
+                },
+                datalabels: {
+                    formatter: function(value, context) {
+                        var percentage = ((value / totalVentas) * 100).toFixed(2);
+                        return percentage + '%';  
+                    },
+                    color: '#fff',  
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    anchor: 'center',  
+                    align: 'center',   
+                    offset: 0,         
+                    padding: 0,       
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+<!-- Modal de Tipo de Movimiento -->
+<div class="modal fade" id="modalTipoMovimiento" tabindex="-1" aria-labelledby="modalTipoMovimientoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTipoMovimientoLabel">Seleccionar Tipo de Movimiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowVerTipoMovimiento">
+                    <div class="mb-3">
+                        <label for="tipoMovimiento" class="form-label">Tipo de movimiento</label>
+                        <select class="form-control" id="tipoMovimiento" name="tipoMovimiento" required>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Salida">Salida</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaPago47" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago47" name="fechaPago47" />
+                    </div>
+                    <div class="mb-3" id="fechaPago47Container" style="display: none;">
+                        <label for="fechaPago48" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago48" name="fechaPago48" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formatoFecha47" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha47" name="formatoFecha47" onchange="toggleFechaPago47()">
+                            <option value="" selected disabled>Seleccionar formato</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFechaPago47() {
+        const formato = document.getElementById("formatoFecha47").value;
+        const fechaPago47Container = document.getElementById("fechaPago47Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago47Container.style.display = "block";
+        } else {
+            fechaPago47Container.style.display = "none";
+        }
+    }
+</script>
+<canvas id="pieChartMOV" width="400" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+    var bodegas = @Html.Raw(Json.Serialize(ViewData["Bodegas"]));
+    var cantidades = @Html.Raw(Json.Serialize(ViewData["Cantidades"]));
+
+    if (bodegas && cantidades && bodegas.length > 0 && cantidades.length > 0) {
+        var total = cantidades.reduce((acc, val) => acc + val, 0);
+
+        var porcentajes = cantidades.map(cantidad => ((cantidad / total) * 100).toFixed(2));
+
+        var ctx = document.getElementById('pieChartMOV').getContext('2d');
+        var pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: bodegas,
+                datasets: [{
+                    data: cantidades, 
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF6699'], 
+                    hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF6699']
+                }]
+            },
+            options: {
+                responsive: true, 
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                var percentage = porcentajes[tooltipItem.dataIndex];
+                                return tooltipItem.label + ': ' + percentage + '%'; 
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: true, 
+                        formatter: function(value, context) {
+                            var percentage = porcentajes[context.dataIndex];
+                            return percentage + '%'; 
+                        },
+                        color: '#fff', 
+                        font: {
+                            weight: 'bold',
+                            size: 14 
+                        },
+                        align: 'center', 
+                        anchor: 'center' 
+                    }
+                }
+            },
+            plugins: [ChartDataLabels] 
+        });
+    } else {
+        console.log("No hay datos disponibles para el gráfico.");
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="modal10Clientes" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowTOPclientes">
+                    <div class="mb-3">
+                        <label for="fechaPago17" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago17" name="fechaPago17" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="orden" class="form-label">Tipo de orden</label>
+                        <select class="form-select" id="orden" name="orden" required>
+                            <option value="Ascendente">Ascendente</option>
+                            <option value="Descendente">Descendente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="fechaPago17Container" style="display: none;">
+                        <label for="fechaPago18" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago18" name="fechaPago18" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formatoFecha17" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha17" name="formatoFecha17">
+                            <option value="" selected disabled>Seleccionar formato</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFechaPago17() {
+        const formato = document.getElementById("formatoFecha17").value;
+        const fechaPago17Container = document.getElementById("fechaPago17Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago17Container.style.display = "block";
+        } else {
+            fechaPago17Container.style.display = "none";
+        }
+    }
+</script>
+
+
+
+
+@{
+    var ventasCotizaciones = ViewData["VentasCotizaciones"] as List<VentasCotizaciones>;
+}
+
+@if (ventasCotizaciones != null && ventasCotizaciones.Any())
+{
+    <div>
+        <!-- Aquí va el gráfico de barras -->
+        <canvas id="ventasCotizacionesChart"></canvas>
+    </div>
+
+    <script>
+        var ventasCotizaciones = @Html.Raw(Json.Serialize(ventasCotizaciones)); 
+
+        var groupedData = {};
+
+        ventasCotizaciones.forEach(function(item) {
+            var yearMonth = item.año + '-' + item.mes; 
+            if (!groupedData[yearMonth]) {
+                groupedData[yearMonth] = { ventas: 0, cotizaciones: 0 };
+            }
+            if (item.tipo === 'Venta') {
+                groupedData[yearMonth].ventas += item.total; 
+            } else if (item.tipo === 'Cotizacion') {
+                groupedData[yearMonth].cotizaciones += item.total; 
+            }
+        });
+
+        var labels = Object.keys(groupedData);
+        var ventasData = labels.map(function(label) { return groupedData[label].ventas; });
+        var cotizacionesData = labels.map(function(label) { return groupedData[label].cotizaciones; });
+
+        var ctx = document.getElementById('ventasCotizacionesChart').getContext('2d');
+        var ventasCotizacionesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, 
+                datasets: [{
+                    label: 'Ventas',
+                    data: ventasData, 
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)', 
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Cotizaciones',
+                    data: cotizacionesData, 
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)', 
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}
+else
+{
+    <p>No hay datos de ventas o cotizaciones disponibles para mostrar en el gráfico.</p>
+}
+
+
+
+
+                    
+
+
+<div class="modal fade" id="modalZonaClientes" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowClientesZona">
+                    <div class="mb-3">
+                        <label for="fechaPago27" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago27" name="fechaPago27" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="orden2" class="form-label">Tipo de orden</label>
+                        <select class="form-select" id="orden2" name="orden2" required>
+                            <option value="Ascendente">Ascendente</option>
+                            <option value="Descendente">Descendente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="fechaPago27Container" style="display: none;">
+                        <label for="fechaPago28" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago28" name="fechaPago28" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formatoFecha27" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha27" name="formatoFecha27"  onchange="toggleFechaPago27()">
+                            <option value="" selected disabled>Seleccionar formato</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago27() {
+        const formato = document.getElementById("formatoFecha27").value;
+        const fechaPago27Container = document.getElementById("fechaPago27Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago27Container.style.display = "block";
+        } else {
+            fechaPago27Container.style.display = "none";
+        }
+    }
+</script>
+
+@{
+    var zonas = ViewData["Zonas"] as List<ZonaModel>;
+}
+
+<h2>Información de Zonas</h2>
+
+@if (zonas != null && zonas.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Zona</th>
+                <th>Clientes en la Zona</th>
+                <th>Total Venta</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var zona in zonas)
+            {
+                <tr>
+                    <td>@zona.Zona</td>
+                    <td>@zona.ClientesZona</td>
+                    <td>@zona.TotalVenta.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay datos disponibles para mostrar.</p>
+}
+
+
+
+
+
+                
+
+
+
+<div class="modal fade" id="modalTop15Tareas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowTareas">
+                    <div class="mb-3">
+                        <label for="fechaPago37" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago37" name="fechaPago37" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="orden3" class="form-label">Tipo de orden</label>
+                        <select class="form-select" id="orden3" name="orden3" required>
+                            <option value="Ascendente">Ascendente</option>
+                            <option value="Descendente">Descendente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="fechaPago37Container" style="display: none;">
+                        <label for="fechaPago38" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago38" name="fechaPago38" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formatoFecha37" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha37" name="formatoFecha37" onchange="toggleFechaPago37()">
+                            <option value="" selected disabled>Seleccionar formato</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago37() {
+        const formato = document.getElementById("formatoFecha37").value;
+        const fechaPago37Container = document.getElementById("fechaPago37Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago37Container.style.display = "block";
+        } else {
+            fechaPago37Container.style.display = "none";
+        }
+    }
+</script>
+
+
+@{
+    var tareas = ViewData["Tareas"] as List<TareaModel2>;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Código de Tarea</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (tareas != null && tareas.Any())
+        {
+            foreach (var tarea in tareas)
+            {
+                <tr>
+                    <td>@tarea.CodigoTarea</td>
+                    <td>@tarea.Fecha.ToString("yyyy-MM-dd")</td>
+                    <td>@tarea.Descripcion2</td>
+                    <td>@tarea.Estado2</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No hay tareas disponibles.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<div class="modal fade" id="modalTOPBODEGAS" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTopLabel">Seleccionar Fecha y Formato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="ShowTopBodegas">
+                    <div class="mb-3">
+                        <label for="fechaPago57" class="form-label">Fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago57" name="fechaPago57" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="orden6" class="form-label">Tipo de orden</label>
+                        <select class="form-select" id="orden6" name="orden6" required>
+                            <option value="Ascendente">Ascendente</option>
+                            <option value="Descendente">Descendente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="fechaPago57Container" style="display: none;">
+                        <label for="fechaPago58" class="form-label">Segunda fecha a revisar</label>
+                        <input type="date" class="form-control" id="fechaPago58" name="fechaPago58" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formatoFecha57" class="form-label">Formato de Fecha</label>
+                        <select class="form-select" id="formatoFecha57" name="formatoFecha57" onchange="toggleFechaPago57()">
+                            <option value="" selected disabled>Seleccionar formato</option>
+                            <option value="mes(año)">Mes(Año)</option>
+                            <option value="RangoFecha">Rango fecha</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFechaPago57() {
+        const formato = document.getElementById("formatoFecha57").value;
+        const fechaPago57Container = document.getElementById("fechaPago57Container");
+
+        if (formato === "RangoFecha") {
+            fechaPago57Container.style.display = "block";
+        } else {
+            fechaPago57Container.style.display = "none";
+        }
+    }
+</script>
+@{
+    var bodegasList = ViewData["Bodegas"] as List<Bodegas>;
+}
+
+@if (bodegasList != null && bodegasList.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Bodega</th>
+                <th>Total Transados</th>
+                <th>Fecha Factura</th> 
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bodega in bodegasList)
+            {
+                <tr>
+                    <td>@bodega.bodegas</td>
+                    <td>@bodega.TotalTransados</td>
+                    <td>@bodega.FechaFactura.ToString("yyyy-MM-dd")</td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        No hay bodegas disponibles.
+    </div>
+}
