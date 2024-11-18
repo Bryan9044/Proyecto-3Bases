@@ -1,13 +1,14 @@
-CREATE DATABASE ERPPRUEBA12
+CREATE DATABASE ERPPRUEBA13
 GO
 
-USE ERPPRUEBA12;
+USE ERPPRUEBA13;
 GO
 
+-- Tabla para gestionar los usuarios del sistema
 CREATE TABLE Usuarios (
-    IDUsuario INT IDENTITY(1,1) PRIMARY KEY,
-    NombreUS VARCHAR(50) NOT NULL UNIQUE,
-    ContrasenaUS VARCHAR(255) NOT NULL
+    IDUsuario INT IDENTITY(1,1) PRIMARY KEY, -- Identificador único y auto incrementado del usuario
+    NombreUS VARCHAR(50) NOT NULL UNIQUE, -- Nombre único del usuario
+    ContrasenaUS VARCHAR(255) NOT NULL -- Contraseña en formato hash
 );
 INSERT INTO Usuarios(NombreUS, ContrasenaUS) values
 ('Prueba','Nashe'),
@@ -19,11 +20,12 @@ INSERT INTO Usuarios(NombreUS, ContrasenaUS) values
 
 
 
+-- Tabla para almacenar las zonas geográficas
 CREATE TABLE Zona (
-	Nombre VARCHAR(20) UNIQUE NOT NULL,
-	TamanoKmCuadrado INT NOT NULL,
-	Descripcion VARCHAR(200),
-	PRIMARY KEY (Nombre)
+    Nombre VARCHAR(20) UNIQUE NOT NULL, -- Nombre único de la zona
+    TamanoKmCuadrado INT NOT NULL, -- Tamaño en kilómetros cuadrados
+    Descripcion VARCHAR(200), -- Descripción adicional de la zona
+    PRIMARY KEY (Nombre)
 );
 
 
@@ -37,10 +39,11 @@ INSERT INTO Zona (Nombre, TamanoKmCuadrado,Descripcion) VALUES
 ('Zona norte',200 ,'Mucha tierra y muchos cultivos de caña y arroz');
 
 
+-- Tabla para registrar sectores dentro de una zona
 CREATE TABLE Sector (
-	Nombre VARCHAR(20) UNIQUE NOT NULL,
-	Descripcion VARCHAR(200),
-	PRIMARY KEY (Nombre)
+    Nombre VARCHAR(20) UNIQUE NOT NULL, -- Nombre único del sector
+    Descripcion VARCHAR(200), -- Descripción adicional del sector
+    PRIMARY KEY (Nombre)
 );
 
 INSERT INTO Sector (Nombre, Descripcion) VALUES
@@ -64,11 +67,13 @@ INSERT INTO Sector (Nombre, Descripcion) VALUES
 
 
 
+-- Tabla para los diferentes estados que puede tener un caso o entidad
 CREATE TABLE Estado(
-	TipoEstado VARCHAR(20) NOT NULL,
-	Descripcion VARCHAR(200) NOT NULL,
-	PRIMARY KEY (TipoEstado)
+    TipoEstado VARCHAR(20) NOT NULL, -- Tipo de estado (ej., "Abierto", "Cerrado")
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción del estado
+    PRIMARY KEY (TipoEstado)
 );
+
 
 insert into Estado(TipoEstado,Descripcion) values
 ('Abierta', 'Todavia no se da un veredicto final'),
@@ -76,10 +81,11 @@ insert into Estado(TipoEstado,Descripcion) values
 ('Rechazado', 'Se rechaza la cotizacion mecagoentodo');
 
 
+-- Tabla para gestionar probabilidades estadísticas
 CREATE TABLE Probabilidad (
-	Porcentaje FLOAT,
-	ProbabilidadEstimada VARCHAR(20),
-	PRIMARY KEY (Porcentaje)
+    Porcentaje FLOAT, -- Porcentaje de probabilidad
+    ProbabilidadEstimada VARCHAR(20), -- Descripción de la probabilidad
+    PRIMARY KEY (Porcentaje)
 );
 
 
@@ -91,10 +97,11 @@ VALUES
 
 
 
+-- Tabla para definir tipos de prioridad
 CREATE TABLE Prioridad(
-	TipoPrioridad VARCHAR(20) NOT NULL,
-	Descripcion varchar(200) not null
-	PRIMARY KEY (TipoPrioridad)
+    TipoPrioridad VARCHAR(20) NOT NULL, -- Tipo de prioridad (ej., "Alta", "Media")
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción del tipo de prioridad
+    PRIMARY KEY (TipoPrioridad)
 );
 
 insert into Prioridad(TipoPrioridad, Descripcion) values
@@ -103,11 +110,13 @@ insert into Prioridad(TipoPrioridad, Descripcion) values
 ('Baja','Para hacer después');
 
 
+-- Tabla para gestionar tipos de casos
 CREATE TABLE TipoCaso(
-	Tipocaso VARCHAR(20) NOT NULL,
-	Descripcion VARCHAR(200) NOT NULL,
-	PRIMARY KEY (Tipocaso)
+    TipoCaso VARCHAR(20) NOT NULL, -- Tipo de caso (Reclamo, Devolucion, etc)
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción del tipo de caso
+    PRIMARY KEY (TipoCaso)
 );
+
 
 insert into TipoCaso(Tipocaso,Descripcion) values
 ('Reclamo','Se exige un reclamo por un error'),
@@ -115,10 +124,11 @@ insert into TipoCaso(Tipocaso,Descripcion) values
 ('Garantia','Un producto se daño antes de lo esperado');
 
 
+-- Tabla para los departamentos dentro de una organización
 CREATE TABLE Departamento (
-	Codigo VARCHAR(15) NOT NULL,
-	Nombre VARCHAR(20) NOT NULL,
-	PRIMARY KEY(Codigo)
+    Codigo VARCHAR(15) NOT NULL, -- Código único del departamento
+    Nombre VARCHAR(20) NOT NULL, -- Nombre del departamento
+    PRIMARY KEY(Codigo)
 );
 INSERT INTO Departamento(Codigo, Nombre) values
 ('DEP1', 'Mantenimiento'),
@@ -133,10 +143,11 @@ INSERT INTO Departamento(Codigo, Nombre) values
 
 
 
+-- Tabla para gestionar módulos dentro de un sistema
 CREATE TABLE Modulos (
-    IDModulo INT PRIMARY KEY,
-    NombreModulo VARCHAR(50) UNIQUE NOT NULL,
-    Descripcion VARCHAR(200)
+    IDModulo INT PRIMARY KEY, -- Identificador del módulo
+    NombreModulo VARCHAR(50) UNIQUE NOT NULL, -- Nombre único del módulo
+    Descripcion VARCHAR(200) -- Descripción del módulo
 );
 
 INSERT INTO Modulos(IDModulo,NombreModulo,Descripcion) values
@@ -149,10 +160,11 @@ INSERT INTO Modulos(IDModulo,NombreModulo,Descripcion) values
 (7, 'Caso', 'Se le permite hacer cosas de un caso'),
 (8, 'Usuario', 'Se le permite hacer cosas del usuario');
 
+-- Tabla para registrar acciones disponibles en el sistema
 CREATE TABLE Acciones (
-    IDAccion INT NOT NULL,
-    tipoAccion VARCHAR(40) UNIQUE,
-    descripcion VARCHAR(200),
+    IDAccion INT NOT NULL, -- Identificador único de la acción
+    TipoAccion VARCHAR(40) UNIQUE, -- Nombre único de la acción
+    Descripcion VARCHAR(200), -- Descripción de la acción
     PRIMARY KEY (IDAccion)
 );
 
@@ -164,12 +176,13 @@ INSERT INTO Acciones(IDAccion,tipoAccion,descripcion) values
 
 
 
+-- Relación muchos a muchos entre módulos y acciones
 CREATE TABLE ModulosXAcciones (
-    NombreModulo varchar(50),
-    tipoAccion varchar(40),
-    PRIMARY KEY (NombreModulo, tipoAccion),
+    NombreModulo VARCHAR(50), -- Nombre del módulo relacionado
+    TipoAccion VARCHAR(40), -- Tipo de acción relacionado
+    PRIMARY KEY (NombreModulo, TipoAccion),
     FOREIGN KEY (NombreModulo) REFERENCES Modulos(NombreModulo),
-    FOREIGN KEY (tipoAccion) REFERENCES Acciones(tipoAccion)
+    FOREIGN KEY (TipoAccion) REFERENCES Acciones(TipoAccion)
 );
 insert into ModulosXAcciones(NombreModulo,tipoAccion) values
 ('Cotizacion', 'Visualizacion'),
@@ -177,10 +190,11 @@ insert into ModulosXAcciones(NombreModulo,tipoAccion) values
 ('Cotizacion', 'Edicion');
 
 
+-- Tabla para gestionar los roles en el sistema
 CREATE TABLE Roles (
-    IDRol INT IDENTITY(1,1) , --Preguntar si se puede autoIncrementar
-    tipoRol VARCHAR(20) UNIQUE,
-	Descripcion varchar(200),
+    IDRol INT IDENTITY(1,1), -- Identificador único y auto incrementado del rol
+    TipoRol VARCHAR(20) UNIQUE, -- Tipo de rol (Encargado, Ayudante, etc)
+    Descripcion VARCHAR(200), -- Descripción del rol
     PRIMARY KEY (IDRol)
 );
 insert into Roles(tipoRol,Descripcion) values
@@ -191,12 +205,13 @@ insert into Roles(tipoRol,Descripcion) values
 ('Ayudante','Ayuda en todas las tareas al admin');
 
 
-CREATE TABLE AccionesXrol (
-    tipoRol VARCHAR(20),
-    tipoAccion VARCHAR(40),
-    PRIMARY KEY (tipoRol, tipoAccion),
-    FOREIGN KEY (tipoRol) REFERENCES Roles(tipoRol),
-    FOREIGN KEY (tipoAccion) REFERENCES Acciones(tipoAccion)
+-- Relación muchos a muchos entre roles y acciones
+CREATE TABLE AccionesXRol (
+    TipoRol VARCHAR(20), -- Tipo de rol relacionado
+    TipoAccion VARCHAR(40), -- Tipo de acción relacionado
+    PRIMARY KEY (TipoRol, TipoAccion),
+    FOREIGN KEY (TipoRol) REFERENCES Roles(TipoRol),
+    FOREIGN KEY (TipoAccion) REFERENCES Acciones(TipoAccion)
 );
 
 
@@ -207,11 +222,12 @@ INSERT INTO AccionesXrol (tipoRol, tipoAccion) VALUES ('SuperUsuario', 'Reporter
 
 
 
-CREATE TABLE Puesto(
-	TipoPuesto VARCHAR(35) NOT NULL,
-	Salario int NOT NULL,
-	Descripcion VARCHAR(200) NOT NULL,
-	PRIMARY KEY (TipoPuesto)
+-- Tabla para registrar los diferentes tipos de puestos de trabajo
+CREATE TABLE Puesto (
+    TipoPuesto VARCHAR(35) NOT NULL, -- Nombre del puesto de trabajo
+    Salario INT NOT NULL, -- Salario asociado al puesto
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción del puesto
+    PRIMARY KEY (TipoPuesto)
 );
 
 INSERT INTO Puesto(TipoPuesto, Salario, Descripcion) values
@@ -236,26 +252,28 @@ INSERT INTO Puesto(TipoPuesto, Salario, Descripcion) values
 
 
 
+-- Tabla para gestionar empleados
 CREATE TABLE Empleado (
-	Cedula VARCHAR(9) NOT NULL,
-	Nombre varchar(30) not null,
-	apellido1 varchar(30) Not null,
-	apellido2 varchar(30) not null,
-	genero char(1) not null,
-	FechaNacimiento date not null,
-	provincia varchar(30) not null,
-	Direccion varchar(30) not null,
-	Telefono varchar(9) not null,
-	CodigoDepartamento VARCHAR(15) NOT NULL,
-	FechaIngreso DATE NOT NULL,
-	Puesto VARCHAR(35) NOT NULL,
-	tipoRol varchar(20) not null,
-	SalarioActual int not null
-	PRIMARY KEY(Cedula),
-	FOREIGN KEY (tipoRol) references Roles(tipoRol),
-	FOREIGN KEY (CodigoDepartamento) REFERENCES Departamento(Codigo),
-	FOREIGN KEY (Puesto) REFERENCES Puesto(TipoPuesto)
-	);
+    Cedula VARCHAR(9) NOT NULL, -- Identificación única del empleado
+    Nombre VARCHAR(30) NOT NULL, -- Nombre del empleado
+    Apellido1 VARCHAR(30) NOT NULL, -- Primer apellido del empleado
+    Apellido2 VARCHAR(30) NOT NULL, -- Segundo apellido del empleado
+    Genero CHAR(1) NOT NULL, -- Género (ej., 'M', 'F')
+    FechaNacimiento DATE NOT NULL, -- Fecha de nacimiento
+    Provincia VARCHAR(30) NOT NULL, -- Provincia de residencia
+    Direccion VARCHAR(30) NOT NULL, -- Dirección del empleado
+    Telefono VARCHAR(9) NOT NULL, -- Teléfono de contacto
+    CodigoDepartamento VARCHAR(15) NOT NULL, -- Departamento asociado
+    FechaIngreso DATE NOT NULL, -- Fecha de ingreso al trabajo
+    Puesto VARCHAR(35) NOT NULL, -- Puesto del empleado
+    TipoRol VARCHAR(20) NOT NULL, -- Rol del empleado en el sistema
+    SalarioActual INT NOT NULL, -- Salario actual del empleado
+    PRIMARY KEY (Cedula),
+    FOREIGN KEY (TipoRol) REFERENCES Roles(TipoRol),
+    FOREIGN KEY (CodigoDepartamento) REFERENCES Departamento(Codigo),
+    FOREIGN KEY (Puesto) REFERENCES Puesto(TipoPuesto)
+);
+
 insert into Empleado(Cedula,Nombre,apellido1,apellido2,genero,FechaNacimiento,provincia,Direccion,Telefono,CodigoDepartamento,FechaIngreso,Puesto,tipoRol,SalarioActual)
 values
 ('123456789', 'Jose', 'Perez', 'Rodriguez', 'M', '1990-05-12', 'San José', 'San pedro 50 metros norte', '22223333', 'DEP1', '2015-03-10', 'Electricista', 'Encargado', 500000),
@@ -284,37 +302,39 @@ values
 
 
 
+-- Tabla para registrar el historial de puestos de un empleado
 CREATE TABLE HistoricoPuesto (
-    IdHistoricoPuesto INT PRIMARY KEY IDENTITY(1,1), 
-    CedulaEmpleado VARCHAR(9) not null, 
-    FechaInicio DATE not null,  
-    FechaFin DATE not null, 
-    NombrePuesto VARCHAR(50) not null, 
-    Departamento VARCHAR(50) not null,
+    IdHistoricoPuesto INT PRIMARY KEY IDENTITY(1,1), -- Identificador único del historial
+    CedulaEmpleado VARCHAR(9) NOT NULL, -- Identificación del empleado
+    FechaInicio DATE NOT NULL, -- Fecha de inicio en el puesto
+    FechaFin DATE NOT NULL, -- Fecha de finalización en el puesto
+    NombrePuesto VARCHAR(50) NOT NULL, -- Nombre del puesto ocupado
+    Departamento VARCHAR(50) NOT NULL, -- Departamento asociado
     FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula)
 );
 
+-- Tabla para registrar el historial salarial de un empleado
 CREATE TABLE HistoricoSalario (
-    IdHistoricoSalario INT PRIMARY KEY IDENTITY(1,1), 
-    CedulaEmpleado VARCHAR(9) not null,
-    FechaInicio DATE not null,  
-    FechaFin DATE not null, 
-    Monto Decimal not null, 
-    NombrePuesto VARCHAR(50) not null, 
-    Departamento VARCHAR(50) not null,
+    IdHistoricoSalario INT PRIMARY KEY IDENTITY(1,1), -- Identificador único del historial
+    CedulaEmpleado VARCHAR(9) NOT NULL, -- Identificación del empleado
+    FechaInicio DATE NOT NULL, -- Fecha de inicio del salario
+    FechaFin DATE NOT NULL, -- Fecha de fin del salario
+    Monto DECIMAL NOT NULL, -- Monto salarial
+    NombrePuesto VARCHAR(50) NOT NULL, -- Puesto asociado
+    Departamento VARCHAR(50) NOT NULL, -- Departamento asociado
     FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula)
 );
-
 
 --En este probablemente vamos a ocupar la función que habíamos creado pero con un cursor para que se hagan todos
+-- Tabla para gestionar planillas de empleados
 CREATE TABLE Planilla (
-	CodigoPlanilla VARCHAR(15) NOT NULL,
-	FechaPlanilla date not null,   
-	CedulaEmpleado varchar(9) not null,
-	HorasRealizadas int not null,
-	Salario int null, 
-	foreign key (CedulaEmpleado) references Empleado(Cedula),
-	Primary key (CodigoPlanilla, CedulaEmpleado)
+    CodigoPlanilla VARCHAR(15) NOT NULL, -- Identificador único de la planilla
+    FechaPlanilla DATE NOT NULL, -- Fecha de la planilla
+    CedulaEmpleado VARCHAR(9) NOT NULL, -- Identificación del empleado
+    HorasRealizadas INT NOT NULL, -- Horas trabajadas
+    Salario INT NULL, -- Salario calculado
+    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula),
+    PRIMARY KEY (CodigoPlanilla, CedulaEmpleado)
 );
 --Creo que tenemos que cambiar la planilla pues de una se pueden pagar varios empleados
 insert into Planilla (CodigoPlanilla, FechaPlanilla, CedulaEmpleado, HorasRealizadas, Salario) values
@@ -745,12 +765,13 @@ insert into Planilla (CodigoPlanilla, FechaPlanilla, CedulaEmpleado, HorasRealiz
 
 
 
+-- Tabla para gestionar las familias de artículos
 CREATE TABLE Familia (
-	CodigoFamilia VARCHAR(15) NOT NULL,
-	Nombre VARCHAR(20) NOT NULL,
-	activo varchar(20) not null,
-	Descripcion VARCHAR(200) not null,
-	PRIMARY KEY(CodigoFamilia)
+    CodigoFamilia VARCHAR(15) NOT NULL, -- Identificador único de la familia
+    Nombre VARCHAR(20) NOT NULL, -- Nombre de la familia
+    Activo VARCHAR(20) NOT NULL, -- Estado activo/inactivo
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción de la familia
+    PRIMARY KEY (CodigoFamilia)
 );
 
 INSERT INTO Familia(CodigoFamilia,Nombre,activo,Descripcion) values
@@ -780,17 +801,18 @@ INSERT INTO Familia(CodigoFamilia,Nombre,activo,Descripcion) values
 ('Fam24', 'Bebés', 'No','Productos para el cuidado de bebés'),
 ('Fam25', 'Accesorios de hogar', 'Si','Productos hechos para usar en el hogar');
 
+-- Tabla para registrar artículos
 CREATE TABLE Articulo (
-	CodigoFamilia VARCHAR(15)  NOT NULL,
-	Codigo VARCHAR(15) NOT NULL,
-	Nombre VARCHAR(40) NOT NULL,
-	Activo Varchar(20) not null,
-	Peso FLOAT NOT NULL,
-	Costo decimal not null,
-	PrecioEstandar decimal not null,
-	Descripcion VARCHAR(200) not null,
-	PRIMARY KEY (Codigo),
-	FOREIGN KEY (CodigoFamilia) references Familia(CodigoFamilia)
+    CodigoFamilia VARCHAR(15) NOT NULL, -- Familia a la que pertenece el artículo
+    Codigo VARCHAR(15) NOT NULL, -- Código único del artículo
+    Nombre VARCHAR(40) NOT NULL, -- Nombre del artículo
+    Activo VARCHAR(20) NOT NULL, -- Estado activo/inactivo
+    Peso FLOAT NOT NULL, -- Peso del artículo
+    Costo DECIMAL NOT NULL, -- Costo del artículo
+    PrecioEstandar DECIMAL NOT NULL, -- Precio estándar del artículo
+    Descripcion VARCHAR(200) NOT NULL, -- Descripción del artículo
+    PRIMARY KEY (Codigo),
+    FOREIGN KEY (CodigoFamilia) REFERENCES Familia(CodigoFamilia)
 );
 
 
@@ -905,13 +927,14 @@ INSERT INTO Articulo (CodigoFamilia, Codigo, Nombre,Activo, Peso, Costo,PrecioEs
 ('Fam25', 'ART80', 'Cuchillos' ,'No', 3.2, 6.5, 5000.00, 'Para cortar alimentos.'),
 ('Fam25', 'ART81', 'Cuadros decorativos' ,'Si', 2.3, 9.5, 6000.00, 'Para que se vea bonita la casa.');
 
+-- Tabla que representa una bodega para almacenamiento
 CREATE TABLE Bodega (
-	Codigo VARCHAR(15) NOT NULL,
-	Nombre VARCHAR(20) NOT NULL,
-	Ubicacion VARCHAR(20) NOT NULL,
-	EspacioCubico int NOT NULL,
-	CapacidadTon int NOT NULL,
-	PRIMARY KEY (Codigo)
+    Codigo VARCHAR(15) NOT NULL,         -- Identificador único de la bodega
+    Nombre VARCHAR(20) NOT NULL,         -- Nombre de la bodega
+    Ubicacion VARCHAR(20) NOT NULL,      -- Ubicación de la bodega
+    EspacioCubico INT NOT NULL,          -- Espacio cúbico disponible en la bodega
+    CapacidadTon INT NOT NULL,           -- Capacidad de la bodega en toneladas
+    PRIMARY KEY (Codigo)                 -- Clave primaria: Código único de bodega
 );
 INSERT INTO Bodega(Codigo, Nombre,Ubicacion,EspacioCubico,CapacidadTon) values
 ('BO1','Castle Rock','Limon', 50,3 ),
@@ -930,12 +953,13 @@ INSERT INTO Bodega(Codigo, Nombre,Ubicacion,EspacioCubico,CapacidadTon) values
 
 
 
+-- Tabla para relacionar bodegas con familias de productos
 CREATE TABLE FamiliaBodega (
-	CodigoBodega VARCHAR(15) NOT NULL,
-	CodigoFamilia VARCHAR(15) NOT NULL,
-	PRIMARY KEY (CodigoBodega,CodigoFamilia),
-	FOREIGN KEY (CodigoBodega) references Bodega(Codigo),
-	FOREIGN KEY (CodigoFamilia) references Familia(CodigoFamilia)
+    CodigoBodega VARCHAR(15) NOT NULL,   -- Código de la bodega
+    CodigoFamilia VARCHAR(15) NOT NULL,  -- Código de la familia de productos
+    PRIMARY KEY (CodigoBodega, CodigoFamilia), -- Clave compuesta única
+    FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo), -- Relación con Bodega
+    FOREIGN KEY (CodigoFamilia) REFERENCES Familia(CodigoFamilia) -- Relación con Familia
 );
 
 
@@ -967,19 +991,19 @@ insert into FamiliaBodega(CodigoBodega,CodigoFamilia) values
 
 
 
+-- Tabla para registrar clientes
 CREATE TABLE Cliente (
-    Cedula VARCHAR(9) NOT NULL,
-    Telefono VARCHAR(8) NOT NULL,
-    Genero char(1) NOT NULL,
-    Nombre VARCHAR(20) NOT NULL,
-    CorreoElectronico VARCHAR(50) NOT NULL,
-    Fax VARCHAR(20) not null,
-    Sector varchar(20) not null,
-    Zona varchar(20) not null,
-	Celular VARCHAR(8) NOT NULL,
-	PRIMARY KEY (Cedula)
+    Cedula VARCHAR(9) NOT NULL,          -- Identificación única del cliente
+    Telefono VARCHAR(8) NOT NULL,        -- Número de teléfono
+    Genero CHAR(1) NOT NULL,             -- Género (M/F)
+    Nombre VARCHAR(20) NOT NULL,         -- Nombre del cliente
+    CorreoElectronico VARCHAR(50) NOT NULL, -- Correo electrónico del cliente
+    Fax VARCHAR(20) NOT NULL,            -- Número de fax
+    Sector VARCHAR(20) NOT NULL,         -- Sector donde reside
+    Zona VARCHAR(20) NOT NULL,           -- Zona donde reside
+    Celular VARCHAR(8) NOT NULL,         -- Número de celular
+    PRIMARY KEY (Cedula)                 -- Clave primaria: Número de cédula
 );
-
 
 
 INSERT INTO Cliente (Cedula, Telefono, Genero, Nombre, CorreoElectronico, Fax, Sector, Zona, Celular) VALUES
@@ -1004,21 +1028,22 @@ INSERT INTO Cliente (Cedula, Telefono, Genero, Nombre, CorreoElectronico, Fax, S
 ('321234678', '43211257', 'F', 'Sofia Vergara', 'VerSofi@mail.com', '11112345', 'Deportivo', 'Caribe sur', '45678976');
 
 
+-- Tabla que gestiona la cantidad de productos en una bodega
 CREATE TABLE ListaArticulos (
-    CodigoBodega VARCHAR(15) NOT NULL,
-    CodigoProducto VARCHAR(15) NOT NULL,
-    CantidadProducto INT NOT NULL,
-    PRIMARY KEY (CodigoBodega,CodigoProducto),
-    FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo),
-    FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo)
+    CodigoBodega VARCHAR(15) NOT NULL,   -- Código de la bodega
+    CodigoProducto VARCHAR(15) NOT NULL, -- Código del producto
+    CantidadProducto INT NOT NULL,       -- Cantidad de producto en bodega
+    PRIMARY KEY (CodigoBodega, CodigoProducto), -- Clave compuesta
+    FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo), -- Relación con Bodega
+    FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo) -- Relación con Articulo
 );
 
-
-create table TipoTareaCotizacion (
-	TipoTarea varchar(30),
-	descripcion varchar(200)
-	Primary key (TipoTarea)
-)
+-- Tabla para tipos de tareas asociadas a cotizaciones
+CREATE TABLE TipoTareaCotizacion (
+    TipoTarea VARCHAR(30),               -- Identificador único del tipo de tarea
+    Descripcion VARCHAR(200),            -- Descripción del tipo de tarea
+    PRIMARY KEY (TipoTarea)              -- Clave primaria
+);
 
 insert into TipoTareaCotizacion(TipoTarea,descripcion) values
 ('Seguimiento','El empleado debe estar en constante vigilancia de la cotización para ver el progreso que esta tiene'),
@@ -1033,11 +1058,13 @@ insert into TipoTareaCotizacion(TipoTarea,descripcion) values
 
 
 
-create table TipoTareaCaso (
-	TipoTarea varchar(30) not null,
-	descripcion varchar(200)not null,
-	Primary key (TipoTarea)
-)
+-- Tabla para tipos de tareas asociadas a casos
+CREATE TABLE TipoTareaCaso (
+    TipoTarea VARCHAR(30) NOT NULL,      -- Identificador único del tipo de tarea
+    Descripcion VARCHAR(200) NOT NULL,  -- Descripción del tipo de tarea
+    PRIMARY KEY (TipoTarea)              -- Clave primaria
+);
+
 
 insert into TipoTareaCaso(TipoTarea,descripcion) values
 ('Devolucion','Revisar el por qué es que se debe devolver el producto'),
@@ -1046,11 +1073,12 @@ insert into TipoTareaCaso(TipoTarea,descripcion) values
 
 
 
-create table TipoTareaEstado (
-	tipoEstado varchar(30) not null,
-	descripcion varchar(200)not null,
-	Primary key (tipoEstado)
-)
+-- Tabla para tipos de estados de las tareas
+CREATE TABLE TipoTareaEstado (
+    TipoEstado VARCHAR(30) NOT NULL,     -- Identificador único del estado
+    Descripcion VARCHAR(200) NOT NULL,  -- Descripción del estado
+    PRIMARY KEY (TipoEstado)             -- Clave primaria
+);
 
 
 insert into TipoTareaEstado(tipoEstado,descripcion) values
@@ -1060,17 +1088,18 @@ insert into TipoTareaEstado(tipoEstado,descripcion) values
 
  
 
+-- Tabla para registrar tareas
 CREATE TABLE Tarea (
-    CodigoTarea VARCHAR(15) NOT NULL,
-	tipoTareaCotizacion varchar(30) null,
-	tipoTareaCaso varchar(30) null,
-    Fecha DATE NOT NULL,
-    Descripcion VARCHAR(200) NOT NULL,
-    Estado VARCHAR(30) NOT NULL,
-	PRIMARY KEY (CodigoTarea),
-	FOREIGN KEY (Estado) REFERENCES TipoTareaEstado(tipoEstado),
-	FOREIGN KEY (tipoTareaCotizacion) References TipoTareaCotizacion(TipoTarea),
-	FOREIGN KEY (tipoTareaCaso) References TipoTareaCaso(TipoTarea)
+    CodigoTarea VARCHAR(15) NOT NULL,    -- Código único de la tarea
+    TipoTareaCotizacion VARCHAR(30) NULL, -- Relación con TipoTareaCotizacion
+    TipoTareaCaso VARCHAR(30) NULL,      -- Relación con TipoTareaCaso
+    Fecha DATE NOT NULL,                 -- Fecha de la tarea
+    Descripcion VARCHAR(200) NOT NULL,  -- Descripción de la tarea
+    Estado VARCHAR(30) NOT NULL,         -- Estado de la tarea
+    PRIMARY KEY (CodigoTarea),           -- Clave primaria
+    FOREIGN KEY (Estado) REFERENCES TipoTareaEstado(TipoEstado), -- Relación con TipoTareaEstado
+    FOREIGN KEY (TipoTareaCotizacion) REFERENCES TipoTareaCotizacion(TipoTarea), -- Relación con TipoTareaCotizacion
+    FOREIGN KEY (TipoTareaCaso) REFERENCES TipoTareaCaso(TipoTarea) -- Relación con TipoTareaCaso
 );
 INSERT INTO Tarea (CodigoTarea, tipoTareaCotizacion, tipoTareaCaso, Fecha, Descripcion, Estado) 
 VALUES
@@ -1121,12 +1150,11 @@ VALUES
 
 
 
-
-
-CREATE TABLE TipoCotizacion(
-	Tipocotizacion varchar(50),
-	Descripcion varchar(200),
-	PRIMARY KEY (Tipocotizacion)
+-- Tabla para tipos de cotización
+CREATE TABLE TipoCotizacion (
+    TipoCotizacion VARCHAR(50),          -- Identificador único del tipo de cotización
+    Descripcion VARCHAR(200),            -- Descripción del tipo de cotización
+    PRIMARY KEY (TipoCotizacion)         -- Clave primaria
 );
 
 INSERT INTO TipoCotizacion(Tipocotizacion,Descripcion) values
@@ -1140,27 +1168,23 @@ INSERT INTO TipoCotizacion(Tipocotizacion,Descripcion) values
 
 
 
+-- Tabla para registrar cotizaciones
 CREATE TABLE Cotizacion (
-	Codigo int identity(1,1) NOT NULL,
-	CedulaCliente VARCHAR(9)  NOT NULL, 
-	CedulaEmpleado VARCHAR(9)  NOT NULL, 
-	FechaCotizacion DATE NOT NULL,
-	MesProyectadoCierre DATE NOT NULL,
-	TipoCotizacion VARCHAR(50) NOT NULL,
-	Estado VARCHAR(20) NOT NULL,
-	Probabilidad FLOAT not null,
-	Zona VARCHAR(20) not null,
-	Sector VARCHAR(20) not null,
-	PRIMARY KEY(Codigo), 
-	FOREIGN KEY (CedulaCliente) REFERENCES Cliente(Cedula),
-	FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula),
-    FOREIGN KEY (TipoCotizacion) REFERENCES TipoCotizacion(Tipocotizacion),
-	FOREIGN KEY (Probabilidad) REFERENCES Probabilidad(Porcentaje),
-	FOREIGN KEY (Estado) REFERENCES  Estado(TipoEstado),
-	FOREIGN KEY (Zona) REFERENCES Zona(Nombre),
-    FOREIGN KEY (Sector) REFERENCES Sector(Nombre)
+    Codigo INT IDENTITY(1,1) NOT NULL,   -- Identificador único de la cotización
+    CedulaCliente VARCHAR(9) NOT NULL,  -- Relación con Cliente
+    CedulaEmpleado VARCHAR(9) NOT NULL, -- Relación con Empleado
+    FechaCotizacion DATE NOT NULL,      -- Fecha de creación de la cotización
+    MesProyectadoCierre DATE NOT NULL,  -- Mes estimado de cierre
+    TipoCotizacion VARCHAR(50) NOT NULL, -- Relación con TipoCotizacion
+    Estado VARCHAR(20) NOT NULL,        -- Estado de la cotización
+    Probabilidad FLOAT NOT NULL,        -- Probabilidad de cierre
+    Zona VARCHAR(20) NOT NULL,          -- Zona asociada a la cotización
+    Sector VARCHAR(20) NOT NULL,        -- Sector asociado a la cotización
+    PRIMARY KEY (Codigo),               -- Clave primaria
+    FOREIGN KEY (CedulaCliente) REFERENCES Cliente(Cedula), -- Relación con Cliente
+    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula), -- Relación con Empleado
+    FOREIGN KEY (TipoCotizacion) REFERENCES TipoCotizacion(TipoCotizacion) -- Relación con TipoCotizacion
 );
-
 
 
 
@@ -1235,11 +1259,27 @@ insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectad
 
 --Hay 55
 
-create table estadoFactura(
-	tipoFactura varchar(30) not null,
-	descripcion varchar(200) not null,
-	primary key (tipoFactura)
 
+
+
+
+
+
+
+-- Tabla que relaciona tareas con cotizaciones específicas.
+CREATE TABLE TareaCotizacion (
+    CodigoTarea VARCHAR(15) NOT NULL, -- Identificador único de la tarea.
+    Codigo INT NOT NULL,              -- Identificador único de la cotización asociada.
+    PRIMARY KEY (CodigoTarea, Codigo), -- Llave primaria que asegura unicidad en la relación.
+    FOREIGN KEY (Codigo) REFERENCES Cotizacion(Codigo) -- Relación con la tabla Cotizacion.
+);
+
+
+
+CREATE TABLE estadoFactura (
+    tipoFactura VARCHAR(30) NOT NULL,   -- Identificador único del estado de factura.
+    descripcion VARCHAR(200) NOT NULL, -- Descripción detallada del estado.
+    PRIMARY KEY (tipoFactura)          -- Llave primaria única.
 );
 
 insert into estadoFactura(tipoFactura, descripcion) values 
@@ -1249,21 +1289,22 @@ insert into estadoFactura(tipoFactura, descripcion) values
 
 
 
+-- Tabla que almacena las facturas generadas en el sistema.
 CREATE TABLE Factura (
-    Codigo VARCHAR(15) NOT NULL, --
-	CodigoCotizacion int  null,  --
-	CedulaCliente varchar(9),
-    CedulaEmpleado VARCHAR(9) NOT NULL, 
-    CedulaJuridica VARCHAR(9) NOT NULL,
-    TelefonoLocal VARCHAR(8) NOT NULL,
-    NombreLocal VARCHAR(40) NOT NULL,
-    FechaFactura DATE not null,
-	NombreCliente varchar(20) not null,
-	estado varchar(30) not null
-	PRIMARY KEY (Codigo),
-    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula),
-	FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo),
-	foreign key (estado) references estadoFactura(tipoFactura)
+    Codigo VARCHAR(15) NOT NULL,         -- Identificador único de la factura.
+    CodigoCotizacion INT NULL,           -- (Opcional) Relación con la cotización de origen.
+    CedulaCliente VARCHAR(9),            -- Cliente asociado con la factura.
+    CedulaEmpleado VARCHAR(9) NOT NULL,  -- Empleado que generó la factura.
+    CedulaJuridica VARCHAR(9) NOT NULL,  -- Identificador del local comercial.
+    TelefonoLocal VARCHAR(8) NOT NULL,   -- Teléfono del local comercial.
+    NombreLocal VARCHAR(40) NOT NULL,    -- Nombre del local comercial.
+    FechaFactura DATE NOT NULL,          -- Fecha de emisión de la factura.
+    NombreCliente VARCHAR(20) NOT NULL,  -- Nombre del cliente asociado.
+    estado VARCHAR(30) NOT NULL,         -- Estado actual de la factura.
+    PRIMARY KEY (Codigo),                -- Llave primaria de la factura.
+    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula), -- Relación con empleado.
+    FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo), -- Relación con cotización.
+    FOREIGN KEY (estado) REFERENCES estadoFactura(tipoFactura) -- Relación con estadoFactura.
 );
 
 
@@ -1310,36 +1351,74 @@ VALUES
 ('FAC39', null, '432123478', '334455667', '789654321', '39284576', 'Construcción Heredia', '2024-05-01', 'MYke Towers', 'Emitida'),
 ('FAC40', null, '564298645', '112233445', '678543219', '92384756', 'Tienda El Progreso', '2023-05-08', 'Rodrigo Chaves', 'Pagada');
 
---Me falta hacer inserts
+
+
+-- Tabla que registra casos de atención al cliente.
 CREATE TABLE Caso (
-    CodigoCaso VARCHAR(15) NOT NULL,
-    PropietarioCaso VARCHAR(9) NOT NULL,
-    OrigenCasoC INT ,
-	OrigenCasoF varchar(15) ,
-    NombreCuenta VARCHAR(40) NOT NULL,
-    NombreContacto VARCHAR(40) NOT NULL,
-    Asunto VARCHAR(200) NOT NULL,
-    Direccion VARCHAR(150) NOT NULL,
-    Descripcion VARCHAR(200) NOT NULL,
-    EstadoCaso VARCHAR(20) NOT NULL,
-    TipoCaso VARCHAR(20) NOT NULL,
-    Prioridad VARCHAR(20) NOT NULL,
-    PRIMARY KEY (CodigoCaso),
-    FOREIGN KEY (TipoCaso) REFERENCES TipoCaso(TipoCaso),
-    FOREIGN KEY (EstadoCaso) REFERENCES Estado(TipoEstado),
-    FOREIGN KEY (OrigenCasoC) REFERENCES Cotizacion(Codigo),
-	foreign key (OrigenCasoF) references Factura(Codigo),
-    FOREIGN KEY (PropietarioCaso) REFERENCES Cliente(Cedula),
-    FOREIGN KEY (Prioridad) REFERENCES Prioridad(TipoPrioridad)
+    CodigoCaso VARCHAR(15) NOT NULL,       -- Identificador único del caso.
+    PropietarioCaso VARCHAR(9) NOT NULL,   -- Cliente asociado al caso.
+    OrigenCasoC INT,                       -- (Opcional) Relación con una cotización.
+    OrigenCasoF VARCHAR(15),               -- (Opcional) Relación con una factura.
+    NombreCuenta VARCHAR(40) NOT NULL,     -- Nombre de la cuenta asociada.
+    NombreContacto VARCHAR(40) NOT NULL,   -- Nombre del contacto asociado.
+    Asunto VARCHAR(200) NOT NULL,          -- Descripción breve del caso.
+    Direccion VARCHAR(150) NOT NULL,       -- Dirección relacionada con el caso.
+    Descripcion VARCHAR(200) NOT NULL,     -- Detalle completo del caso.
+    EstadoCaso VARCHAR(20) NOT NULL,       -- Estado actual del caso.
+    TipoCaso VARCHAR(20) NOT NULL,         -- Tipo de caso (por ejemplo, consulta, reclamo).
+    Prioridad VARCHAR(20) NOT NULL,        -- Prioridad asignada al caso.
+    PRIMARY KEY (CodigoCaso),              -- Llave primaria del caso.
+    FOREIGN KEY (TipoCaso) REFERENCES TipoCaso(TipoCaso), -- Relación con el tipo de caso.
+    FOREIGN KEY (EstadoCaso) REFERENCES Estado(TipoEstado), -- Relación con estado.
+    FOREIGN KEY (OrigenCasoC) REFERENCES Cotizacion(Codigo), -- Relación con cotización.
+    FOREIGN KEY (OrigenCasoF) REFERENCES Factura(Codigo),    -- Relación con factura.
+    FOREIGN KEY (PropietarioCaso) REFERENCES Cliente(Cedula), -- Relación con cliente.
+    FOREIGN KEY (Prioridad) REFERENCES Prioridad(TipoPrioridad) -- Relación con prioridad.
 );
- 
+
 INSERT INTO Caso (CodigoCaso, PropietarioCaso, OrigenCasoC, OrigenCasoF, NombreCuenta, NombreContacto, Asunto, Direccion, Descripcion, EstadoCaso, TipoCaso, Prioridad) VALUES
-('CS1', '754323489', 1, 'FAC1', 'Salamar','Personal', 'Necesitamos una ayuda inmediata', 'San jose en el centro de la capital', 'Se tiene que verificar el tipo de ayuda que necesita', 'Abierta', 'Devolucion', 'Alta'),
-('CS2', '369253247', 2, 'FAC2', 'Dospinos','Empresarial', 'Queremos hablar con un encargado', 'Alajuela a un costado del mercado', 'Se procedera a enviar la queja al encargado', 'Aprobado', 'Devolucion', 'Alta'),
-('CS3', '432124368', 3, 'FAC3', 'Aurua','Personal', 'Tuvimos problemas', 'En San carlos debajo de una catarata', 'Se busca el tipo de problemas', 'Rechazado', 'Garantia', 'Baja'),
-('CS4', '456789123', 4, 'FAC4', 'Dianeys','Personal', 'Hubo un problema', 'En la casa habitacion #58 en limon', 'Se habla para ver el problema', 'Aprobado', 'Garantia', 'Baja'),
-('CS5', '533467853', 5, 'FAC5', 'Nike','Empresarial', 'Algo fallo en los pedidos', 'San jose a la par de amazon', 'Se indica el fallo que hubo', 'Abierta', 'Reclamo', 'Media'),
-('CS6', '754323489', 6, 'FAC6', 'Adidas','Empresarial', 'Es un asunto de urgencia', 'San jose por el mall san pedro', 'Se habla con el administrador', 'Rechazado', 'Reclamo', 'Media');
+('CS1', '123456789', null, null, 'Salamar','Salamar', 'Necesitamos una ayuda inmediata', 'San jose en el centro de la capital', 'Se tiene que verificar el tipo de ayuda que necesita', 'Abierta', 'Reclamo', 'Alta'),
+('CS2', '325543227', null, null, 'Dospinos','Dospinos', 'Queremos hablar con un encargado', 'Alajuela a un costado del mercado', 'Se procedera a enviar la queja al encargado', 'Aprobado', 'Devolucion', 'Alta'),
+('CS3', '456789123', null, null, 'Aurua','Aurua', 'Tuvimos problemas', 'En San carlos debajo de una catarata', 'Se busca el tipo de problemas', 'Rechazado', 'Garantia', 'Baja'),
+('CS4', '321654987', null, null, 'Dianeys','Dianeys', 'Hubo un problema', 'En la casa habitacion #58 en limon', 'Se habla para ver el problema', 'Aprobado', 'Garantia', 'Baja'),
+('CS5', '754323489', null, null, 'Nike','Nike', 'Algo fallo en los pedidos', 'San jose a la par de amazon', 'Se indica el fallo que hubo', 'Abierta', 'Reclamo', 'Media'),
+('CS6', '432124368', null, null, 'Adidas','Adidas', 'Es un asunto de urgencia', 'San jose por el mall san pedro', 'Se habla con el administrador', 'Rechazado', 'Reclamo', 'Media'),
+('CS7', '153234558', null, null, 'Cerveza del Valle','Cerveza del Valle', 'Solicito reposición', 'Cartago, frente al parque central', 'Reposición de producto defectuoso', 'Abierta', 'Garantia', 'Alta'),
+('CS8', '533467853', null, null, 'Zapatos Rápidos','Zapatos Rápidos', 'Problema con la talla', 'Heredia, calle principal', 'Cambio de talla solicitado', 'Aprobado', 'Reclamo', 'Baja'),
+('CS9', '258932147', null, null, 'Panadería El Buen Pan','Panadería El Buen Pan', 'Falta de producto', 'San Jose, barrio Escalante', 'Falta de producto en el pedido', 'Abierta', 'Devolucion', 'Media'),
+('CS10', '369253247', null, null, 'Supermercados La Familia','Supermercados La Familia', 'Pedido incompleto', 'Alajuela, zona sur', 'Se confirma que faltan productos', 'Aprobado', 'Reclamo', 'Alta'),
+('CS11', '235754438', null, null, 'Muebles Modernos','Muebles Modernos', 'Pedido equivocado', 'Puntarenas, frente a la playa', 'Se corrige el error y se envía el producto correcto', 'Abierta', 'Garantia', 'Media'),
+('CS12', '754332564', null, null, 'Tecnología Avanzada','Tecnología Avanzada', 'Equipos defectuosos', 'San jose, zona oeste', 'Se ofrece reemplazo por otro equipo', 'Aprobado', 'Garantia', 'Alta'),
+('CS13', '432123478', null, null, 'Electricidad Total','Electricidad Total', 'Daño en el equipo', 'Alajuela, zona norte', 'Se verifican detalles del daño para la reparación', 'Abierta', 'Garantia', 'Baja'),
+('CS14', '564298645', null, null, 'Casa y Hogar','Casa y Hogar', 'Problema con los materiales', 'Cartago, sector El Tejar', 'Se solicita cambio por materiales dañados', 'Rechazado', 'Reclamo', 'Baja'),
+('CS15', '354215796', null, null, 'Comida Rápida','Comida Rápida', 'Error en la entrega', 'Heredia, frente al colegio', 'Se informa sobre el error en la entrega', 'Abierta', 'Reclamo', 'Media'),
+('CS16', '642342123', null, null, 'Tecnología Total','Tecnología Total', 'Mal funcionamiento', 'San jose, centro comercial', 'Se solicita revisar la falla técnica', 'Aprobado', 'Garantia', 'Alta'),
+('CS17', '653212356', null, null, 'Suministros Industriales','Suministros Industriales', 'Daño en el equipo', 'Alajuela, zona industrial', 'Se envia técnico para revisar el equipo', 'Abierta', 'Garantia', 'Baja'),
+('CS18', '257543123', null, null, 'Lentes Ópticos','Lentes Ópticos', 'Montura rota', 'San jose, Avenida central', 'Se autoriza la reposición del producto', 'Rechazado', 'Garantia', 'Baja'),
+('CS19', '321234678', null, null, 'Libros Online','Libros Online', 'Pedido erróneo', 'Cartago, cerca del parque', 'Se procederá con la devolución del producto', 'Aprobado', 'Devolucion', 'Media'),
+('CS20', '123456789', null, null, 'Tecnología y Accesorios','Tecnología y Accesorios', 'Reemplazo de producto', 'Puntarenas, frente al puerto', 'Se ofrece la reposición del artículo dañado', 'Rechazado', 'Garantia', 'Alta'),
+('CS21', '325543227', null, null, 'Decoraciones de Lujo','Decoraciones de Lujo', 'Pedido incompleto', 'Heredia, zona comercial', 'Faltan algunos artículos en el pedido', 'Abierta', 'Reclamo', 'Alta'),
+('CS22', '456789123', null, null, 'Automóviles Ágiles','Automóviles Ágiles', 'Problema con el servicio', 'San jose, barrio la estrella', 'Se solicitará revisión por el equipo de servicio', 'Abierta', 'Garantia', 'Media'),
+('CS23', '321654987', null, null, 'Cosméticos Naturales','Cosméticos Naturales', 'Producto defectuoso', 'Alajuela, cerca de la estación de buses', 'Se reemplaza el producto defectuoso', 'Aprobado', 'Garantia', 'Baja'),
+('CS24', '754323489', null, null, 'Farmacia Salud Total','Farmacia Salud Total', 'Error en receta', 'Cartago, centro comercial', 'Se enviará corrección a la receta', 'Abierta', 'Devolucion', 'Baja'),
+('CS25', '432124368', null, null, 'Juguetes Divertidos','Juguetes Divertidos', 'Pedido retrasado', 'San jose, zona este', 'Se solicita investigar retraso en la entrega', 'Abierta', 'Reclamo', 'Media'),
+('CS26', '153234558', null, null, 'Ropa Elegante','Ropa Elegante', 'Cambio de talla', 'Puntarenas, sector norte', 'Se procederá con el cambio de talla', 'Rechazado', 'Reclamo', 'Baja'),
+('CS27', '533467853', null, null, 'Zapatos de Cuero','Zapatos de Cuero', 'Producto no encontrado', 'Heredia, cerca del hospital', 'Se busca alternativa de producto', 'Aprobado', 'Devolucion', 'Alta'),
+('CS28', '258932147', null, null, 'Electrodomésticos Premium','Electrodomésticos Premium', 'Falla en la nevera', 'Alajuela, zona comercial', 'Se ofrece reparación o sustitución', 'Abierta', 'Garantia', 'Alta'),
+('CS29', '369253247', null, null, 'Café Orgánico', 'Café Orgánico','Falta de stock', 'Cartago, frente al supermercado', 'Se notificará sobre el repositorio', 'Abierta', 'Reclamo', 'Media'),
+('CS30', '235754438', null, null, 'Herramientas Industriales','Herramientas Industriales', 'Faltan piezas en el pedido', 'San jose, parque central', 'Se procederá a enviar las piezas faltantes', 'Aprobado', 'Devolucion', 'Baja'),
+('CS31', '754332564', null, null, 'Productos Lácteos','Productos Lácteos', 'Envío tardío', 'Alajuela, zona sur', 'Se investiga el motivo del retraso', 'Abierta', 'Reclamo', 'Alta'),
+('CS32', '432123478', null, null, 'Restaurante El Buen Comer','Restaurante El Buen Comer', 'Problema con ingredientes', 'Heredia, zona norte', 'Se sustituirán los ingredientes defectuosos', 'Rechazado', 'Garantia', 'Baja'),
+('CS33', '564298645', null, null, 'Moda Actual','Moda Actual', 'Cambio de producto', 'Puntarenas, sector sur', 'Se procederá con el cambio por otro artículo', 'Aprobado', 'Reclamo', 'Media'),
+('CS34', '354215796', null, null, 'Tiendas Naturales','Tiendas Naturales', 'Error en cantidad de producto', 'San jose, barrio los alamos', 'Se enviará la cantidad faltante', 'Abierta', 'Devolucion', 'Baja'),
+('CS35', '642342123', null, null, 'Salud y Bienestar','Salud y Bienestar', 'Problema con el medicamento', 'Cartago, zona este', 'Se procederá a la devolución del medicamento', 'Aprobado', 'Devolucion', 'Alta'),
+('CS36', '653212356', null, null, 'Instrumentos Musicales','Instrumentos Musicales', 'Producto en mal estado', 'Alajuela, zona céntrica', 'Se procederá con la devolución y reposición', 'Rechazado', 'Garantia', 'Alta'),
+('CS37', '257543123', null, null, 'Tienda Digital','Tienda Digital', 'Problemas con la facturación', 'San jose, calle 13', 'Se revisarán los datos de facturación', 'Aprobado', 'Devolucion', 'Media'),
+('CS38', '123456789', null, null, 'Bebidas Naturales','Bebidas Naturales', 'Producto defectuoso', 'Heredia, sector las flores', 'Se reemplaza el producto defectuoso', 'Abierta', 'Garantia', 'Alta'),
+('CS39', '325543227', null, null, 'Carpintería El Mueble','Carpintería El Mueble', 'Falla en la entrega', 'Puntarenas, zona oeste', 'Se confirmará la fecha de entrega', 'Aprobado', 'Reclamo', 'Baja'),
+('CS40', '456789123', null, null, 'Electrodomésticos Rápidos','Electrodomésticos Rápidos', 'Error en el tipo de artículo', 'San jose, barrio los laureles', 'Se autoriza el cambio del artículo erróneo', 'Rechazado', 'Devolucion', 'Baja');
+
+
 
 
 
@@ -1362,23 +1441,14 @@ insert into TareaCaso(CodigoTarea,CodigoCaso) values
 
 
 
-CREATE TABLE TareaCotizacion (
-    CodigoTarea VARCHAR(15) NOT NULL,
-	Codigo int not null,
-	PRIMARY KEY (CodigoTarea,Codigo),
-    FOREIGN KEY (Codigo) REFERENCES Cotizacion(Codigo)
-);
-
-
-
-
+-- Tabla que detalla los productos incluidos en una factura.
 CREATE TABLE ListaFactura (
-    Codigo varchar(15) not null,
-	CantidadProducto int NOT NULL,
-	CodigoF varchar(15) not null
-    primary key (Codigo, CodigoF),
-    foreign key (Codigo) references Articulo (Codigo), 
-	foreign key (CodigoF) references Factura(Codigo), 
+    Codigo VARCHAR(15) NOT NULL,           -- Identificador del producto.
+    CantidadProducto INT NOT NULL,         -- Cantidad del producto facturado.
+    CodigoF VARCHAR(15) NOT NULL,          -- Identificador de la factura asociada.
+    PRIMARY KEY (Codigo, CodigoF),         -- Llave primaria que asegura unicidad.
+    FOREIGN KEY (Codigo) REFERENCES Articulo(Codigo), -- Relación con artículo.
+    FOREIGN KEY (CodigoF) REFERENCES Factura(Codigo)  -- Relación con factura.
 );
 insert into ListaFactura(Codigo,CantidadProducto ,CodigoF) values
 ('ART14', 5, 'FAC1'),
@@ -1570,38 +1640,41 @@ insert into ListaFactura(Codigo,CantidadProducto ,CodigoF) values
 
 
 
-CREATE TABLE Movimiento(
-	IDMovimiento int IDENTITY(1,1) not null,
-	Cedula VARCHAR(9) not null, 
-	BodegaOrigen varchar(15) not null,
-	BodegaDestino varchar(15) null,
-	fecha date not null,
-	hora time not null,
-	PRIMARY KEY (IDMovimiento),
-	FOREIGN KEY (Cedula) references Empleado(Cedula),
-	FOREIGN KEY (BodegaOrigen) REFERENCES Bodega(Codigo),
-    FOREIGN KEY (BodegaDestino) REFERENCES Bodega(Codigo)
+-- Tabla que registra movimientos de productos entre bodegas.
+CREATE TABLE Movimiento (
+    IDMovimiento INT IDENTITY(1,1) NOT NULL, -- Identificador único del movimiento.
+    Cedula VARCHAR(9) NOT NULL,              -- Empleado responsable del movimiento.
+    BodegaOrigen VARCHAR(15) NOT NULL,       -- Bodega de origen del movimiento.
+    BodegaDestino VARCHAR(15) NULL,          -- Bodega de destino del movimiento.
+    Fecha DATE NOT NULL,                     -- Fecha del movimiento.
+    Hora TIME NOT NULL,                      -- Hora del movimiento.
+    PRIMARY KEY (IDMovimiento),              -- Llave primaria del movimiento.
+    FOREIGN KEY (Cedula) REFERENCES Empleado(Cedula), -- Relación con empleado.
+    FOREIGN KEY (BodegaOrigen) REFERENCES Bodega(Codigo), -- Relación con bodega origen.
+    FOREIGN KEY (BodegaDestino) REFERENCES Bodega(Codigo) -- Relación con bodega destino.
 );
 
 
+-- Tabla que detalla los artículos involucrados en un movimiento.
 CREATE TABLE ListaMovimiento (
-	CodigoArticulo VARCHAR(15) NOT NULL,
-	CantidadArticulo int not null,
-	CodigoMovimiento int NOT NULL,
-	PRIMARY KEY (CodigoArticulo, CodigoMovimiento),
-	FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo),
-	FOREIGN KEY (CodigoMovimiento) REFERENCES Movimiento(IDMovimiento),
+    CodigoArticulo VARCHAR(15) NOT NULL, -- Identificador del artículo.
+    CantidadArticulo INT NOT NULL,      -- Cantidad involucrada en el movimiento.
+    CodigoMovimiento INT NOT NULL,      -- Identificador del movimiento asociado.
+    PRIMARY KEY (CodigoArticulo, CodigoMovimiento), -- Llave primaria única.
+    FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo), -- Relación con artículo.
+    FOREIGN KEY (CodigoMovimiento) REFERENCES Movimiento(IDMovimiento) -- Relación con movimiento.
 );
 
 --Esto es para ingresar elementos a una bodega
+-- Tabla que registra los ingresos de inventario en una bodega específica.
 CREATE TABLE IngresoInventario (
-    IDIngreso INT IDENTITY(1,1) NOT NULL,
-    CedulaEmpleado VARCHAR(9) NOT NULL,
-    BodegaDestino VARCHAR(15) NOT NULL,
-    Fecha DATETIME,
-    PRIMARY KEY (IDIngreso, BodegaDestino),  
-    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula),
-    FOREIGN KEY (BodegaDestino) REFERENCES Bodega(Codigo)
+    IDIngreso INT IDENTITY(1,1) NOT NULL, -- Identificador único del ingreso (autoincremental).
+    CedulaEmpleado VARCHAR(9) NOT NULL,  -- Cédula del empleado responsable del ingreso.
+    BodegaDestino VARCHAR(15) NOT NULL,  -- Código de la bodega donde se registra el ingreso.
+    Fecha DATETIME,                      -- Fecha y hora en que se realizó el ingreso.
+    PRIMARY KEY (IDIngreso, BodegaDestino), -- Llave primaria compuesta por el ingreso y la bodega.
+    FOREIGN KEY (CedulaEmpleado) REFERENCES Empleado(Cedula), -- Relación con la tabla de empleados.
+    FOREIGN KEY (BodegaDestino) REFERENCES Bodega(Codigo)    -- Relación con la tabla de bodegas.
 );
 
 insert into IngresoInventario(CedulaEmpleado, BodegaDestino, Fecha) values 
@@ -1630,15 +1703,16 @@ insert into IngresoInventario(CedulaEmpleado, BodegaDestino, Fecha) values
 ('112244335', 'BO10', '2024-03-12 17:00:00'), --21
 ('775566443', 'BO11', '2024-02-12 18:00:00'); --22
 
+-- Tabla que detalla los artículos ingresados en un inventario específico.
 CREATE TABLE ListaIngreso (
-    IDIngreso INT NOT NULL,
-    BodegaDestino VARCHAR(15) NOT NULL, 
-    CodigoArticulo VARCHAR(15) NOT NULL,
-    CantidadIngresada INT NOT NULL,
-	fecha date not null,
-    PRIMARY KEY (CodigoArticulo, IDIngreso, BodegaDestino),
-    FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo),
-    FOREIGN KEY (IDIngreso, BodegaDestino) REFERENCES IngresoInventario(IDIngreso, BodegaDestino)
+    IDIngreso INT NOT NULL,                    -- Identificador del ingreso (referencia a IngresoInventario).
+    BodegaDestino VARCHAR(15) NOT NULL,        -- Código de la bodega donde se ingresaron los artículos.
+    CodigoArticulo VARCHAR(15) NOT NULL,       -- Código del artículo ingresado.
+    CantidadIngresada INT NOT NULL,            -- Cantidad del artículo ingresado.
+    Fecha DATE NOT NULL,                       -- Fecha en que se realizó el ingreso del artículo.
+    PRIMARY KEY (CodigoArticulo, IDIngreso, BodegaDestino), -- Llave primaria compuesta por artículo, ingreso y bodega.
+    FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo), -- Relación con la tabla de artículos.
+    FOREIGN KEY (IDIngreso, BodegaDestino) REFERENCES IngresoInventario(IDIngreso, BodegaDestino) -- Relación con IngresoInventario.
 );
 
 
@@ -1741,17 +1815,20 @@ insert into ListaIngreso(IDIngreso, BodegaDestino, CodigoArticulo, CantidadIngre
 (22, 'BO11', 'ART18', 63, '2024-06-05'),  
 (22, 'BO11', 'ART41', 74, '2024-06-10');
 
-CREATE TABLE SalidaMovimiento(
-	IDFactura VARCHAR(15) not null,
-	CodigoProducto VARCHAR(15) not null,
-	CodigoBodega VARCHAR(15) not null,
-	Cantidad int not null,
-	fecha date
-	PRIMARY KEY(IDFactura, CodigoProducto,CodigoBodega),
-	FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo),
-	FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo),
-	FOREIGN KEY (IDFactura) REFERENCES Factura(Codigo)
+
+-- Tabla que registra los movimientos de salida de artículos desde una bodega.
+CREATE TABLE SalidaMovimiento (
+    IDFactura VARCHAR(15) NOT NULL,            -- Código de la factura asociada al movimiento de salida.
+    CodigoProducto VARCHAR(15) NOT NULL,       -- Código del producto que se está retirando.
+    CodigoBodega VARCHAR(15) NOT NULL,         -- Código de la bodega desde donde se retira el producto.
+    Cantidad INT NOT NULL,                     -- Cantidad del producto retirado.
+    Fecha DATE,                                -- Fecha del movimiento de salida.
+    PRIMARY KEY (IDFactura, CodigoProducto, CodigoBodega), -- Llave primaria compuesta por factura, producto y bodega.
+    FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo), -- Relación con la tabla de artículos.
+    FOREIGN KEY (CodigoBodega) REFERENCES Bodega(Codigo),     -- Relación con la tabla de bodegas.
+    FOREIGN KEY (IDFactura) REFERENCES Factura(Codigo)        -- Relación con la tabla de facturas.
 );
+
 
 
 
@@ -1802,13 +1879,14 @@ insert into SalidaMovimiento(IDFactura, CodigoProducto, CodigoBodega, Cantidad,f
 
 
 
+-- Tabla que detalla los artículos involucrados en un movimiento de salida.
 CREATE TABLE ListaSalida (
-    CodigoMovimiento INT NOT NULL,
-    CodigoArticulo VARCHAR(15) NOT NULL,
-    CantidadIngresada INT not null,
-    PRIMARY KEY (CodigoArticulo, CodigoMovimiento),
-    FOREIGN KEY (CodigoMovimiento) REFERENCES Movimiento(IDMovimiento),
-    FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo)
+    CodigoMovimiento INT NOT NULL,             -- Código del movimiento asociado (referencia a Movimiento).
+    CodigoArticulo VARCHAR(15) NOT NULL,       -- Código del artículo involucrado en la salida.
+    CantidadIngresada INT NOT NULL,            -- Cantidad del artículo involucrado.
+    PRIMARY KEY (CodigoArticulo, CodigoMovimiento), -- Llave primaria compuesta por artículo y movimiento.
+    FOREIGN KEY (CodigoMovimiento) REFERENCES Movimiento(IDMovimiento), -- Relación con Movimiento.
+    FOREIGN KEY (CodigoArticulo) REFERENCES Articulo(Codigo)            -- Relación con la tabla de artículos.
 );
 
 
@@ -1817,13 +1895,15 @@ CREATE TABLE ListaSalida (
 
 
 
+
+-- Tabla que detalla los productos y cantidades asociados a una cotización.
 CREATE TABLE ListaCotizacion (
-	CodigoProducto VARCHAR(15) NOT NULL,
-	CantidadProducto INT NOT NULL,
-	CodigoCotizacion int NOT NULL,
-	PRIMARY KEY (CodigoProducto,CodigoCotizacion),
-	FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo),
-	FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo)
+    CodigoProducto VARCHAR(15) NOT NULL,       -- Código del producto cotizado.
+    CantidadProducto INT NOT NULL,            -- Cantidad del producto cotizado.
+    CodigoCotizacion INT NOT NULL,            -- Código de la cotización asociada.
+    PRIMARY KEY (CodigoProducto, CodigoCotizacion), -- Llave primaria compuesta por producto y cotización.
+    FOREIGN KEY (CodigoProducto) REFERENCES Articulo(Codigo), -- Relación con la tabla de artículos.
+    FOREIGN KEY (CodigoCotizacion) REFERENCES Cotizacion(Codigo) -- Relación con la tabla de cotizaciones.
 );
 
 insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) values
@@ -2078,57 +2158,65 @@ insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) va
 
 
 --Procedimiento almacenado para calcular todos los salarios o el pago en general de una planilla
-
-GO
-
+go
 create procedure CalcularPago 
 as 
 begin 
 
-    declare @CodigoPlanilla varchar(15);
-    declare @HorasRealizadas int;
-    declare @Cedula varchar(9);
-    declare @SalarioActual int;
-    declare @NuevoSalario int;
-    declare @Excedente int;
+-- Declaración de variables necesarias para el cálculo
+declare @CodigoPlanilla varchar(15);
+declare @HorasRealizadas int;
+declare @Cedula varchar(9);
+declare @SalarioActual int;
+declare @NuevoSalario int;
+declare @Excedente int;
 
-    declare CursorPlanilla cursor for
-    select CodigoPlanilla, HorasRealizadas, CedulaEmpleado
-    from Planilla
-    where Salario is null;
+-- Cursor para recorrer las planillas con salarios no calculados
+declare CursorPlanilla cursor for
+select CodigoPlanilla, HorasRealizadas, CedulaEmpleado
+from Planilla
+where Salario is null;
 
-    open CursorPlanilla;
+open CursorPlanilla;
+
+-- Iteración sobre cada planilla seleccionada
+fetch next from CursorPlanilla into @CodigoPlanilla, @HorasRealizadas, @Cedula;
+
+while @@FETCH_STATUS = 0
+begin
+    -- Obtención del salario actual del empleado
+    select @SalarioActual = SalarioActual
+    from Empleado
+    where Cedula = @Cedula;
+
+    -- Verificar si se exceden las 200 horas trabajadas
+    if @HorasRealizadas > 200
+    begin
+        -- Calcular excedente y nuevo salario con pago extra
+        set @Excedente = @HorasRealizadas - 200;  
+        set @NuevoSalario = (@SalarioActual / 200) * @Excedente * 1.5 + @SalarioActual;
+    end
+    else
+    begin
+        -- Si no hay horas extra, el salario se mantiene igual
+        set @NuevoSalario = @SalarioActual;
+    end
+
+    -- Actualizar el salario calculado en la planilla
+    update Planilla
+    set Salario = @NuevoSalario
+    where CodigoPlanilla = @CodigoPlanilla;
 
     fetch next from CursorPlanilla into @CodigoPlanilla, @HorasRealizadas, @Cedula;
+end;
 
-    while @@FETCH_STATUS = 0
-    begin
-        select @SalarioActual = SalarioActual
-        from Empleado
-        where Cedula = @Cedula;
+-- Cerrar y liberar recursos del cursor
+close CursorPlanilla;
+deallocate CursorPlanilla;
 
-        if @HorasRealizadas > 200
-        begin
-            set @Excedente = @HorasRealizadas - 200;  
-            set @NuevoSalario = (@SalarioActual / 200) * @Excedente * 1.5 + @SalarioActual;
-        end
-        else
-        begin
-            set @NuevoSalario = @SalarioActual; -- Si no se exceden las 200 horas, el salario es el mismo
-        end
+-- Mensaje informativo al final del proceso
+print 'Salarios calculados y actualizados correctamente para todas las planillas.';
 
-        update Planilla
-        set Salario = @NuevoSalario
-        where CodigoPlanilla = @CodigoPlanilla;
-
-        fetch next from CursorPlanilla into @CodigoPlanilla, @HorasRealizadas, @Cedula;
-
-    end;
-
-    close CursorPlanilla;
-    deallocate CursorPlanilla;
-
-    print 'Salarios calculados y actualizados correctamente para todas las planillas.';
 end;
 
 
@@ -2136,14 +2224,15 @@ end;
 go
 create view verPago as
 select 
-    p.CodigoPlanilla as Planilla, 
-    p.FechaPlanilla, 
-    SUM(p.Salario) as MontoPagado
+    p.CodigoPlanilla as Planilla, -- Identificador de la planilla
+    p.FechaPlanilla, -- Fecha de la planilla
+    SUM(p.Salario) as MontoPagado -- Total de salarios pagados
 from 
     Planilla as p
 group by 
     p.CodigoPlanilla, 
     p.FechaPlanilla;
+
 
 
 
@@ -2157,31 +2246,21 @@ returns table
 as
 return
 (
-    select 
-        Planilla, 
-        FechaPlanilla, 
-        MontoPagado
-    from 
-        verPago
-    where 
-        (
-            (@tipo = 'mes-año' 
-                and (
-                    (month(FechaPlanilla) >= month(@fecha) and year(FechaPlanilla) = year(@fecha))
-                    or (year(FechaPlanilla) > year(@fecha))
-                )
-            )
-            or (@tipo = 'año-mes' 
-                and (
-                    (month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) >= year(@fecha))
-                )
-            )
-            or (@tipo = 'mes(año)' 
-                and (month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) = year(@fecha))
-            )
-            or (@tipo = 'RangoFecha' 
-                and FechaPlanilla between @fecha and isnull(@fechaFin, @fecha))
-        )
+-- Devuelve las planillas y montos pagados según filtros de fecha
+select 
+    Planilla, 
+    FechaPlanilla, 
+    MontoPagado
+from 
+    verPago
+where 
+    (
+        (@tipo = 'mes-año' and (month(FechaPlanilla) >= month(@fecha) and year(FechaPlanilla) = year(@fecha)))
+        or (@tipo = 'año-mes' and month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) >= year(@fecha))
+        or (@tipo = 'mes(año)' and month(FechaPlanilla) = month(@fecha) and year(FechaPlanilla) = year(@fecha))
+        or (@tipo = 'RangoFecha' and FechaPlanilla between @fecha and isnull(@fechaFin, @fecha))
+    )
+
 );
 
 --TODO ESTO ES PARA MOSTRAR EL PAGO DE PLANILLA
@@ -2194,19 +2273,20 @@ return
 --TODO ESTO ES PARA PLANILLA DEPARTAMENTO
 go
 create view depPlanilla as 
-    select 
-        d.Nombre as nombredepar, 
-		p.FechaPlanilla ,
-        sum(p.salario) as montopagado
-    from 
-        planilla as p
-    join 
-        empleado as e on p.cedulaempleado = e.cedula
-    join 
-        departamento as d on e.codigodepartamento = d.codigo
-	group by
-	d.Nombre, 
-	p.FechaPlanilla 
+select 
+    d.Nombre as nombredepar, -- Nombre del departamento
+    p.FechaPlanilla, -- Fecha de la planilla
+    sum(p.salario) as montopagado -- Total pagado en el departamento
+from 
+    planilla as p
+join 
+    empleado as e on p.cedulaempleado = e.cedula
+join 
+    departamento as d on e.codigodepartamento = d.codigo
+group by 
+    d.Nombre, 
+    p.FechaPlanilla;
+
 
 --select * from depPlanilla
 --drop function pagosplanilladep
@@ -2247,25 +2327,26 @@ return (
 go
 create view VentasZonas as 
 
-    select 
-        s.Nombre as Sector,
-        s.Descripcion as descripcionsector,
-		f.FechaFactura,
-        sum(a.PrecioEstandar * lf.CantidadProducto) as monto
-    from 
-        ListaFactura as lf
-    join 
-        Factura as f on lf.CodigoF = f.Codigo
-    join 
-        Cliente as c on f.CedulaCliente = c.Cedula
-    join 
-        Articulo as a on lf.Codigo = a.Codigo
-    join 
-        Sector as s on c.Sector = s.Nombre
-	group by
-	s.Nombre,
-	s.Descripcion,
-	f.FechaFactura
+select 
+    s.Nombre as Sector, -- Nombre del sector
+    s.Descripcion as descripcionsector, -- Descripción del sector
+    f.FechaFactura, -- Fecha de la factura
+    sum(a.PrecioEstandar * lf.CantidadProducto) as monto -- Monto total de ventas
+from 
+    ListaFactura as lf
+join 
+    Factura as f on lf.CodigoF = f.Codigo
+join 
+    Cliente as c on f.CedulaCliente = c.Cedula
+join 
+    Articulo as a on lf.Codigo = a.Codigo
+join 
+    Sector as s on c.Sector = s.Nombre
+group by 
+    s.Nombre, 
+    s.Descripcion, 
+    f.FechaFactura;
+
 	
 go
 create function VentaSector (
@@ -2277,22 +2358,20 @@ returns table
 as
 return
 (
-    select 
-        v.Sector,
-        v.DescripcionSector,
-        SUM(v.monto) as Monto
-    from 
-        VentasZonas as v
-    where 
-        (
-            -- Filtro por mes y año
-            (@tipo = 'mes(año)' and year(v.FechaFactura) = year(@fecha) and month(v.FechaFactura) = month(@fecha))
-            or 
-            -- Filtro por rango de fechas
-            (@tipo = 'RangoFecha' and v.FechaFactura between @fecha and isnull(@fechafin, @fecha))
-        )
-    group by 
-        v.Sector, v.DescripcionSector
+select 
+    v.Sector, -- Nombre del sector
+    v.DescripcionSector, -- Descripción del sector
+    SUM(v.monto) as Monto -- Total de ventas en el sector
+from 
+    VentasZonas as v
+where 
+    (
+        (@tipo = 'mes(año)' and year(v.FechaFactura) = year(@fecha) and month(v.FechaFactura) = month(@fecha))
+        or (@tipo = 'RangoFecha' and v.FechaFactura between @fecha and isnull(@fechafin, @fecha))
+    )
+group by 
+    v.Sector, v.DescripcionSector
+
 );
 
 --SELECT * 
@@ -2319,42 +2398,42 @@ return
 --------------------------------------------------------------------------------------
 --select * from VentaSector
 go
+-- Crear una vista llamada ZonaVenta que calcula el monto total por zona y fecha de factura
 create view ZonaVenta as 
- select 
-        z.nombre as zona,
-        z.descripcion as descripcionzona,
-		f.FechaFactura,
-        sum(a.precioestandar * lf.cantidadproducto) as monto
+    select 
+        z.nombre as zona,  -- Nombre de la zona
+        z.descripcion as descripcionzona,  -- Descripción de la zona
+        f.FechaFactura,  -- Fecha de la factura
+        sum(a.precioestandar * lf.cantidadproducto) as monto  -- Monto total de ventas (precio * cantidad)
     from 
         listafactura as lf
     join 
-        factura as f on lf.codigof = f.codigo
+        factura as f on lf.codigof = f.codigo  -- Relaciona las facturas
     join 
-        cliente as c on f.cedulacliente = c.cedula
+        cliente as c on f.cedulacliente = c.cedula  -- Relaciona a los clientes
     join 
-        articulo as a on lf.codigo = a.codigo
+        articulo as a on lf.codigo = a.codigo  -- Relaciona los artículos
     join 
-        zona as z on c.zona = z.nombre
-	group by
-	z.Nombre,
-	z.descripcion,
-	f.FechaFactura
-
-
+        zona as z on c.zona = z.nombre  -- Relaciona las zonas de los clientes
+    group by
+        z.Nombre,  -- Agrupación por nombre de la zona
+        z.descripcion,  -- Agrupación por descripción de la zona
+        f.FechaFactura  -- Agrupación por fecha de la factura
 go
+-- Crear una función que devuelve el monto total por zona según un tipo de filtro
 create function ventazona2 (
-    @tipo varchar(20), 
-    @fecha date, 
-    @fechafin date null
+    @tipo varchar(20),  -- Tipo de filtro (mes/año o rango de fechas)
+    @fecha date,  -- Fecha de inicio
+    @fechafin date null  -- Fecha final (opcional)
 )
 returns table
 as
 return
 (
     select 
-        z.zona,
-        z.descripcionzona,
-        sum(z.monto) as monto
+        z.zona,  -- Nombre de la zona
+        z.descripcionzona,  -- Descripción de la zona
+        sum(z.monto) as monto  -- Suma del monto por zona
     from 
         ZonaVenta as z
     where 
@@ -2366,7 +2445,7 @@ return
             (@tipo = 'rangofecha' and z.FechaFactura between @fecha and isnull(@fechafin, @fecha))
         )
     group by 
-        z.zona, z.descripcionzona
+        z.zona, z.descripcionzona  -- Agrupación por zona y descripción
 );
 
 --SELECT * 
@@ -2379,70 +2458,75 @@ return
 --drop view topclientes
   --Todo esto es para ver cliente top 10
 go
+-- Crear una vista que obtiene los 10 principales clientes según el monto de las facturas
 create view topclientes as
-select top 10 
-    c.nombre as cliente,
-    sum(lf.cantidadproducto * a.precioestandar) as monto,
-	f.FechaFactura
-from listafactura as lf
-join factura as f on lf.codigof = f.codigo
-join cliente as c on f.cedulacliente = c.cedula
-join articulo as a on lf.codigo = a.codigo
-group by c.nombre, 
-f.FechaFactura
+    select top 10 
+        c.nombre as cliente,  -- Nombre del cliente
+        sum(lf.cantidadproducto * a.precioestandar) as monto,  -- Monto total de ventas por cliente
+        f.FechaFactura  -- Fecha de la factura
+    from 
+        listafactura as lf
+    join 
+        factura as f on lf.codigof = f.codigo  -- Relaciona las facturas
+    join 
+        cliente as c on f.cedulacliente = c.cedula  -- Relaciona a los clientes
+    join 
+        articulo as a on lf.codigo = a.codigo  -- Relaciona los artículos
+    group by 
+        c.nombre,  -- Agrupación por nombre de cliente
+        f.FechaFactura  -- Agrupación por fecha de factura
 
 --select * from topclientes
 --drop function top10ClientesAscendente
 go
+-- Crear una función que devuelve los 10 principales clientes ordenados ascendentemente por monto
 create function top10ClientesAscendente(@tipo varchar(20) = null, @fecha date = null, @fin date = null)
 returns table
 as
 return (
     select top 10
-        t.cliente,
-        t.monto,
-        t.FechaFactura
-    from topclientes t
+        t.cliente,  -- Nombre del cliente
+        t.monto,  -- Monto total de ventas por cliente
+        t.FechaFactura  -- Fecha de la factura
+    from 
+        topclientes t
     -- Filtrado de fechas según el tipo
     where 
         (
-            -- Si el tipo es 'mes(año)', se filtra por el mes y año de @fecha
+            -- Filtrado por mes/año
             (@tipo = 'mes(año)' and format(t.FechaFactura, 'MM/yyyy') = format(@fecha, 'MM/yyyy')) 
-            
-            -- Si el tipo es 'rangofecha', se filtra entre las fechas @fecha y @fin
+            -- Filtrado por rango de fechas
             or (@tipo = 'rangofecha' and t.FechaFactura between @fecha and @fin)
-            
-            -- Si el tipo es 'cualquier' o es nulo, no se filtra por fecha
+            -- Si no hay filtro por tipo, incluir todos los registros
             or (@tipo is null or @tipo = 'cualquier') 
         )
-    -- Ordenar Ascendentemente
-    order by t.monto ASC  -- Orden ascendente
+    -- Ordenar Ascendentemente por monto
+    order by t.monto ASC
 );
-
 
 --select * from dbo.top10ClientesAscendente(null, null, null);
 
 go
+-- Crear una función que devuelve los 10 principales clientes ordenados descendentemente por monto
 create function top10ClientesDescendente(@tipo varchar(20) null, @fecha date null, @fin date null)
 returns table
 as
 return (
     select top 10
-        t.cliente,
-        t.monto,
-        t.FechaFactura
-    from topclientes t
+        t.cliente,  -- Nombre del cliente
+        t.monto,  -- Monto total de ventas por cliente
+        t.FechaFactura  -- Fecha de la factura
+    from 
+        topclientes t
     -- Filtrado de fechas según el tipo
     where 
         (
             (@tipo = 'mes(año)' and format(t.FechaFactura, 'MM/yyyy') = format(@fecha, 'MM/yyyy')) 
-            or
-            (@tipo = 'rangofecha' and t.FechaFactura between @fecha and @fin)
-            or
-            (@tipo is null or @tipo = 'cualquier') -- Si @tipo es nulo o 'cualquier', no se filtra por fecha
+            or (@tipo = 'rangofecha' and t.FechaFactura between @fecha and @fin)
+            or (@tipo is null or @tipo = 'cualquier') -- Si @tipo es nulo o 'cualquier', no se filtra por fecha
         )
-    -- Ordenar Descendentemente
-    order by t.monto DESC  -- Orden descendente
+    -- Ordenar Descendentemente por monto
+    order by t.monto DESC
 );
 
 --select * from dbo.top10ClientesDescendente(null, null, null);
@@ -2455,25 +2539,33 @@ return (
 
   --Esto es para la cantidad de clientes por zona y sus ventas
 go
-
+-- Crear una vista que calcula la cantidad de clientes y ventas por zona
 create view ClientesZona as
-  select count(distinct f.Codigo) as CantidadClientes, z.Nombre as Zona, sum(lf.cantidadproducto * a.precioestandar) as Ventas  from ListaFactura as lf
-  join Factura as f on lf.CodigoF = f.Codigo
-  join Cliente as c on f.CedulaCliente = c.Cedula
-  join Articulo as a on lf.Codigo = a.Codigo
-  join Zona as z on c.Zona = z.Nombre
-  group by z.Nombre
+    select count(distinct f.Codigo) as CantidadClientes, 
+           z.Nombre as Zona, 
+           sum(lf.cantidadproducto * a.precioestandar) as Ventas  
+    from 
+        ListaFactura as lf
+    join 
+        Factura as f on lf.CodigoF = f.Codigo  -- Relaciona las facturas
+    join 
+        Cliente as c on f.CedulaCliente = c.Cedula  -- Relaciona a los clientes
+    join 
+        Articulo as a on lf.Codigo = a.Codigo  -- Relaciona los artículos
+    join 
+        Zona as z on c.Zona = z.Nombre  -- Relaciona las zonas
+    group by 
+        z.Nombre  -- Agrupación por zona
 
-go
-  select * from ClientesZona
+ -- select * from ClientesZona
 
-go
+
 
   go
-  create view familiaA as
+create view familiaA as
     select 
         fm.Nombre as NombreFamilia, 
-		f.FechaFactura,
+        f.FechaFactura,
         sum(lf.CantidadProducto * a.PrecioEstandar) as MontoVendido
     from 
         ListaFactura as lf
@@ -2483,10 +2575,9 @@ go
         Articulo as a on lf.Codigo = a.Codigo
     join 
         Familia as fm on a.CodigoFamilia = fm.CodigoFamilia
-	group by 
-	fm.Nombre,
-	F.FechaFactura
-go
+    group by 
+        fm.Nombre,  -- Agrupación por nombre de familia
+        f.FechaFactura  -- Agrupación por fecha de factura
 
   --drop function FamiliaArt
 --Ver familia de productos más vendidos
@@ -2502,8 +2593,8 @@ as
 return
 (
     select 
-        fa.NombreFamilia,
-        sum(fa.MontoVendido) as TotalVendido
+        fa.NombreFamilia,  -- Nombre de la familia
+        sum(fa.MontoVendido) as TotalVendido  -- Total vendido por familia
     from 
         familiaA as fa
     where 
@@ -2513,7 +2604,7 @@ return
             (@tipo = 'rangofecha' and fa.FechaFactura between @fecha and isnull(@fechafin, @fecha))
         )
     group by 
-        fa.NombreFamilia
+        fa.NombreFamilia  -- Agrupación por nombre de familia
 );
 
 
@@ -2521,29 +2612,30 @@ return
 
 --select * from FamiliaArt
 
-
+GO
 
 --Lo que es el movimiento todavia no lo hare
---Este es para la cantidad de movimientos de entrada
-go
+-- Vista para obtener la cantidad de entradas (ingresos) por bodega
 create view SacarIngreso as
-select b.Nombre as Bodega,count(li.IDIngreso) CantidadEntrada from ListaIngreso as li 
+select b.Nombre as Bodega, count(li.IDIngreso) CantidadEntrada 
+from ListaIngreso as li 
 join Bodega as b on li.BodegaDestino = b.Codigo
 group by b.Nombre;
 
 
-
 --select * from SacarIngreso
 
-go
+GO
+-- Vista para obtener la cantidad de salidas (movimientos) por bodega
 create view SacarSalida as
-select b.Nombre as Bodega,count(sl.IDFactura) CantidadEntrada from SalidaMovimiento as sl
+select b.Nombre as Bodega, count(sl.IDFactura) CantidadEntrada 
+from SalidaMovimiento as sl
 join Bodega as b on sl.CodigoBodega = b.Codigo
 group by b.Nombre;
 
 
-
 GO
+-- Función para obtener movimientos según tipo (mes/año o rango de fechas)
 CREATE FUNCTION tipoMovimientoS(
     @tipo varchar(20) null, 
     @fecha date null, 
@@ -2560,15 +2652,15 @@ return
         SacarSalida
     where
         (
-            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate())
+            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate()) -- Filtra por mes/año
         )
         OR 
         (
-            @tipo = 'RangoFecha' and @fecha between @fecha and @fin
+            @tipo = 'RangoFecha' and @fecha between @fecha and @fin -- Filtra por rango de fechas
         )
         OR 
         (
-            @tipo is null
+            @tipo is null -- Sin filtros específicos
         )
 );
 
@@ -2578,6 +2670,7 @@ return
 
 
 GO
+-- Función similar a la anterior, pero para ingresos
 create function tipoMovimientoM(
     @tipo varchar(20) null, 
     @fecha date null, 
@@ -2594,17 +2687,16 @@ return
         SacarIngreso
     where
         (
-            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate())
+            @tipo = 'mes(año)' and year(@fecha) = year(getdate()) and month(@fecha) = month(getdate()) -- Filtra por mes/año
         )
         or 
         (
-            @tipo = 'RangoFecha' and @fecha between @fecha and @fin
+            @tipo = 'RangoFecha' and @fecha between @fecha and @fin -- Filtra por rango de fechas
         )
         or 
         (
-            @tipo is null
+            @tipo is null -- Sin filtros específicos
         )
-
 );
 
 
@@ -2626,21 +2718,26 @@ return
 
 --TODO ESTO ES PARA LAS COTIZACIONES POR DEPARTAMENTO
 
---Esto es para ver las cotizaciones por departamento
 go 
+-- Vista para obtener el total por departamento de las cotizaciones
 create view comparacionDepartamentoC as
-select d.Nombre as Departamento, sum(lc.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, C.FechaCotizacion from ListaCotizacion as lc 
+select 
+    d.Nombre as Departamento, 
+    sum(lc.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, 
+    C.FechaCotizacion 
+from 
+    ListaCotizacion as lc 
 join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
 join Empleado as e on c.CedulaEmpleado = e.Cedula
 join Articulo as a on lc.CodigoProducto = a.Codigo
 join Departamento as d on e.CodigoDepartamento = d.Codigo
 group by 
-	d.Nombre,
-	C.FechaCotizacion
-
+    d.Nombre,
+    C.FechaCotizacion;
 	--select * from comparacionDepartamentoC
 go
-CREATE FUNCTION cotizacionespordepartamento (
+-- Función para obtener el monto de cotizaciones por departamento según tipo (mes/año o rango de fechas)
+create function cotizacionespordepartamento (
     @tipo varchar(20), 
     @fecha date, 
     @fechafin date null
@@ -2657,10 +2754,10 @@ return
     where 
         (@tipo = 'mes(año)' 
          and year(FechaCotizacion) = year(@fecha) 
-         and month(FechaCotizacion) = month(@fecha))
+         and month(FechaCotizacion) = month(@fecha)) -- Filtra por mes/año
         or 
         (@tipo = 'rangofecha' 
-         and FechaCotizacion between @fecha and isnull(@fechafin, @fecha))
+         and FechaCotizacion between @fecha and isnull(@fechafin, @fecha)) -- Filtra por rango de fechas
     group by 
         Departamento
 );
@@ -2672,20 +2769,27 @@ return
 
 --TODO ESTO ES PARA LAS COTIZACIONES POR FACTURA
 
-	--Este es es el de Ventas por departamento
-go 
+--drop view comparacionDepartamento
+GO
+-- Vista para obtener el total por departamento de las ventas
 create view comparacionDepartamento as
-select d.Nombre as Departamento, sum(lf.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, f.FechaFactura as Fecha from ListaFactura as lf  
+select 
+    d.Nombre as Departamento, 
+    sum(lf.CantidadProducto * a.PrecioEstandar) as MontoxDeparmento, 
+    f.FechaFactura as Fecha 
+from 
+    ListaFactura as lf  
 join Factura as f on lf.CodigoF = f.Codigo
 join Empleado as e on f.CedulaEmpleado = e.Cedula
 join Articulo as a on lf.Codigo = a.Codigo
 join Departamento as d on e.CodigoDepartamento = d.Codigo
 group by 
-	d.Nombre,
-	f.FechaFactura
+    d.Nombre,
+    f.FechaFactura;
 
 --Este es el nuevo de ventas por departamento 
 go
+-- Función para obtener el monto de ventas por departamento según tipo (mes/año o rango de fechas)
 create function ventaspordepartamento (
     @tipo varchar(20), 
     @fecha date, 
@@ -2703,10 +2807,10 @@ return
     where 
         (@tipo = 'mes(año)' 
          and year(Fecha) = year(@fecha) 
-         and month(Fecha) = month(@fecha))
+         and month(Fecha) = month(@fecha)) -- Filtra por mes/año
         or 
         (@tipo = 'rangofecha' 
-         and Fecha between @fecha and isnull(@fechafin, @fecha))
+         and Fecha between @fecha and isnull(@fechafin, @fecha)) -- Filtra por rango de fechas
     group by 
         Departamento
 );
@@ -2717,6 +2821,7 @@ return
 
 --ASI ES COMO DEBE DE FUNCIONAR LAS FUNCIONES s
 go
+-- Vista para obtener las ventas por departamento, con un filtro adicional por fecha
 create function ventaspordepartamento2(
     @tipo varchar(20),
     @fecha date,
@@ -2731,9 +2836,9 @@ return
         cd.MontoxDeparmento as montoventas
     from comparacionDepartamento as cd
     where 
-        (@tipo = 'mes(año)' and year(cd.Fecha) = year(@fecha) and month(cd.Fecha) = month(@fecha))
+        (@tipo = 'mes(año)' and year(cd.Fecha) = year(@fecha) and month(cd.Fecha) = month(@fecha)) -- Filtra por mes/año
         or 
-        (@tipo = 'rangofecha' and cd.Fecha between @fecha and isnull(@fechafin, @fecha))
+        (@tipo = 'rangofecha' and cd.Fecha between @fecha and isnull(@fechafin, @fecha)) -- Filtra por rango de fechas
 );
 
 -- Probar la función para un mes específico del año
@@ -2749,6 +2854,7 @@ return
 
 --Este es para ver el top 10 productos cotizados
 go
+-- Procedimiento para obtener productos más cotizados (ascendente o descendente según el parámetro)
 create procedure productoscot
     @tipo varchar(20)
 as
@@ -2761,7 +2867,7 @@ begin
         from listacotizacion as lc
         join articulo as a on lc.codigoproducto = a.codigo
         group by a.descripcion
-        order by sum(lc.cantidadproducto) asc;
+        order by sum(lc.cantidadproducto) asc; -- Orden ascendente por cantidad total
     end
     else
     begin
@@ -2771,7 +2877,7 @@ begin
         from listacotizacion as lc
         join articulo as a on lc.codigoproducto = a.codigo
         group by a.descripcion
-        order by sum(lc.cantidadproducto) desc;
+        order by sum(lc.cantidadproducto) desc; -- Orden descendente por cantidad total
     end
 end;
 
@@ -2781,31 +2887,30 @@ end;
 
 
 
-
---Ventas y cotizaciones por mes, por año
---drop view cotizacionesMes
-go
-create view  cotizacionesMes as
-select month(c.FechaCotizacion) as mesCotizacion, year(c.FechaCotizacion) as añoCotizacion ,  sum(lc.CantidadProducto * a.PrecioEstandar) as total, 'Cotizacion' as tipo from ListaCotizacion as lc
+GO
+-- Vista para obtener cotizaciones mensuales
+create view cotizacionesMes as
+select month(c.FechaCotizacion) as mesCotizacion, year(c.FechaCotizacion) as añoCotizacion, sum(lc.CantidadProducto * a.PrecioEstandar) as total, 'Cotizacion' as tipo 
+from ListaCotizacion as lc
 join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
 join Articulo as a on lc.CodigoProducto = a.Codigo
-group by month(c.FechaCotizacion), year(c.FechaCotizacion)
+group by month(c.FechaCotizacion), year(c.FechaCotizacion);
 
-go
-select * from cotizacionesMes
+--select * from cotizacionesMes
 
---drop view VentasMes
-go
+GO
+-- Vista para obtener ventas mensuales
 create view VentasMes as 
-select month(f.FechaFactura) as mesFactura,  year(f.FechaFactura) as añoFactura,  sum(lf.CantidadProducto *  a.PrecioEstandar) as total, 'Venta' as tipo
+select month(f.FechaFactura) as mesFactura,  year(f.FechaFactura) as añoFactura, sum(lf.CantidadProducto *  a.PrecioEstandar) as total, 'Venta' as tipo
  from ListaFactura as lf
 join Factura as f on lf.CodigoF = f.Codigo
 join Articulo as a on lf.Codigo = a.Codigo
-group by month(f.FechaFactura), year(f.FechaFactura)
+group by month(f.FechaFactura), year(f.FechaFactura);
 
 --select * from VentasMes
 
 go
+-- Función para combinar las vistas de cotizaciones y ventas mensuales
 create function Combinado()
 returns table
 as
@@ -2826,8 +2931,7 @@ return
         tipo
     from 
         VentasMes
-)
-
+);
 --select * from Combinado()
 
 
@@ -2836,12 +2940,13 @@ return
 
 --drop view ClientesZonaVentas
 go
+-- Vista para obtener el total de ventas por zona, clientes y fecha de factura
 create view ClientesZonaVentas as
 select 
     z.Nombre as Zona, 
     count(distinct c.Cedula) as ClientesZona, 
     sum(lf.CantidadProducto * a.PrecioEstandar) as TotalVenta,  
-	f.FechaFactura
+    f.FechaFactura
 from 
     ListaFactura as lf
 join 
@@ -2854,78 +2959,78 @@ join
     Zona as z on c.Zona = z.Nombre
 group by 
     z.Nombre,
-	f.FechaFactura
-
+    f.FechaFactura;
 	--select * from ClientesZonaVentas
 
 
 go	
+-- Función para obtener los clientes por zona en orden ascendente
 create function verClientesZonasAscendente(@tipo varchar(20) null, @fecha date null, @fin date null)
 returns table
 as
 return
 (
     select top 100 
-        Zona,
-        ClientesZona,
-        TotalVenta,
-        FechaFactura
+        Zona,  -- Zona del cliente
+        ClientesZona,  -- Número de clientes en la zona
+        TotalVenta,  -- Total de ventas en la zona
+        FechaFactura  -- Fecha de la factura
     from 
-        ClientesZonaVentas
+        ClientesZonaVentas  -- Vista de ventas por zona
     where 
         (
-            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)
+            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)  -- Filtra por año y mes
         )
         or 
         (
-            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin
+            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin  -- Filtra por rango de fechas
         )
         or 
         (
-            @tipo is null
+            @tipo is null  -- Si no se pasa un tipo, muestra todos los resultados
         )
-    order by ClientesZona asc  -- Orden ascendente
+    order by ClientesZona asc  -- Ordena los resultados por la zona de clientes de forma ascendente
 );
 
 
 
 
 go
+-- Función para obtener los clientes por zona en orden descendente
 create function verClientesZonasDescendente(@tipo varchar(20) null, @fecha date null, @fin date null)
 returns table
 as
 return
 (
     select top 100 
-        Zona,
-        ClientesZona,
-        TotalVenta,
-        FechaFactura
+        Zona,  
+        ClientesZona,  
+        TotalVenta,  
+        FechaFactura  
     from 
-        ClientesZonaVentas
+        ClientesZonaVentas  
     where 
         (
-            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)
+            @tipo = 'mes(año)' and year(FechaFactura) = year(@fecha) and month(FechaFactura) = month(@fecha)  
         )
         or 
         (
-            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin
+            @tipo = 'RangoFecha' and FechaFactura between @fecha and @fin  
         )
         or 
         (
-            @tipo is null
+            @tipo is null  
         )
-    order by ClientesZona desc  
+    order by ClientesZona desc  -- Ordena los resultados por la zona de clientes de forma descendente
 );
 
-
---drop view verTop15Tareas
-go
+GO
+-- Vista que muestra las 15 tareas más recientes en proceso o iniciadas en orden ascendente
 create view verTop15TareasASC as
 select top 15 CodigoTarea, Fecha, Descripcion, Estado 
 from Tarea 
 where Estado = 'En proceso' or Estado = 'Iniciada'
-order by Fecha ASC
+order by Fecha ASC;  -- Orden ascendente por la fecha de la tarea
 
 
 
@@ -2934,7 +3039,7 @@ create view verTop15TareasDESC as
 select top 15 CodigoTarea, Fecha, Descripcion, Estado 
 from Tarea 
 where Estado = 'En proceso' or Estado = 'Iniciada'
-order by Fecha desc
+order by Fecha desc;  -- Orden descendente por la fecha de la tarea
 
 --select * from verTop15Tareas
 
@@ -2957,18 +3062,18 @@ return
         Descripcion, 
         Estado
     from 
-        verTop15TareasDESC  
+        verTop15TareasDESC  -- Usa la vista de tareas ordenadas descendente
     where 
         (
-            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) and month(Fecha) = month(@fecha)
+            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) and month(Fecha) = month(@fecha)  
         )
         or 
         (
-            @tipo = 'RangoFecha' and Fecha between @fecha and @fin
+            @tipo = 'RangoFecha' and Fecha between @fecha and @fin  
         )
         or 
         (
-            @tipo is null
+            @tipo is null  
         )
 );
 GO
@@ -2993,37 +3098,36 @@ return
         Descripcion, 
         Estado
     from 
-        verTop15TareasASC 
+        verTop15TareasASC  -- Usa la vista de tareas ordenadas ascendentemente
     where 
         (
-            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) AND month(Fecha) = month(@fecha)
+            @tipo = 'mes(año)' and year(Fecha) = year(@fecha) AND month(Fecha) = month(@fecha)  
         )
         or 
         (
-            @tipo = 'RangoFecha' AND Fecha BETWEEN @fecha AND @fin
+            @tipo = 'RangoFecha' AND Fecha BETWEEN @fecha AND @fin  
         )
         or 
         (
-            @tipo is null
+            @tipo is null  
         )
 );
-GO
 
 
 --drop view
 --Revisar si borrar
-select b.Nombre as Bodega, sum(lf.CantidadProducto) as TotalTransados
-from ListaFactura as lf
-join Factura as f on lf.CodigoF = f.Codigo
-join Articulo as a on lf.Codigo = a.Codigo
-join FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
-join Bodega as b on fb.CodigoBodega = b.Codigo
-group by b.Nombre
+--select b.Nombre as Bodega, sum(lf.CantidadProducto) as TotalTransados
+---from ListaFactura as lf
+--join Factura as f on lf.CodigoF = f.Codigo
+--join Articulo as a on lf.Codigo = a.Codigo
+--join FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
+--join Bodega as b on fb.CodigoBodega = b.Codigo
+--group by b.Nombre
 
 
 --drop view transadosentrada
 go
-
+-- Vista que muestra la entrada de productos a las bodegas, agrupados por bodega y fecha de factura
 create view transadosentrada as
 select 
     b.Nombre as Bodega, 
@@ -3032,18 +3136,23 @@ select
 from 
     ListaFactura as lf
 join 
-    Factura f on lf.CodigoF = f.Codigo
+    Factura as f on lf.CodigoF = f.Codigo
 join 
-    Articulo a on lf.Codigo = a.Codigo
+    Articulo as a on lf.Codigo = a.Codigo
 join 
-    FamiliaBodega fb on a.CodigoFamilia = fb.CodigoFamilia
+    FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
 join 
-    Bodega b on fb.CodigoBodega = b.Codigo
+    Bodega as b on fb.CodigoBodega = b.Codigo
 group by 
-    b.Nombre, f.FechaFactura;
+    b.Nombre, f.FechaFactura;  -- Agrupar por bodega y fecha de factura
 
+--	select * from transadosentrada
+	--drop view transadosTotales
+
+
+	--select * from transadosTotales
 go
-
+-- Vista que muestra la salida de productos de las bodegas, agrupados por bodega y fecha de salida
 create view transadosSalida as
 SELECT 
     b.Nombre as Bodega, 
@@ -3056,33 +3165,30 @@ join
 join 
     Articulo as a on sm.CodigoProducto = a.Codigo
 group by 
-    b.Nombre, sm.Fecha;
+    b.Nombre, sm.Fecha;  -- Agrupar por bodega y fecha de salida
+
+
 
 go
---	select * from transadosentrada
-	--drop view transadosTotales
-
+-- Vista que combina la entrada y salida de productos, mostrando el total transado por bodega
 create view transadosTotales as
 select 
     te.Bodega,
-    isnull(te.TotalTransados, 0) + isnull(ts.TotalTransados, 0) as TotalTransados,
+    isnull(te.TotalTransados, 0) + isnull(ts.TotalTransados, 0) as TotalTransados,  -- Suma de entradas y salidas
     te.FechaFactura as FechaEntrada,
     ts.Fecha as FechaSalida
 from 
     transadosentrada as te
 left join 
-    transadosSalida as ts ON te.Bodega = ts.Bodega;
-
-
-	--select * from transadosTotales
-go
+    transadosSalida as ts ON te.Bodega = ts.Bodega;  -- Combinación de entrada y salida por bodega
 
 
 	--select * from transadosSalida
 
 
 	--drop function BodegasTransadosf
-
+go
+-- Función para obtener el total transado por bodega, en base a un tipo y rango de fechas
 create function BodegasTransadosf (
     @tipo varchar(20) NULL, 
     @fecha date NULL, 
@@ -3103,18 +3209,16 @@ return
     where
         (
             (@tipo is null) or
-
             (@tipo = 'mes(año)' and 
                 year(te.FechaFactura) = year(@fecha) and 
                 month(te.FechaFactura) = month(@fecha)
             ) or
-
             (@tipo = 'rangoFecha' and 
                 te.FechaFactura between @fecha and isnull(@fin, @fecha)
             )
         )
     group by
-        te.Bodega, te.FechaFactura  -- Agrupar por Bodega y FechaFactura
+        te.Bodega, te.FechaFactura  -- Agrupar por bodega y fecha de factura
 );
 
 
@@ -3134,6 +3238,7 @@ return
 
 
 go
+-- Función similar a la anterior, pero sin la agrupación por fecha
 create function BodegasTransados (
     @tipo varchar(20) NULL, 
     @fecha date NULL, 
@@ -3153,19 +3258,18 @@ return
     where
         (
             (@tipo is null) or
-
             (@tipo = 'mes(año)' and 
                 year(te.FechaFactura) = year(@fecha) AND 
                 month(te.FechaFactura) = month(@fecha)
             ) or
-
             (@tipo = 'rangoFecha' and 
                 te.FechaFactura between @fecha and isnull(@fin, @fecha)
             )
         )
     group by
-        te.Bodega  
+        te.Bodega  -- Agrupar solo por bodega
 );
+
 
 --select *
 
@@ -3178,9 +3282,8 @@ return
 
 
 --Estos son sin filtro
-
---drop view transadosentradaNOF
-go
+GO
+-- Vista que muestra solo las entradas sin fechas específicas
 create view transadosentradaNOF as
 select 
     b.Nombre as Bodega, 
@@ -3203,6 +3306,7 @@ group by
 
 	--drop view transadosTotalesNOF
 go
+-- Vista combinada de entrada y salida sin fechas específicas
 create view transadosTotalesNOF as
 select 
     te.Bodega,
@@ -3214,12 +3318,13 @@ left join
 group by 
     te.Bodega;
 
-go
+
 	--select * from transadosTotalesNOF
 
 
 --	select * from transadosTotalesNOF
-
+go
+-- Vista similar a la anterior, pero para salidas
 create view transadosSalidaNOF as
 select 
     b.Nombre as Bodega, 
@@ -3240,4 +3345,4 @@ group by
 
 
 
---SELECT * FROM dbo.BodegasTransados(null,null,null) ORDER BY TotalTransados desc
+--SELECT * FROM dbo.BodegasTransado
