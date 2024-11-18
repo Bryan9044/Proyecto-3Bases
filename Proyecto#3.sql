@@ -1121,6 +1121,8 @@ VALUES
 
 
 
+
+
 CREATE TABLE TipoCotizacion(
 	Tipocotizacion varchar(50),
 	Descripcion varchar(200),
@@ -1233,69 +1235,6 @@ insert into Cotizacion(CedulaCliente,CedulaEmpleado,FechaCotizacion,MesProyectad
 
 --Hay 55
 
-
-
---Me falta hacer inserts
-CREATE TABLE Caso (
-    CodigoCaso VARCHAR(15) NOT NULL,
-    PropietarioCaso VARCHAR(9) NOT NULL,
-    OrigenCasoC INT ,
-	OrigenCasoF varchar(15) ,
-    NombreCuenta VARCHAR(40) NOT NULL,
-    NombreContacto VARCHAR(40) NOT NULL,
-    Asunto VARCHAR(200) NOT NULL,
-    Direccion VARCHAR(150) NOT NULL,
-    Descripcion VARCHAR(200) NOT NULL,
-    EstadoCaso VARCHAR(20) NOT NULL,
-    TipoCaso VARCHAR(20) NOT NULL,
-    Prioridad VARCHAR(20) NOT NULL,
-    PRIMARY KEY (CodigoCaso),
-    FOREIGN KEY (TipoCaso) REFERENCES TipoCaso(TipoCaso),
-    FOREIGN KEY (EstadoCaso) REFERENCES Estado(TipoEstado),
-    FOREIGN KEY (OrigenCasoC) REFERENCES Cotizacion(Codigo),
-	foreign key (OrigenCasoF) references Factura(Codigo),
-    FOREIGN KEY (PropietarioCaso) REFERENCES Cliente(Cedula),
-    FOREIGN KEY (Prioridad) REFERENCES Prioridad(TipoPrioridad)
-);
-
-INSERT INTO Caso (CodigoCaso, PropietarioCaso, OrigenCasoC, OrigenCasoF, NombreCuenta, NombreContacto, Asunto, Direccion, Descripcion, EstadoCaso, TipoCaso, Prioridad) VALUES
-('CS1', '754323489', 1, 'Personal', 'Salamar', 'Necesitamos una ayuda inmediata', 'San jose en el centro de la capital', 'Se tiene que verificar el tipo de ayuda que necesita', 'Abierta', 'Devolucion', 'Alta'),
-('CS2', '369253247', 2, 'Empresarial', 'Dospinos', 'Queremos hablar con un encargado', 'Alajuela a un costado del mercado', 'Se procedera a enviar la queja al encargado', 'Aprobado', 'Devolucion', 'Alta'),
-('CS3', '432124368', 3, 'Personal', 'Aurua', 'Tuvimos problemas', 'En San carlos debajo de una catarata', 'Se busca el tipo de problemas', 'Rechazado', 'Garantia', 'Baja'),
-('CS4', '456789123', 4, 'Personal', 'Dianeys', 'Hubo un problema', 'En la casa habitacion #58 en limon', 'Se habla para ver el problema', 'Aprobado', 'Garantia', 'Baja'),
-('CS5', '533467853', 5, 'Empresarial', 'Nike', 'Algo fallo en los pedidos', 'San jose a la par de amazon', 'Se indica el fallo que hubo', 'Abierta', 'Reclamo', 'Media'),
-('CS6', '754323489', 6, 'Empresarial', 'Adidas', 'Es un asunto de urgencia', 'San jose por el mall san pedro', 'Se habla con el administrador', 'Rechazado', 'Reclamo', 'Media');
-
-
-
-
-CREATE TABLE TareaCaso (
-    CodigoTarea VARCHAR(15) NOT NULL,
-	CodigoCaso varchar(15) not null,
-	PRIMARY KEY (CodigoTarea,CodigoCaso),
-	foreign key (CodigoCaso) references Caso(CodigoCaso)
-);
-insert into TareaCaso(CodigoTarea,CodigoCaso) values
-('T1', 'CS1'),
-('T2', 'CS2'),
-('T3', 'CS3'),
-('T4', 'CS4'),
-('T5', 'CS5'),
-('T6', 'CS6');
-
-
-
-
-
-CREATE TABLE TareaCotizacion (
-    CodigoTarea VARCHAR(15) NOT NULL,
-	Codigo int not null,
-	PRIMARY KEY (CodigoTarea,Codigo),
-    FOREIGN KEY (Codigo) REFERENCES Cotizacion(Codigo)
-);
-
-
-
 create table estadoFactura(
 	tipoFactura varchar(30) not null,
 	descripcion varchar(200) not null,
@@ -1370,6 +1309,67 @@ VALUES
 ('FAC38', null, '369253247', '556677889', '456789321', '56723984', 'Gimnasio Power', '2024-05-28', 'Isabel Torres', 'Cancelada'),
 ('FAC39', null, '432123478', '334455667', '789654321', '39284576', 'Construcción Heredia', '2024-05-01', 'MYke Towers', 'Emitida'),
 ('FAC40', null, '564298645', '112233445', '678543219', '92384756', 'Tienda El Progreso', '2023-05-08', 'Rodrigo Chaves', 'Pagada');
+
+--Me falta hacer inserts
+CREATE TABLE Caso (
+    CodigoCaso VARCHAR(15) NOT NULL,
+    PropietarioCaso VARCHAR(9) NOT NULL,
+    OrigenCasoC INT ,
+	OrigenCasoF varchar(15) ,
+    NombreCuenta VARCHAR(40) NOT NULL,
+    NombreContacto VARCHAR(40) NOT NULL,
+    Asunto VARCHAR(200) NOT NULL,
+    Direccion VARCHAR(150) NOT NULL,
+    Descripcion VARCHAR(200) NOT NULL,
+    EstadoCaso VARCHAR(20) NOT NULL,
+    TipoCaso VARCHAR(20) NOT NULL,
+    Prioridad VARCHAR(20) NOT NULL,
+    PRIMARY KEY (CodigoCaso),
+    FOREIGN KEY (TipoCaso) REFERENCES TipoCaso(TipoCaso),
+    FOREIGN KEY (EstadoCaso) REFERENCES Estado(TipoEstado),
+    FOREIGN KEY (OrigenCasoC) REFERENCES Cotizacion(Codigo),
+	foreign key (OrigenCasoF) references Factura(Codigo),
+    FOREIGN KEY (PropietarioCaso) REFERENCES Cliente(Cedula),
+    FOREIGN KEY (Prioridad) REFERENCES Prioridad(TipoPrioridad)
+);
+ 
+INSERT INTO Caso (CodigoCaso, PropietarioCaso, OrigenCasoC, OrigenCasoF, NombreCuenta, NombreContacto, Asunto, Direccion, Descripcion, EstadoCaso, TipoCaso, Prioridad) VALUES
+('CS1', '754323489', 1, 'FAC1', 'Salamar','Personal', 'Necesitamos una ayuda inmediata', 'San jose en el centro de la capital', 'Se tiene que verificar el tipo de ayuda que necesita', 'Abierta', 'Devolucion', 'Alta'),
+('CS2', '369253247', 2, 'FAC2', 'Dospinos','Empresarial', 'Queremos hablar con un encargado', 'Alajuela a un costado del mercado', 'Se procedera a enviar la queja al encargado', 'Aprobado', 'Devolucion', 'Alta'),
+('CS3', '432124368', 3, 'FAC3', 'Aurua','Personal', 'Tuvimos problemas', 'En San carlos debajo de una catarata', 'Se busca el tipo de problemas', 'Rechazado', 'Garantia', 'Baja'),
+('CS4', '456789123', 4, 'FAC4', 'Dianeys','Personal', 'Hubo un problema', 'En la casa habitacion #58 en limon', 'Se habla para ver el problema', 'Aprobado', 'Garantia', 'Baja'),
+('CS5', '533467853', 5, 'FAC5', 'Nike','Empresarial', 'Algo fallo en los pedidos', 'San jose a la par de amazon', 'Se indica el fallo que hubo', 'Abierta', 'Reclamo', 'Media'),
+('CS6', '754323489', 6, 'FAC6', 'Adidas','Empresarial', 'Es un asunto de urgencia', 'San jose por el mall san pedro', 'Se habla con el administrador', 'Rechazado', 'Reclamo', 'Media');
+
+
+
+
+CREATE TABLE TareaCaso (
+    CodigoTarea VARCHAR(15) NOT NULL,
+	CodigoCaso varchar(15) not null,
+	PRIMARY KEY (CodigoTarea,CodigoCaso),
+	foreign key (CodigoCaso) references Caso(CodigoCaso)
+);
+insert into TareaCaso(CodigoTarea,CodigoCaso) values
+('T1', 'CS1'),
+('T2', 'CS2'),
+('T3', 'CS3'),
+('T4', 'CS4'),
+('T5', 'CS5'),
+('T6', 'CS6');
+
+
+
+
+
+CREATE TABLE TareaCotizacion (
+    CodigoTarea VARCHAR(15) NOT NULL,
+	Codigo int not null,
+	PRIMARY KEY (CodigoTarea,Codigo),
+    FOREIGN KEY (Codigo) REFERENCES Cotizacion(Codigo)
+);
+
+
 
 
 CREATE TABLE ListaFactura (
@@ -1741,7 +1741,6 @@ insert into ListaIngreso(IDIngreso, BodegaDestino, CodigoArticulo, CantidadIngre
 (22, 'BO11', 'ART18', 63, '2024-06-05'),  
 (22, 'BO11', 'ART41', 74, '2024-06-10');
 
-drop table SalidaMovimiento
 CREATE TABLE SalidaMovimiento(
 	IDFactura VARCHAR(15) not null,
 	CodigoProducto VARCHAR(15) not null,
@@ -2079,6 +2078,9 @@ insert into ListaCotizacion(CodigoProducto,CantidadProducto,CodigoCotizacion) va
 
 
 --Procedimiento almacenado para calcular todos los salarios o el pago en general de una planilla
+
+GO
+
 create procedure CalcularPago 
 as 
 begin 
@@ -2453,7 +2455,8 @@ return (
 
   --Esto es para la cantidad de clientes por zona y sus ventas
 go
-  create view ClientesZona as
+
+create view ClientesZona as
   select count(distinct f.Codigo) as CantidadClientes, z.Nombre as Zona, sum(lf.cantidadproducto * a.precioestandar) as Ventas  from ListaFactura as lf
   join Factura as f on lf.CodigoF = f.Codigo
   join Cliente as c on f.CedulaCliente = c.Cedula
@@ -2461,9 +2464,10 @@ go
   join Zona as z on c.Zona = z.Nombre
   group by z.Nombre
 
+go
   select * from ClientesZona
 
-
+go
 
   go
   create view familiaA as
@@ -2482,7 +2486,7 @@ go
 	group by 
 	fm.Nombre,
 	F.FechaFactura
-
+go
 
   --drop function FamiliaArt
 --Ver familia de productos más vendidos
@@ -2668,7 +2672,6 @@ return
 
 --TODO ESTO ES PARA LAS COTIZACIONES POR FACTURA
 
-drop view comparacionDepartamento
 	--Este es es el de Ventas por departamento
 go 
 create view comparacionDepartamento as
@@ -2787,6 +2790,8 @@ select month(c.FechaCotizacion) as mesCotizacion, year(c.FechaCotizacion) as año
 join Cotizacion as c on lc.CodigoCotizacion = c.Codigo
 join Articulo as a on lc.CodigoProducto = a.Codigo
 group by month(c.FechaCotizacion), year(c.FechaCotizacion)
+
+go
 select * from cotizacionesMes
 
 --drop view VentasMes
@@ -3017,6 +3022,7 @@ group by b.Nombre
 
 
 --drop view transadosentrada
+go
 
 create view transadosentrada as
 select 
@@ -3026,17 +3032,33 @@ select
 from 
     ListaFactura as lf
 join 
-    Factura as f on lf.CodigoF = f.Codigo
+    Factura f on lf.CodigoF = f.Codigo
 join 
-    Articulo as a on lf.Codigo = a.Codigo
+    Articulo a on lf.Codigo = a.Codigo
 join 
-    FamiliaBodega as fb on a.CodigoFamilia = fb.CodigoFamilia
+    FamiliaBodega fb on a.CodigoFamilia = fb.CodigoFamilia
 join 
-    Bodega as b on fb.CodigoBodega = b.Codigo
+    Bodega b on fb.CodigoBodega = b.Codigo
 group by 
     b.Nombre, f.FechaFactura;
 
+go
 
+create view transadosSalida as
+SELECT 
+    b.Nombre as Bodega, 
+    sum(sm.Cantidad) as TotalTransados, 
+    sm.Fecha
+from 
+    SalidaMovimiento as sm
+join 
+    Bodega as b on sm.CodigoBodega = b.Codigo
+join 
+    Articulo as a on sm.CodigoProducto = a.Codigo
+group by 
+    b.Nombre, sm.Fecha;
+
+go
 --	select * from transadosentrada
 	--drop view transadosTotales
 
@@ -3054,20 +3076,6 @@ left join
 
 	--select * from transadosTotales
 go
-create view transadosSalida as
-SELECT 
-    b.Nombre as Bodega, 
-    sum(sm.Cantidad) as TotalTransados, 
-    sm.Fecha
-from 
-    SalidaMovimiento as sm
-join 
-    Bodega as b on sm.CodigoBodega = b.Codigo
-join 
-    Articulo as a on sm.CodigoProducto = a.Codigo
-group by 
-    b.Nombre, sm.Fecha;
-
 
 
 	--select * from transadosSalida
@@ -3206,7 +3214,7 @@ left join
 group by 
     te.Bodega;
 
-
+go
 	--select * from transadosTotalesNOF
 
 
