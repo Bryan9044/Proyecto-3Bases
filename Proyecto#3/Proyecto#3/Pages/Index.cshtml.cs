@@ -114,18 +114,24 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostShowPagoPlanillasAsync(DateOnly fechaPago20, string formatoFecha, DateOnly? fechaPago2)
     {
+        // Inicializa las listas que almacenaron los datos de la consulta
         Console.WriteLine("Entre");
         MontoPagadoPorMes = new List<int>();
         Meses = new List<string>();
         Planillas = new List<string>();
 
+        // Establece una conexion con la base de datos
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
+            // Abre la conexion de manera asincrona
             await connection.OpenAsync();
 
+            // Convierte la fecha proporcionada a un objeto DateTime
             DateTime fecha = DateTime.Parse(fechaPago20.ToString());
+            // Si la fecha de pago final es proporcionada, la convierte a formato de cadena
             string fechaFin = fechaPago2.HasValue ? fechaPago2.Value.ToString("yyyy-MM-dd") : null;
 
+            //Prepara la consulta sql con parametros
             SqlCommand command = new SqlCommand(
                 "SELECT Planilla, FechaPlanilla, MontoPagado FROM dbo.pagosplanilla(@fecha, @tipo, @fechaFin)",
                 connection
@@ -134,11 +140,16 @@ public class IndexModel : PageModel
             command.Parameters.AddWithValue("@tipo", formatoFecha);
             command.Parameters.AddWithValue("@fechaFin", (object?)fechaFin ?? DBNull.Value);
 
+            // Ejecuta la consulta y obtiene los resultados
+
             SqlDataReader reader = await command.ExecuteReaderAsync();
+            // Procesa cada fila obtenida de la consulta
 
             while (await reader.ReadAsync())
             {
                 string mesAnio = string.Empty;
+                // Dependiendo del formato de fecha, construye el valor de mes/año
+
                 if (formatoFecha == "mes-año")
                 {
                     mesAnio = $"{fecha.Month}/{fecha.Year}";
@@ -176,30 +187,38 @@ public class IndexModel : PageModel
 
         string? fechaFinFormatted = null;
 
+        // Si la fecha de pago final es proporcionada, la convierte a formato de cadena
+
         if (fechaPago2.HasValue)
         {
             fechaFinFormatted = fechaPago2.Value.ToString("yyyy-MM-dd");
         }
 
         Console.WriteLine($"fechaFinFormatted: {fechaFinFormatted ?? "null"}");
-
+        //Limpie las listas previas
         Departamentos.Clear();
         MontoPagadoPorMesDEP.Clear();
 
+        //establece una conexion con la base de datos
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
+            //Abre la conexión de manera asincrona
             await connection.OpenAsync();
 
+            // Prepara la consulta SQL con parametros
             SqlCommand command = new SqlCommand("SELECT * FROM pagosplanilladep(@mes, @tipo, @fechafin)", connection);
 
             command.Parameters.Add(new SqlParameter("@mes", SqlDbType.Date) { Value = fechaPago });
             command.Parameters.Add(new SqlParameter("@tipo", SqlDbType.VarChar) { Value = formatoFecha2 });
             command.Parameters.Add(new SqlParameter("@fechafin", SqlDbType.Date) { Value = (object)fechaFinFormatted ?? DBNull.Value });
 
+            //ejecuta la consulta y obtiene los resultados
             SqlDataReader reader = await command.ExecuteReaderAsync();
 
+            //Procesa cada fila obtenida de la consulta
             while (await reader.ReadAsync())
             {
+                   //Agrega los valores obtenidos a las listas
                 string nombreDepartamento = reader.IsDBNull(0) ? "Sin nombre" : reader.GetString(0);
                 int montoPagado = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
 
@@ -238,14 +257,14 @@ public class IndexModel : PageModel
     {
         try
         {
-            List<string> bodegas = new List<string>();
-            List<int> cantidades = new List<int>();
+            List<string> bodegas = new List<string>();// lista para almacenar los nombres de las bodegas.
+            List<int> cantidades = new List<int>();// lista para almacenar las cantidades.
 
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 await connection.OpenAsync();
                 SqlCommand command;
-
+                //selecciona la consulta SQL adecuada segun el tipo de movimiento
                 if (tipoMovimiento == "Entrada")
                 {
                     command = new SqlCommand("SELECT * FROM tipoMovimientoM(@tipo, @fecha, @fin)", connection);
@@ -258,13 +277,15 @@ public class IndexModel : PageModel
                 {
                     return BadRequest("Tipo de movimiento no reconocido.");
                 }
-
+                //Configura los parametros de consulta
                 command.Parameters.AddWithValue("@tipo", string.IsNullOrEmpty(formatoFecha47) ? (object)DBNull.Value : formatoFecha47);
                 command.Parameters.AddWithValue("@fecha", fechaPago47.HasValue ? (object)fechaPago47.Value : DBNull.Value);
                 command.Parameters.AddWithValue("@fin", fechaPago48.HasValue ? (object)fechaPago48.Value : DBNull.Value);
 
+                //Ejecuta la consulta SQL
                 SqlDataReader reader = await command.ExecuteReaderAsync();
 
+                //Lee los resultados y los agrega a las listas correspondientes
                 while (await reader.ReadAsync())
                 {
                     string codigoBodega = reader.IsDBNull(0) ? "Sin código" : reader.GetString(0);
@@ -274,7 +295,7 @@ public class IndexModel : PageModel
                     cantidades.Add(monto);
                 }
             }
-
+            //Pasa a los resultados a la vista
             ViewData["Bodegas"] = bodegas;
             ViewData["Cantidades"] = cantidades;
 
@@ -289,24 +310,15 @@ public class IndexModel : PageModel
 
 
 
-
-
-
-
-
-
-
-
-
-
     public async Task<IActionResult> OnPostShowTopFamilias(DateOnly fechaPago3, string formatoFecha3, DateOnly? fechaPago4)
     {
         Console.WriteLine("Entre");
 
-
+        //Establece la conexion con la base de datos
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Configura la consulta SQL para obtener las familias y los montos vendidos.
 
             SqlCommand command = new SqlCommand("SELECT * FROM FamiliaArt(@tipo, @fecha, @fechafin)", connection);
             command.Parameters.AddWithValue("@tipo", formatoFecha3);  
@@ -320,8 +332,9 @@ public class IndexModel : PageModel
                 command.Parameters.AddWithValue("@fechafin", DBNull.Value); 
             }
 
-
+            // Ejecuta la consulta SQL.
             SqlDataReader reader = await command.ExecuteReaderAsync();
+            // Lee los resultados y los agrega a las listas correspondientes.
 
             while (await reader.ReadAsync())
             {
@@ -337,18 +350,21 @@ public class IndexModel : PageModel
     }
 
 
+    // Metodo que se encarga de mostrar los sectores de ventas basados en las fechas y tipo de movimiento proporcionados.
 
     public async Task<IActionResult> OnPostShowSectorVentas(DateOnly fechaPago4, string formatoFecha4, DateOnly? fechaPago5)
     {
         Console.WriteLine("Entre");
-
+        //Estable la conexion
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Crea la consulta SQL para obtener los sectores de ventas segun los parametros
 
             SqlCommand command = new SqlCommand("SELECT * FROM dbo.VentaSector(@tipo, @fecha, @fechafin)", connection);
 
-          
+            // Asigna los valores de los parametros a la consulta.
+
             command.Parameters.AddWithValue("@tipo", formatoFecha4);  
             command.Parameters.AddWithValue("@fecha", fechaPago4.ToString("yyyy-MM-dd"));
             if (fechaPago5.HasValue)  
@@ -360,8 +376,9 @@ public class IndexModel : PageModel
                 command.Parameters.AddWithValue("@fechafin", DBNull.Value); 
             }
 
-
+            // Ejecuta la consulta y obtiene los resultados.
             SqlDataReader reader = await command.ExecuteReaderAsync();
+            // Procesa los resultados de la consulta y los agrega a las listas correspondientes.
 
             while (await reader.ReadAsync())
             {
@@ -374,6 +391,8 @@ public class IndexModel : PageModel
                 decimal monto = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
                 MontoSector.Add(monto);
             }
+            // Muestra en consola los resultados obtenidos.
+
             Console.WriteLine("Sectores:");
             foreach (var nombre in NombreSector)
             {
@@ -400,6 +419,7 @@ public class IndexModel : PageModel
 
 
 
+    // Metodo para mostrar las zonas de ventas basadas en tipo de movimiento y fechas.
 
     public async Task<IActionResult> OnPostShowZonasVentas(DateOnly fechaPago5, string formatoFecha5, DateOnly? fechaPago6)
     {
@@ -408,9 +428,11 @@ public class IndexModel : PageModel
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Consulta para obtener las zonas de ventas.
 
             SqlCommand command = new SqlCommand("SELECT * FROM dbo.ventazona2(@tipo, @fecha, @fechafin)", connection);
 
+            // Asigna los parametros a la consulta SQL.
 
             command.Parameters.AddWithValue("@tipo", formatoFecha5);
             command.Parameters.AddWithValue("@fecha", fechaPago5.ToString("yyyy-MM-dd"));
@@ -423,8 +445,9 @@ public class IndexModel : PageModel
                 command.Parameters.AddWithValue("@fechafin", DBNull.Value);
             }
 
-
+            // Ejecuta la consulta SQL.
             SqlDataReader reader = await command.ExecuteReaderAsync();
+            // Lee los resultados y agrega a las listas correspondientes.
 
             while (await reader.ReadAsync())
             {
@@ -445,6 +468,7 @@ public class IndexModel : PageModel
     }
 
 
+    // Metodo que obtiene las ventas y cotizaciones por departamento dentro de un rango de fechas.
 
     public async Task<IActionResult> OnPostShowVentasCotizaciones(DateOnly fechaPago6, string formatoFecha6, DateOnly? fechaPago7)
     {
@@ -453,6 +477,7 @@ public class IndexModel : PageModel
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Consulta para obtener ventas por departamento.
 
             SqlCommand ventasCommand = new SqlCommand("SELECT departamento, montoventas FROM ventaspordepartamento(@tipo, @fecha, @fechafin)", connection);
             ventasCommand.Parameters.AddWithValue("@tipo", formatoFecha6);
@@ -465,6 +490,7 @@ public class IndexModel : PageModel
             {
                 ventasCommand.Parameters.AddWithValue("@fechafin", DBNull.Value);
             }
+            // Ejecuta la consulta y procesa los resultados de ventas.
 
             SqlDataReader ventasReader = await ventasCommand.ExecuteReaderAsync();
 
@@ -477,6 +503,7 @@ public class IndexModel : PageModel
                 ventas[departamento] = montoVentas;  
             }
             ventasReader.Close();
+            // Consulta para obtener cotizaciones por departamento.
 
             SqlCommand cotizacionesCommand = new SqlCommand("SELECT departamento, montocotizaciones FROM cotizacionespordepartamento(@tipo, @fecha, @fechafin)", connection);
             cotizacionesCommand.Parameters.AddWithValue("@tipo", formatoFecha6);
@@ -489,6 +516,7 @@ public class IndexModel : PageModel
             {
                 cotizacionesCommand.Parameters.AddWithValue("@fechafin", DBNull.Value);
             }
+            // Ejecuta la consulta y procesa los resultados de cotizaciones.
 
             SqlDataReader cotizacionesReader = await cotizacionesCommand.ExecuteReaderAsync();
 
@@ -501,6 +529,7 @@ public class IndexModel : PageModel
                 cotizaciones[departamento] = montoCotizaciones;  
             }
             cotizacionesReader.Close();
+            // Combina los resultados de ventas y cotizaciones en una lista comparativa.
 
             var comparacion = new List<string>(); 
             var ventasMontos = new List<decimal>(); 
@@ -515,6 +544,7 @@ public class IndexModel : PageModel
                 ventasMontos.Add(montoVentas);
                 cotizacionesMontos.Add(montoCotizaciones);
             }
+            // Asigna los resultados a las propiedades para su uso en la vista.
 
             DeparmentosJuntos = comparacion.ToList();
             VentasDEP = ventasMontos.ToList();
@@ -527,6 +557,7 @@ public class IndexModel : PageModel
 
 
 
+    // Metodo que obtiene las ventas por departamento en un rango de fechas.
 
     public async Task<IActionResult> OnPostShowVentas(DateOnly fechaPago7, string formatoFecha7, DateOnly? fechaPago8)
     {
@@ -537,11 +568,13 @@ public class IndexModel : PageModel
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Consulta para obtener ventas por departamento.
 
             SqlCommand ventasCommand = new SqlCommand("SELECT * FROM dbo.ventaspordepartamento(@tipo, @fecha, @fechafin)", connection);
             ventasCommand.Parameters.AddWithValue("@tipo", formatoFecha7);
             ventasCommand.Parameters.AddWithValue("@fecha", fechaPago7.ToString("yyyy-MM-dd"));
             ventasCommand.Parameters.AddWithValue("@fechafin", fechaPago8.HasValue ? fechaPago8.Value : (object)DBNull.Value);
+            // Ejecuta la consulta y procesa los resultados de ventas por departamento.
 
             SqlDataReader ventasReader = await ventasCommand.ExecuteReaderAsync();
 
@@ -562,6 +595,7 @@ public class IndexModel : PageModel
 
 
 
+    // Metodo que obtiene las ventas y cotizaciones combinadas para ser mostradas en la pagina.
 
     public async Task<IActionResult> OnPostShowVentasCotizacionesFactura()
     {
@@ -571,10 +605,12 @@ public class IndexModel : PageModel
         using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             await connection.OpenAsync();
+            // Ejecuta la consulta para obtener los datos combinados de ventas y cotizaciones.
 
             SqlCommand command = new SqlCommand("SELECT * FROM dbo.Combinado()", connection);
 
             SqlDataReader reader = await command.ExecuteReaderAsync();
+            // Procesa los resultados y los agrega a una lista de objetos `VentasCotizaciones`.
 
             while (await reader.ReadAsync())
             {
@@ -591,6 +627,7 @@ public class IndexModel : PageModel
 
             reader.Close();
         }
+        // Asigna la lista de `VentasCotizaciones` a `ViewData` para su uso en la vista.
 
         ViewData["VentasCotizaciones"] = ventasCotizaciones; 
         return Page(); 
@@ -607,6 +644,7 @@ public class IndexModel : PageModel
         Console.WriteLine(fechaPago18);
         string query;
         string tipo;
+        // Determinar la consulta SQL basada en el orden ascendente o descendente
 
         if (orden == "Ascendente")
         {
@@ -616,23 +654,32 @@ public class IndexModel : PageModel
         {
             query = "SELECT * FROM dbo.top10ClientesDescendente(@tipo, @fecha, @fin)";
         }
+        // Determinar el tipo de formato basado en la entrada
 
         tipo = string.IsNullOrEmpty(formatoFecha17) ? null : (formatoFecha17 == "mes(año)" ? "mes(año)" : "rangofecha");
+        // Convertir las fechas recibidas a valores nulos si no estan presentes
 
         var fecha = fechaPago17.HasValue ? fechaPago17.Value : (DateOnly?)null;
         var fin = fechaPago18.HasValue ? fechaPago18.Value : (DateOnly?)null;
+        // Crear una lista vacia para almacenar los clientes
 
         Clientes = new List<TopCliente>();
+        // Abrir conexion a la base de datos y ejecutar la consulta SQL
 
         using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
+                // Agregar parametros a la consulta SQL
+
                 cmd.Parameters.Add("@tipo", SqlDbType.NVarChar).Value = tipo ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = fecha.HasValue ? fecha.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
                 cmd.Parameters.Add("@fin", SqlDbType.Date).Value = fin.HasValue ? fin.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
 
-                conn.Open(); 
+                conn.Open(); // Abrir la conexion
+
+                // Leer los resultados de la consulta y almacenarlos en la lista de clientes
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -662,12 +709,15 @@ public class IndexModel : PageModel
 
     public void OnPostShowClientesZona(DateOnly? fechaPago27, string orden2, string? formatoFecha27, DateOnly? fechaPago28 = null)
     {
+        // Imprimir los parametros recibidos para depuracion
+
         Console.WriteLine(fechaPago27);
         Console.WriteLine(orden2);
         Console.WriteLine(formatoFecha27);
         Console.WriteLine(fechaPago28);
         string query;
         string tipo;
+        // Determinar la consulta SQL basada en el orden ascendente o descendente
 
         if (orden2 == "Ascendente")
         {
@@ -677,13 +727,17 @@ public class IndexModel : PageModel
         {
             query = "SELECT * FROM dbo.verClientesZonasDescendente(@tipo, @fecha, @fin)";
         }
+        // Determinar el tipo de formato basado en la entrada
 
         tipo = string.IsNullOrEmpty(formatoFecha27) ? null : (formatoFecha27 == "mes(año)" ? "mes(año)" : "rangofecha");
+        // Convertir las fechas recibidas a valores nulos si no estan presentes
 
         var fecha = fechaPago27.HasValue ? fechaPago27.Value : (DateOnly?)null;
         var fin = fechaPago28.HasValue ? fechaPago28.Value : (DateOnly?)null;
+        // Crear una lista vacia para almacenar las zonas
 
         Zona = new List<ZonaModel>();
+        // Abrir conexion a la base de datos y ejecutar la consulta SQL
 
         using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
@@ -694,7 +748,9 @@ public class IndexModel : PageModel
                 cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = fecha.HasValue ? fecha.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
                 cmd.Parameters.Add("@fin", SqlDbType.Date).Value = fin.HasValue ? fin.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
 
-                conn.Open();  
+                conn.Open();
+                // Leer los resultados de la consulta y almacenarlos en la lista de zonas
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -736,6 +792,7 @@ public class IndexModel : PageModel
 
         string query;
         string tipo;
+        // Determinar la consulta SQL basada en el orden ascendente o descendente
 
         if (orden3 == "Ascendente")
         {
@@ -745,13 +802,19 @@ public class IndexModel : PageModel
         {
             query = "SELECT * FROM dbo.verTareasDesc(@tipo, @fecha, @fin)";
         }
+        // Determinar el tipo de formato basado en la entrada
 
         tipo = string.IsNullOrEmpty(formatoFecha37) ? null : (formatoFecha37 == "mes(año)" ? "mes(año)" : "rangofecha");
 
+
+        // Convertir las fechas recibidas a valores nulos si no estan presentes
+
         var fecha = fechaPago37.HasValue ? fechaPago37.Value : (DateOnly?)null;
         var fin = fechaPago38.HasValue ? fechaPago38.Value : (DateOnly?)null;
+        // Crear una lista vacia para almacenar las tareas
 
         List<TareaModel> Tareas = new List<TareaModel>();
+        // Abrir conexion a la base de datos y ejecutar la consulta SQL
 
         using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
         {
@@ -762,7 +825,9 @@ public class IndexModel : PageModel
                 cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = fecha.HasValue ? fecha.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
                 cmd.Parameters.Add("@fin", SqlDbType.Date).Value = fin.HasValue ? fin.Value.ToString("yyyy-MM-dd") : (object)DBNull.Value;
 
-                conn.Open(); 
+                conn.Open();
+                // Leer los resultados de la consulta y almacenarlos en la lista de tareas
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -778,6 +843,7 @@ public class IndexModel : PageModel
                 }
             }
         }
+        // Almacenar la lista de tareas en ViewData para mostrar en la vista
 
         ViewData["Tareas"] = Tareas2;
 
@@ -797,58 +863,56 @@ public class IndexModel : PageModel
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void OnPostShowTopBodegas(string orden6)
     {
         // Imprimir parámetros iniciales
         Console.WriteLine($"Orden: {orden6}");
 
-        // Definir consulta para ordenar solo por TotalTransados
+        // Definir la consulta SQL basada en el parametro 'orden6' para ordenar los resultados por 'TotalTransados'
         string query;
+        // Si la orden es "Ascendente", ordenamos los resultados en orden ascendente por 'TotalTransados'
 
         if (orden6 == "Ascendente")
         {
             query = "SELECT * FROM transadosTotalesNOF ORDER BY TotalTransados ASC";
         }
+        // Si la orden es diferente, ordenamos los resultados en orden descendente por 'TotalTransados'
+
         else
         {
             query = "SELECT * FROM transadosTotalesNOF ORDER BY TotalTransados DESC";
         }
 
 
-        // Lista para almacenar resultados
+        // Crear una lista vacia para almacenar los resultados de las bodegas
         List<Bodegas> bodegasList = new List<Bodegas>();
 
         try
         {
+            // Establecer la conexion con la base de datos usando la cadena de conexion configurada
+
             using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
+                // Crear un comando SQL utilizando la consulta definida
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     conn.Open();
+                    // Ejecutar el comando y leer los resultados usando un SqlDataReader
+
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
+                        // Recorrer los resultados obtenidos de la base de datos
+
                         while (reader.Read())
                         {
+                            // Obtener el valor de la columna 'TotalTransados' y verificar que sea mayor a 0
+
                             var totalTransados = reader.GetInt32(reader.GetOrdinal("TotalTransados"));
 
                             if (totalTransados > 0)
                             {
-                                // Agregar la bodega a la lista
+                                // Si el total de transacciones es mayor que 0, agregar la bodega a la lista
                                 bodegasList.Add(new Bodegas
                                 {
                                     bodegas = reader["Bodega"].ToString(),
@@ -878,18 +942,6 @@ public class IndexModel : PageModel
 
         Console.WriteLine("Terminé");
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
