@@ -6,6 +6,8 @@
 
 <h2>Proyecto #3 de bases</h2>
 
+
+<!-- Toda esta parte serian los botones con los cuales vamos a desplegar ya sean los modales o directamente un tipo de tabla-->
 <form method="post">
     <button type="submit" class="btn btn-primary">Mostrar Tareas</button>
 </form>
@@ -104,7 +106,7 @@
     </button>
 </form>
 <br />
-
+<!-- Toda esta parte serian los botones con los cuales vamos a desplegar ya sean los modales o directamente un tipo de tabla-->
 
 
 <!-- Esto es para ver si se mostraban los clientes-->
@@ -139,6 +141,12 @@
 </div>
 <!-- Esto es para ver si se mostraban los clientes-->
 
+
+
+<!-- Esto es para mostrar las cotizaciones y ventas por departamento en esta parte tendremos no solo lo que es el modal
+    sino que también tenemos la llamado a la otra página para que así se genere la consulta SQL por medio de los
+    campos que va a rellenar el usuario los cuales son la fecha, el tipo y una segunda fecha dependiendo del tipo
+-->
 <div class="modal fade" id="modalCotizacionesVentas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -169,6 +177,7 @@
         </div>
     </div>
 </div>
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
 <script>
     function toggleFechaPago6() {
         const formato = document.getElementById("formatoFecha6").value;
@@ -182,6 +191,10 @@
     }
 </script>
 
+<!--Toda esta parte es la información que va a desplegar el gráfico una vez vuelva del metodo "post" así ella realizara primero
+    la validación y luego procedera con la información que le dimos a rellenar el gráfico, todo esto extrayendo los datos de las
+    consultas.
+-->
 <canvas id="bartComparacion" width="400" height="200"></canvas>
 
 @if (Model.DeparmentosJuntos != null && Model.VentasDEP != null && Model.CotizacionesDEP.Count > 0)
@@ -250,7 +263,10 @@
 }
 
 
-
+<!-- Este modal es para mostrar todo lo que respecta a las ventas por sector de forma que el filtrara si el usuario así lo desea
+    sino simplemente seguira con la consulta, de igual forma esto se hace en la otra página o en el metodo post, pues aqui solo 
+    pasamos los datos
+-->
 
 <div class="modal fade" id="modalSectores" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -282,6 +298,8 @@
         </div>
     </div>
 </div>
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago4() {
         const formato = document.getElementById("formatoFecha4").value;
@@ -295,7 +313,10 @@
     }
 </script>
 
-
+<!--Esta parte es para mostrar correctamente el gráfico, en este caso es un gráfico de pie el cual solo se muestra si cumple con las restricciones
+del if sino el gráfico nunca se desplegará, aquí lo que hacemos es pasarle los datos de la consulta de forma que el gráfico los pueda adaptar y generar
+los datos que corresponden a cada porción de pie.
+-->
 <canvas id="pieChartSector" width="400" height="400"></canvas>
 
 @if (Model.NombreSector != null && Model.MontoSector != null && Model.DescripcionSector.Count > 0)
@@ -375,6 +396,11 @@
 }
 
 
+
+<!--Este es el modal para los pagos de planilla por departamento en el aplicaremos igual los mismos filtros de rangoFecha, mes, mes(año) todos 
+    estos van a varios la consulta en el metodo post pero la idea es que sea muy versatil y así pueda mostrar diferentes datos dependiendo
+    lo que el usuario desee, aquí el metodo post nos ayudara a saber qué se pago por departamento según la planilla
+-->
 <div class="modal fade" id="modalFechaPagoPlanillasDEP" tabindex="-1" aria-labelledby="modalFechaPagoPlanillasDEPLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -406,6 +432,7 @@
         </div>
     </div>
 </div>
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
 
 <script>
     function toggleFechaPago2() {
@@ -420,6 +447,11 @@
     }
 </script>
 
+<!-- Esta parte es para mostrar otro gráfico de pie solo que esta también ira por departamentos y montos, todo esto va a variar segun el usuario,
+    pues dependiendo los filtros y el comportamiento de la consulta va a cambiar los datos, mostrando así algunos u otros departamentos, 
+    aqui para los colores y todo se basa en un patron rgba en el cual constantemente va a cambiar por cada consulta que se realice en el sistema,
+    asignando así diferentes colores
+-->
 <canvas id="pieChartDEP" width="400" height="400"></canvas>
 
 
@@ -432,11 +464,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script>
-        // Datos desde el backend
-        var Departamentos = @Html.Raw(Json.Serialize(Model.Departamentos)); // Departamentos
-        var montos = @Html.Raw(Json.Serialize(Model.MontoPagadoPorMesDEP)); // Montos de ventas
+        var Departamentos = @Html.Raw(Json.Serialize(Model.Departamentos)); 
+        var montos = @Html.Raw(Json.Serialize(Model.MontoPagadoPorMesDEP)); 
 
-        // Función para generar un color aleatorio en formato rgba
         function generateRandomColor() {
             var r = Math.floor(Math.random() * 256);
             var g = Math.floor(Math.random() * 256);
@@ -445,32 +475,28 @@
             return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
         }
 
-        // Generar colores aleatorios para cada departamento
         var generatedColors = Departamentos.map(function() {
             return generateRandomColor();
         });
 
-        // Calcular el total de ventas para los porcentajes
         var totalVentas = montos.reduce(function(sum, value) {
             return sum + value;
         }, 0);
 
-        // Calcular los porcentajes y almacenarlos
         var porcentajes = montos.map(function(monto) {
             return totalVentas > 0 ? ((monto / totalVentas) * 100).toFixed(2) : 0;
         });
 
-        // Crear el gráfico
         var ctx = document.getElementById('pieChartDEP').getContext('2d');
         var ventasChart = new Chart(ctx, {
             type: 'pie', // Tipo de gráfico "pie"
             data: {
-                labels: Departamentos,  // Los nombres de los departamentos
+                labels: Departamentos,  
                 datasets: [{
                     label: 'Ventas por Departamento',
-                    data: montos,  // Los montos de ventas
-                    backgroundColor: generatedColors, // Colores aleatorios generados
-                    borderColor: generatedColors,     // Bordes con los mismos colores
+                    data: montos, 
+                    backgroundColor: generatedColors, 
+                    borderColor: generatedColors,    
                     borderWidth: 1
                 }]
             },
@@ -483,36 +509,33 @@
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                // Usar el porcentaje calculado previamente
                                 var percentage = porcentajes[tooltipItem.dataIndex];
-                                return tooltipItem.label + ': ' + percentage + '%'; // Mostrar el porcentaje en el tooltip
+                                return tooltipItem.label + ': ' + percentage + '%'; 
                             }
                         }
                     },
                     datalabels: {
-                        // Mostrar el porcentaje dentro de la porción del gráfico
                         formatter: function(value, context) {
-                            // Usar el porcentaje calculado previamente
                             var percentage = porcentajes[context.dataIndex];
-                            return percentage + '%';  // Mostrar el porcentaje dentro de las porciones
+                            return percentage + '%';  
                         },
-                        color: '#fff',  // Color de las etiquetas (puedes cambiar este valor)
+                        color: '#fff',  
                         font: {
                             weight: 'bold',
                             size: 14
                         },
-                        anchor: 'center',  // Centrar el texto dentro de cada porción
-                        align: 'center',   // Alineación centrada
-                        offset: 0,         // Sin desplazamiento para estar centrado
-                        padding: 0,        // Sin espaciado entre el texto y la porción
+                        anchor: 'center',  
+                        align: 'center',  
+                        offset: 0,         
+                        padding: 0,       
                         display: function(context) {
-                            // Solo mostrar la etiqueta si el valor es suficientemente grande
+                            
                             return context.dataset.data[context.dataIndex] > 0;
                         }
                     }
                 }
             },
-            plugins: [ChartDataLabels] // Asegúrate de que el plugin esté incluido aquí
+            plugins: [ChartDataLabels] 
         });
     </script>
 }
@@ -522,13 +545,10 @@ else
 }
 
 
-
-
-
-
-
-
-
+<!--Todo este modal es para mostrar los pagos por planilla en general, este cuenta con más filtros que los demás porque así lo requeria
+    de esta forma tenemos lo que mes-año, año-mes, mes(año), así que estos filtros se aplicaran dentro del metodo post para asi devolver
+    diferentes datos dependiendo de lo que haya hecho el filtro de la consulta, aqui realmente solo preguntaremos por fechas
+-->
 <div class="modal fade" id="modalFechaPagoPlanillas" tabindex="-1" aria-labelledby="modalFechaPagoPlanillasLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -562,6 +582,7 @@ else
     </div>
 </div>
 
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
 
 <script>
     function toggleFechaPago1() {
@@ -576,7 +597,10 @@ else
     }
 </script>
 
-
+<!--Todo esto es el apartado gráfico el cual mostrara un gráfico de barra por fecha en la planilla de forma que en el eje x se vean las fechas
+    y en el eje y sea más fácil observar los montos, por eso es que se necesita pasarle los montos y meses, para que así el gráfico se pueda
+    cargar de forma correcta y así mostrar
+-->
 
 <canvas id="barChartPlanilla" width="400" height="200"></canvas>
 
@@ -612,6 +636,9 @@ else
 }
 
 
+<!-- Con este modal haremos lo mismo filtraremos según las fechas y el formato seleccionado por el usuario para que así en la consulta
+se puedan sacar mejores datos, de igual forma todos estos iran al metodo post para ahí generar la consulta a la base de datos
+-->
 
 <div class="modal fade" id="modalTopProductos" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -643,6 +670,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago3() {
         const formato = document.getElementById("formatoFecha3").value;
@@ -658,6 +688,10 @@ else
 
 
 
+<!--Aqui mostraremos el gráfico de los productos más top que puedan haber en la bodega, esto de igual forma lo haremos por medio de un gráfico, realmente
+    lo que queremos mostrar son las familias de estos mismos por eso le pasamos el nombre de la familia y el monto para que se puedan mostrar de forma correcta
+
+-->
 <br />
 <canvas id="pieChartFAM" width="400" height="400"></canvas>
 
@@ -714,7 +748,10 @@ else
 }
 
 
-
+<!--En esta parte lo que buscamos es mostrar las ventas generadas por zonas, de igual forma utilizaremos un filtro
+para que así los datos puedan ser distintos y mejores, sin embargo todos estos son enviados al metodo post para terminar
+de generar la consulta
+-->
 
 <div class="modal fade" id="modalZonas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -746,6 +783,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago5() {
         const formato = document.getElementById("formatoFecha5").value;
@@ -759,7 +799,9 @@ else
     }
 </script>
 
-
+<!-- En este grpafico de igual forma mostraremos tanto lo que viene a ser la descripcion de la zona, como su nombre y el monto que se gasto en las ventas, por ende
+    es que todo lo representamos en un grafico circular o de pie, de igual forma respetando las condiciones, e igual asignamos colores de forma aleatoria
+-->
 <canvas id="pieChartZona" width="400" height="400"></canvas>
 
 @if (Model.NombreZona != null && Model.MontoZona != null && Model.DescripcionZona.Count > 0)
@@ -839,20 +881,10 @@ else
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- En este modal lo que buscamos es sacar las ventas por departamento, así mismo utilizamos datos como lo son fechas
+    para poder en el metodo post generar ciertos filtros sobre estas de forma que se puedan ver cierto tipo de datos según lo que se haya ingresado,
+    ya despues esto devuelve todo al gráfico
+-->
 <div class="modal fade" id="modalVentas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -883,6 +915,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago7() {
         const formato = document.getElementById("formatoFecha7").value;
@@ -895,6 +930,10 @@ else
         }
     }
 </script>
+
+<!-- En este gráfico de pie lo que buscamos mostrar son los departamentos y las ventas que lograron estos mismos por medio de sus empleados
+    es importante mencionar que volvemos a usar un generador random de colores para asignar así los colores
+-->
 <canvas id="piechartVentas" width="400" height="200"></canvas>
 
 
@@ -978,7 +1017,10 @@ else
 
 
 
-<!-- Modal de Tipo de Movimiento -->
+<!-- Este es el modal que muestra los distintos tipos de movimiento o sea entrada o salida todo esto por medio de más combobox para generar un mejor filtro
+en las consultas, todos estos se le pasan al metodo post para que de ahí el filtre la consulta dependiendo de la entrada, la fecha o fechas que haya puesto select
+usuario
+-->
 <div class="modal fade" id="modalTipoMovimiento" tabindex="-1" aria-labelledby="modalTipoMovimientoLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1020,6 +1062,8 @@ else
     </div>
 </div>
 
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago47() {
         const formato = document.getElementById("formatoFecha47").value;
@@ -1032,6 +1076,12 @@ else
         }
     }
 </script>
+
+
+<!--Todo este script es para mostrar un gráfico de pie con los distintos movimiento que fueron generados por una bodega junto a la cantidad 
+    de estos mismos, es importante mencionar que estos si tienen colores ya predefinidos en el background, además de etiquetas y un porcentaje
+    dentro de cada porcion
+-->
 <canvas id="pieChartMOV" width="400" height="400"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1099,7 +1149,9 @@ else
 
 
 
-
+<!-- En esta utilizamos un modal para mostrar los mejores clientes o los más top que hay dentro de los datos, estoss pueden ir en orden, ya sea ascendete
+    o descendete, todo esto dependera del usuario, de igual forma tiene la fácilidad de poder filtrar por fechas si asi lo requiere
+-->
 <div class="modal fade" id="modal10Clientes" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1143,6 +1195,9 @@ else
     </div>
 </div>
 
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago17() {
         const formato = document.getElementById("formatoFecha17").value;
@@ -1158,7 +1213,9 @@ else
 
 
 
-
+<!--En esta parte lo que hacemos es mostrar una tabla o un data grid view el cual se genera en el metodo post y fácilita enviar la información de una 
+    forma más ordenada y práctica, por ende solo es más que acomodar la información, así que por eso usa los arroba para traer ciertos tipos de datos
+-->
 @{
     var ventasCotizaciones = ViewData["VentasCotizaciones"] as List<VentasCotizaciones>;
 }
@@ -1229,7 +1286,9 @@ else
 
 
                     
-
+<!-- Todo esto es para mostrar en el modal los clientes que hay en ciertas zonas y lo que estos pueden generar por eso también filtramos
+    por fechas y estos mismo datos se los enviamos al metodo post para generar consultas más precisa
+-->
 
 <div class="modal fade" id="modalZonaClientes" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1272,6 +1331,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago27() {
         const formato = document.getElementById("formatoFecha27").value;
@@ -1285,6 +1347,10 @@ else
     }
 </script>
 
+
+<!-- Aqui utilizamos un data grid view generado previamente en el metodo post el cual solo es llamado para mostrar la información ya generada
+    en una tabla esto nos fácilita mucho y hace que se vean mejor los datos
+-->
 @{
     var zonas = ViewData["Zonas"] as List<ZonaModel>;
 }
@@ -1324,7 +1390,10 @@ else
 
                 
 
-
+<!-- Este modal es para mostrar los top de las 15 tareas más antiguas o sin cerrar, por eso es que esta también utiliza otro
+    tipo de datos como lo son el orden que es ascendente o descente y los formatos fecha que todos estos son enviados a los metodos
+    post para obtener la consulta
+-->
 
 <div class="modal fade" id="modalTop15Tareas" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1367,6 +1436,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago37() {
         const formato = document.getElementById("formatoFecha37").value;
@@ -1380,7 +1452,9 @@ else
     }
 </script>
 
-
+<!--Aqui igual simplemente traemos la información que ya teníamos del metodo post por ende se nos fácilita el mostrar la información,
+    asi simplemente lo que hacemos es acomodarla y darle el tipo de dato que queremos
+-->
 @{
     var tareas = ViewData["Tareas"] as List<TareaModel2>;
 }
@@ -1416,7 +1490,10 @@ else
 </table>
 
 
-
+<!-- Esta es para mostrar los top de bodegas en el cual va de la misma forma que las anteriores pero al ser en una tabla
+    esta permite filtrar por ascendente o descendente dependiendo así de lo que el usuario desee, así también utiliza filtros
+    de fecha para pasarle al metodo post
+-->
 <div class="modal fade" id="modalTOPBODEGAS" tabindex="-1" aria-labelledby="modalTopLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1458,6 +1535,9 @@ else
         </div>
     </div>
 </div>
+
+<!-- Este script es para que cuando sea RangoFecha se muestre correctamente lo que es la segunda fecha o sea que esta pueda ser visible para el usuario-->
+
 <script>
     function toggleFechaPago57() {
         const formato = document.getElementById("formatoFecha57").value;
@@ -1470,6 +1550,10 @@ else
         }
     }
 </script>
+
+<!--Aqui simplemente mostramos todos los articulos que fueron transados y que sacamos del metodo post,
+asi solo acomodamos lo necesario y mostramos los datos que necesitamos 
+-->
 @{
     var bodegasList = ViewData["Bodegas"] as List<Bodegas>;
 }
@@ -1480,8 +1564,7 @@ else
         <thead>
             <tr>
                 <th>Bodega</th>
-                <th>Total Transados</th>
-                <th>Fecha Factura</th> 
+                <th>Transados Totales NOF</th>
             </tr>
         </thead>
         <tbody>
@@ -1489,8 +1572,7 @@ else
             {
                 <tr>
                     <td>@bodega.bodegas</td>
-                    <td>@bodega.TotalTransados</td>
-                    <td>@bodega.FechaFactura.ToString("yyyy-MM-dd")</td> 
+                    <td>@bodega.TotalTransados</td>  <!-- Mostrar el nuevo campo -->
                 </tr>
             }
         </tbody>
@@ -1502,3 +1584,4 @@ else
         No hay bodegas disponibles.
     </div>
 }
+

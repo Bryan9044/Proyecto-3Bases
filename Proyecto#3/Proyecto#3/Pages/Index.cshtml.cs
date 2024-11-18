@@ -812,45 +812,25 @@ public class IndexModel : PageModel
 
 
 
-    public void OnPostShowTopBodegas(DateOnly? fechaPago57, string orden6, string? formatoFecha57, DateOnly? fechaPago58 = null)
+    public void OnPostShowTopBodegas(string orden6)
     {
-        Console.WriteLine(fechaPago57);
-        Console.WriteLine(orden6);
-        Console.WriteLine(formatoFecha57);
-        Console.WriteLine(fechaPago58);
+        // Imprimir parámetros iniciales
+        Console.WriteLine($"Orden: {orden6}");
 
+        // Definir consulta para ordenar solo por TotalTransados
         string query;
-        string tipo;
 
         if (orden6 == "Ascendente")
         {
-            if (string.IsNullOrEmpty(formatoFecha57))
-            {
-                query = "SELECT * FROM dbo.BodegasTransados(@tipo, @fecha, @fin) ORDER BY TotalTransados ASC";
-            }
-            else
-            {
-                query = "SELECT * FROM dbo.BodegasTransadosf(@tipo, @fecha, @fin) ORDER BY TotalTransados ASC";
-            }
+            query = "SELECT * FROM transadosTotalesNOF ORDER BY TotalTransados ASC";
         }
         else
         {
-            if (string.IsNullOrEmpty(formatoFecha57))
-            {
-                query = "SELECT * FROM dbo.BodegasTransados(@tipo, @fecha, @fin) ORDER BY TotalTransados DESC";
-            }
-            else
-            {
-                query = "SELECT * FROM dbo.BodegasTransadosf(@tipo, @fecha, @fin) ORDER BY TotalTransados DESC";
-            }
+            query = "SELECT * FROM transadosTotalesNOF ORDER BY TotalTransados DESC";
         }
 
-        tipo = string.IsNullOrEmpty(formatoFecha57) ? null : (formatoFecha57 == "mes(año)" ? "mes(año)" : "rangofecha");
 
-        // Inicializar las fechas
-        var fecha = fechaPago57.HasValue ? fechaPago57.Value : (DateOnly?)null;
-        var fin = fechaPago58.HasValue ? fechaPago58.Value : (DateOnly?)null;
-
+        // Lista para almacenar resultados
         List<Bodegas> bodegasList = new List<Bodegas>();
 
         try
@@ -859,39 +839,20 @@ public class IndexModel : PageModel
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.Add("@tipo", SqlDbType.NVarChar).Value = tipo ?? (object)DBNull.Value;
-                    cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = fecha.HasValue ? fecha.Value : (object)DBNull.Value;
-                    cmd.Parameters.Add("@fin", SqlDbType.Date).Value = fin.HasValue ? fin.Value : (object)DBNull.Value;
-
-                    conn.Open();  
+                    conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             var totalTransados = reader.GetInt32(reader.GetOrdinal("TotalTransados"));
+
                             if (totalTransados > 0)
                             {
-                                DateOnly fechaFactura = DateOnly.MinValue;
-                                if (reader["FechaFactura"] != DBNull.Value)
-                                {
-                                    try
-                                    {
-                                        fechaFactura = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("FechaFactura")));
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine($"Error de formato al convertir FechaFactura: {ex.Message}");
-                                        Console.WriteLine($"Valor de FechaFactura: {reader["FechaFactura"]}");
-                                        fechaFactura = DateOnly.MinValue;  
-                                    }
-                                }
-
                                 // Agregar la bodega a la lista
                                 bodegasList.Add(new Bodegas
                                 {
-                                    bodegas = reader["Bodegas"].ToString(),
-                                    TotalTransados = totalTransados,
-                                    FechaFactura = fechaFactura
+                                    bodegas = reader["Bodega"].ToString(),
+                                    TotalTransados = totalTransados
                                 });
                             }
                         }
@@ -901,21 +862,24 @@ public class IndexModel : PageModel
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Error en la consulta: {ex.Message}");
         }
 
+        // Almacenar resultados en ViewData
         ViewData["Bodegas"] = bodegasList;
 
+        // Imprimir información final de las bodegas
         Console.WriteLine("Información de las bodegas:");
         foreach (var bodega in bodegasList)
         {
             Console.WriteLine($"Bodega: {bodega.bodegas}");
             Console.WriteLine($"Total Transados: {bodega.TotalTransados}");
-            Console.WriteLine($"Fecha Factura: {bodega.FechaFactura}");  
         }
 
         Console.WriteLine("Terminé");
     }
+
+
 
 
 
@@ -942,7 +906,6 @@ public class Bodegas
 {
     public string bodegas { get; set; }
     public int TotalTransados { get; set; }
-    public DateOnly FechaFactura { get; set; }
 
 }
 
